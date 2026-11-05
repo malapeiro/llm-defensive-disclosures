@@ -154,7 +154,7 @@ python3 froststrike_lab.py attack --port 8081 --variant h1
 
 ### 4.3 Adversarial validation — operator probes (v1.1)
 
-After the initial release, the operator ran independent adversarial probes (`probe.py`, `improved_detect.py`, `fp_probe.py`, `patient_probe.py`, shipped in the repo root) against scenarios the demo does not cover. All three findings were confirmed and fixed in v1.1:
+After the initial release, the operator ran independent adversarial probes (`probe.py`, `improved_detect.py`, `fp_probe.py`, `patient_probe.py`, shipped alongside the lab in this case study's folder) against scenarios the demo does not cover. All three findings were confirmed and fixed in v1.1:
 
 | Probe | Scenario (not covered by the demo) | v1.0 result | v1.1 result |
 |---|---|---|---|
