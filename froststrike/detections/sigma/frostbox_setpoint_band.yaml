@@ -28,7 +28,7 @@ detection:
   chilled_too_low:
     case|startswith: 'CH-'
     new|lt: 0
-  condition: selection_event and 1 of [freezer_too_high, freezer_too_low, chilled_too_high, chilled_too_low]
+  condition: selection_event and (freezer_too_high or freezer_too_low or chilled_too_high or chilled_too_low)
 falsepositives:
   - Seasonal setpoint re-configuration by service technicians (should occur only
     inside the maintenance window and from the maintenance network)
