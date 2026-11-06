@@ -41,6 +41,13 @@ License: Apache-2.0 (lab code). See the LICENSE file and the report's usage noti
 
 Changelog
 ---------
+v1.5 (2026-11-06): independent-review hardening. set_setpoint validates its
+  value and returns 400 on non-numeric input (the HTTP handler now reports
+  "invalid setpoint" for 400 vs "unknown case" for 404); D-ALARM-MUTE is
+  None-safe (high=null no longer crashes the scan); GuardConfig drops four
+  dead attributes never read anywhere (allow_sources, read_only_paths,
+  write_paths, quarantine_token). No behavioral change to detection logic;
+  full regression re-run passes with identical numbers.
 v1.4 (2026-11-05): license metadata only — the docstring license line now states
   Apache-2.0, matching the repository LICENSE file (it previously said MIT,
   a leftover from the initial release). No behavioral change: detection
@@ -292,9 +299,13 @@ class FrostboxController:
     def set_setpoint(self, cid, value, actor):
         if cid not in self.cases:
             return None, 404
+        try:
+            value = float(value)
+        except (TypeError, ValueError):
+            return None, 400
         c = self.cases[cid]
         old = c.setpoint
-        c.setpoint = float(value)
+        c.setpoint = value
         self.audit.emit("CFG_SETPOINT", case=cid, actor=actor,
                         old=old, new=c.setpoint, source="http")
         return c.setpoint, 200
@@ -396,7 +407,8 @@ def make_handler(ctrl: FrostboxController):
             if path.startswith("/api/case/") and path.endswith("/setpoint"):
                 cid = path.split("/")[3]
                 val, code = ctrl.set_setpoint(cid, body.get("value"), ctrl.sessions[self._token()])
-                self._json(code, {"case": cid, "setpoint": val} if code == 200 else {"error": "unknown case"})
+                self._json(code, {"case": cid, "setpoint": val} if code == 200
+                           else {"error": "unknown case" if code == 404 else "invalid setpoint"})
             elif path.startswith("/api/case/") and path.endswith("/defrost"):
                 cid = path.split("/")[3]
                 self._json(ctrl.force_defrost(cid, ctrl.sessions[self._token()]), {"case": cid, "defrost": "forced"})
@@ -589,7 +601,7 @@ class Detector:
                 self.alert("D-DEFROST-UNSCHEDULED", "CRIT",
                            "Forced defrost on %s outside scheduled defrost window" % rec.get("case"),
                            rec["ts"], case=rec.get("case"), sim_ts=sim_ts)
-        if ev == "CFG_ALARM" and (rec.get("enabled") is False or rec.get("high", 0) > 40):
+        if ev == "CFG_ALARM" and (rec.get("enabled") is False or float(rec.get("high", 0) or 0) > 40):
             self.alert("D-ALARM-MUTE", "CRIT",
                        "Alarm suppression on %s (enabled=%s, high=%s)"
                        % (rec.get("case"), rec.get("enabled"), rec.get("high")),
@@ -724,13 +736,9 @@ def detect_cli(args):
 
 class GuardConfig:
     def __init__(self):
-        self.allow_sources = LOOPBACK | {"10.10.50.0/24"}     # maintenance network
         self.block_creds = {("admin", "admin123"), ("admin", "123456"),
                             ("supervisor", "supervisor")}
         self.strip_headers = {SERVICE_HEADER.lower()}
-        self.read_only_paths = {"/", "/api/status"}
-        self.write_paths = {"/api/login", "/api/case/setpoint", "/api/case/defrost"}
-        self.quarantine_token = None
         # v1.1 (operator probe finding): in-window writes were fully allowed,
         # so a fleet-wide forced defrost inside the maintenance window passed
         # the guard. Fleet-anomaly ceiling: after DEFROST_FLEET_LIMIT distinct
