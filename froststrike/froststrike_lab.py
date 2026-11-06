@@ -41,6 +41,10 @@ License: Apache-2.0 (lab code). See the LICENSE file and the report's usage noti
 
 Changelog
 ---------
+v1.6 (2026-11-06): reject non-finite setpoints (NaN/Infinity) at the controller —
+  they previously passed float() and silenced a case with no alert; the guard
+  already blocked them via the band clamp. No behavioral change to the demo;
+  full regression re-run identical.
 v1.5 (2026-11-06): independent-review hardening. set_setpoint validates its
   value and returns 400 on non-numeric input (the HTTP handler now reports
   "invalid setpoint" for 400 vs "unknown case" for 404); D-ALARM-MUTE is
@@ -86,6 +90,7 @@ v1.0 (2026-11-05): initial release.
 import argparse
 import hashlib
 import json
+import math
 import os
 import secrets
 import sys
@@ -302,6 +307,8 @@ class FrostboxController:
         try:
             value = float(value)
         except (TypeError, ValueError):
+            return None, 400
+        if not math.isfinite(value):
             return None, 400
         c = self.cases[cid]
         old = c.setpoint
