@@ -1,0 +1,87 @@
+title: Potential Credential Dumping Activity Via LSASS
+id: 5ef9853e-4d0e-4a70-846f-a9ca37d876da
+status: test
+description: |
+    Detects process access requests to the LSASS process with specific call trace calls and access masks.
+    This behaviour is expressed by many credential dumping tools such as Mimikatz, NanoDump, Invoke-Mimikatz, Procdump and even the Taskmgr dumping feature.
+    Hardened version: additionally covers Meterpreter-style access masks (0x1f1fff) and low-privilege read access
+    to LSASS (0x1010 / 0x1410) when requested by script interpreters or by binaries running from untrusted paths.
+author: Samir Bousseaden, Michael Haag
+date: 2019-04-03
+modified: 2026-06-29
+tags:
+    - attack.credential-access
+    - attack.t1003.001
+    - attack.s0002
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection_main:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess|contains:
+            - '0x1038'
+            - '0x1438'
+            - '0x143a'
+            - '0x1f1fff'
+            - '0x1fffff'
+        CallTrace|contains:
+            - 'dbgcore.dll'
+            - 'dbghelp.dll'
+            - 'kernel32.dll'
+            - 'kernelbase.dll'
+            - 'ntdll.dll'
+    selection_lowaccess_interpreter:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess:
+            - '0x1010'
+            - '0x1410'
+        SourceImage|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+            - '\mshta.exe'
+            - '\python.exe'
+            - '\pythonw.exe'
+    selection_lowaccess_untrusted_path:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess:
+            - '0x1010'
+            - '0x1410'
+    filter_main_system_user:
+        SourceUser|contains: # Covers many language settings
+            - 'AUTHORI'
+            - 'AUTORI'
+    filter_optional_thor:
+        CallTrace|contains|all:
+            - ':\Windows\Temp\asgard2-agent\'
+            - '\thor\thor64.exe+'
+            - '|UNKNOWN('
+        GrantedAccess: '0x103800'
+    filter_optional_sysmon:
+        SourceImage|endswith:
+            - ':\Windows\Sysmon64.exe'
+            - ':\Windows\Sysmon64a.exe'
+    filter_lowaccess_system_paths:
+        SourceImage|startswith:
+            - 'C:\Windows\'
+            - 'c:\windows\'
+            - 'C:\Program Files\'
+            - 'c:\program files\'
+            - 'C:\Program Files (x86)\'
+            - 'c:\program files (x86)\'
+            - 'C:\ProgramData\'
+            - 'c:\programdata\'
+    filter_lowaccess_optional_sysinternals:
+        SourceImage|endswith:
+            - '\procexp.exe'
+            - '\procexp64.exe'
+            - '\procmon.exe'
+            - '\procmon64.exe'
+    condition: "( selection_main and not 1 of filter_main_* and not 1 of filter_optional_* ) or selection_lowaccess_interpreter or ( selection_lowaccess_untrusted_path and not 1 of filter_lowaccess_* )"
+falsepositives:
+    - Unknown
+    - Legitimate administrative or inventory tools executed from user-controlled paths and opening LSASS with read access (e.g. Sysinternals process tools run from a Downloads or Tools folder)
+    - Custom agents or services installed outside of Windows, Program Files or ProgramData locations
+level: medium
