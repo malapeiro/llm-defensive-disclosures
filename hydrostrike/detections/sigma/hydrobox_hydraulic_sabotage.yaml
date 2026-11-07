@@ -1,0 +1,67 @@
+title: Water Station Hydraulic Sabotage - Out-of-Band Setpoint, Active-Pump Deadhead, or Reservoir Drain
+id: 3f82c104-7d91-43e8-9b25-61a0f843e212
+status: experimental
+description: >
+  Detects high-severity physical parameter manipulation on the synthetic HYDROBOX
+  water treatment/pumping controller: (1) pump pressure setpoint outside [2.5, 5.5] bar,
+  (2) chlorine dosing setpoint outside [0.2, 1.0] mg/L, (3) closing outlet valve VLV-OUT
+  while a pump is actively running (any_pump_running=true) or running a pump against a
+  closed valve (deadheading; scoped per v1.3 Addition A so legitimate pump-stopped valve
+  isolation stays clean), (4) post-backwash network underpressure (< 2.5 bar) or clear-water
+  reservoir drain below 40%, or (5) remote alarm suppression.
+  Verification level: Textual compliance.
+references:
+  - https://cert.pl/
+  - https://attack.mitre.org/techniques/T0855/
+  - https://attack.mitre.org/techniques/T0879/
+author: Sergio Azevedo (malapeiro)
+date: 2026/11/07
+logsource:
+  product: hydrobox
+  service: audit
+detection:
+  pressure_high:
+    event: 'pump_setpoint'
+    new|gt: 5.5
+  pressure_low:
+    event: 'pump_setpoint'
+    new|lt: 2.5
+  chlorine_high:
+    event: 'dosing_setpoint'
+    new|gt: 1.0
+  chlorine_low:
+    event: 'dosing_setpoint'
+    new|lt: 0.2
+  deadhead_on_valve_close:
+    event: 'valve_command'
+    state: 'CLOSED'
+    any_pump_running: true
+  deadhead_on_pump_run:
+    event: 'pump_setpoint'
+    valve: 'CLOSED'
+    running: true
+    new|gt: 0
+  backwash_underpressure:
+    event: 'filter_backwash'
+    pressure_after|lt: 2.5
+  backwash_reservoir_drain:
+    event: 'filter_backwash'
+    trigger: 'API'
+    reservoir_after|lt: 40.0
+  alarm_suppression:
+    event: 'alarm_mute'
+    muted: true
+  condition: >
+    pressure_high or pressure_low or chlorine_high or chlorine_low or
+    deadhead_on_valve_close or deadhead_on_pump_run or
+    backwash_underpressure or backwash_reservoir_drain or alarm_suppression
+falsepositives:
+  - Legitimate valve isolation where all pumps are stopped (running=false) BEFORE
+    closing VLV-OUT is explicitly excluded by deadhead_on_valve_close
+level: critical
+tags:
+  - attack.impact
+  - attack.inhibit_response_function
+  - attack.ics.t0855
+  - attack.ics.t0879   # MITRE ATT&CK for ICS: Damage to Property
+  - attack.ics.ta0107

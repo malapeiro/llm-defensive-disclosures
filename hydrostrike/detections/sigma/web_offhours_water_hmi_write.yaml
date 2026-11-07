@@ -1,0 +1,34 @@
+title: Remote Actuation or Setpoint POST to Water Station Web HMI
+id: 8c19e450-2a14-4d88-b711-5092f1a3c803
+status: experimental
+description: >
+  Generic reverse-proxy / webserver rule detecting remote HTTP POST writes to
+  water station control endpoints (pump/dosing setpoints, filter backwash,
+  outlet valve actuation, alarm muting, or service login). Apply an off-hours
+  (outside 08:00-18:00 local) or source-network filter in your SIEM pipeline.
+  Verification level: Textual compliance.
+references:
+  - https://www.cert.ssi.gouv.fr/
+  - https://attack.mitre.org/techniques/T0855/
+author: Sergio Azevedo (malapeiro)
+date: 2026/11/07
+logsource:
+  category: webserver
+detection:
+  selection_method:
+    cs-method: 'POST'
+  selection_uri:
+    c-uri|contains:
+      - '/api/pump/'
+      - '/api/dosing/setpoint'
+      - '/api/filter/'
+      - '/api/valve/out'
+      - '/api/alarm/mute'
+      - '/api/service_login'
+  condition: selection_method and selection_uri
+falsepositives:
+  - Authorized daytime maintenance by authenticated operators from declared maintenance networks
+level: high
+tags:
+  - attack.impact
+  - attack.ics.t0855

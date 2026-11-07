@@ -1,0 +1,21 @@
+# HYDROBOX reference Suricata signatures — municipal water station web HMIs.
+# Verification level: Textual compliance (not executed against a Suricata engine).
+#
+# Address groups (define in suricata.yaml):
+#   MAINT_NET          — authorized OT maintenance / SCADA bastion network(s)
+#   WATER_CONTROLLERS  — municipal water station HMI / PLC web interfaces
+#
+# Direction !$MAINT_NET -> $WATER_CONTROLLERS alerts on actuation/configuration
+# POST requests originating outside the declared maintenance network.
+# NOTE: http.method and http.uri require plaintext HTTP or TLS termination at
+# the sensor (see detections/README.md).
+
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/setpoint"; endswith; classtype:attempted-admin; sid:2026110701; rev:1;)
+
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/backwash"; endswith; classtype:attempted-admin; sid:2026110702; rev:1;)
+
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote outlet valve actuation on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/valve/out"; startswith; classtype:attempted-admin; sid:2026110703; rev:1;)
+
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote alarm suppression request on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/alarm/mute"; startswith; classtype:attempted-admin; sid:2026110704; rev:1;)
+
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Access to hidden daily-code service authentication endpoint"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/service_login"; startswith; classtype:attempted-admin; sid:2026110705; rev:1;)

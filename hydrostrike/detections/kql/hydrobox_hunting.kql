@@ -1,0 +1,60 @@
+// Microsoft Sentinel KQL hunting queries — HYDROBOX reference schema.
+// Verification level: Textual compliance (written against HydroboxAudit_CL;
+// validate against your own ingestion schema before production use).
+//
+// NOTE: Run each query individually (let station_tz is declared per query).
+
+// 1. Default-credential login or hidden daily service-code authentication
+HydroboxAudit_CL
+| where (event_s == "login_success" and cred_class_s == "default")
+     or event_s == "service_login_success"
+| project TimeGenerated, sim_ts_s, event_s, actor_s, role_s, source_ip_s
+| order by TimeGenerated asc
+
+// 2. Active-pump deadhead risk (v1.3 Probe 2 + Addition A scoping):
+//    Fires ONLY when VLV-OUT is closed with an active pump running
+//    (any_pump_running_b == true) OR when a pump is commanded to run
+//    (running_b == true and new_d > 0) while VLV-OUT is already CLOSED.
+//    Legitimate isolation (stopping pumps BEFORE closing VLV-OUT) stays clean.
+HydroboxAudit_CL
+| where (event_s == "valve_command" and state_s == "CLOSED" and any_pump_running_b == true)
+     or (event_s == "pump_setpoint" and valve_s == "CLOSED" and running_b == true and todouble(new_d) > 0)
+| project TimeGenerated, sim_ts_s, event_s, actor_s, pump_s, valve_s, pressure_d, new_d, any_pump_running_b
+| order by TimeGenerated asc
+
+// 3. Out-of-band pressure/chlorine setpoints or post-backwash underpressure (< 2.5 bar)
+HydroboxAudit_CL
+| where (event_s == "pump_setpoint" and (todouble(new_d) < 2.5 or todouble(new_d) > 5.5))
+     or (event_s == "dosing_setpoint" and (todouble(new_d) < 0.2 or todouble(new_d) > 1.0))
+     or (event_s == "filter_backwash" and todouble(pressure_after_d) < 2.5)
+| project TimeGenerated, sim_ts_s, event_s, actor_s, pump_s, filter_s, new_d, pressure_after_d, reservoir_after_d
+
+// 4. Burst multi-filter or same-filter backwash abuse (v1.2 Probe 7A/7B scoping):
+//    >= 2 distinct filters within 30 minutes OR >= 3 total API backwashes within 60 minutes.
+//    Avoids false-positiving on 2 filters washed hours apart across a shift (Probe 7A).
+HydroboxAudit_CL
+| where event_s == "filter_backwash" and trigger_s == "API"
+| summarize DistinctFilters30m = dcount(filter_s), TotalBackwashes = count(), MinReservoir = min(todouble(reservoir_after_d))
+    by actor_s, bin(TimeGenerated, 30m)
+| where DistinctFilters30m >= 2 or TotalBackwashes >= 3 or MinReservoir < 40.0
+
+// 5. Patient-attacker 24-hour horizon (v1.3 Probe 11 dual-horizon parity):
+//    Catches an attacker spacing backwashes > 60 minutes apart across a shift/day
+//    (>= 3 API backwashes or >= 3 distinct filters within 24h).
+//    CAVEAT (Report Section 7.1): Cannot distinguish a patient attacker from legitimate
+//    heavy maintenance of 3+ filters on the same day without work-order correlation.
+HydroboxAudit_CL
+| where event_s == "filter_backwash" and trigger_s == "API"
+| summarize DistinctFilters24h = dcount(filter_s), TotalBackwashes24h = count(), MinReservoir = min(todouble(reservoir_after_d))
+    by bin(TimeGenerated, 24h)
+| where DistinctFilters24h >= 3 or TotalBackwashes24h >= 3
+
+// 6. Remote actuation or configuration writes outside the 08:00-18:00 local maintenance window
+let station_tz = "Europe/Warsaw";
+HydroboxAudit_CL
+| where event_s in ("pump_setpoint", "dosing_setpoint", "valve_command", "alarm_mute")
+     or (event_s == "filter_backwash" and trigger_s == "API")
+| where actor_s != "PLC-SCHED"
+| extend LocalHour = hourofday(datetime_utc_to_local(TimeGenerated, station_tz))
+| where LocalHour < 8 or LocalHour >= 18
+| project TimeGenerated, sim_ts_s, LocalHour, event_s, actor_s, source_ip_s

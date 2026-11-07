@@ -1,0 +1,34 @@
+title: Default Account or Predictable Daily-Code Service Authentication on Water Station HMI
+id: 9a4e1c73-58b2-4f19-a631-8c04e271d901
+status: experimental
+description: >
+  Detects successful logins to a water treatment/pumping station HMI using either
+  vendor-default credentials (cred_class=default) or a predictable daily service
+  authentication code (service_login_success). Mirrors the initial-access vector
+  documented by Poland's ABW and CERT Polska in municipal water station intrusions.
+  Verification level: Textual compliance (validate against target SIEM pipeline).
+references:
+  - https://cert.pl/
+  - https://attack.mitre.org/techniques/T1078/001/
+  - https://attack.mitre.org/techniques/T0819/
+author: Sergio Azevedo (malapeiro)
+date: 2026/11/07
+logsource:
+  product: hydrobox
+  service: audit
+detection:
+  selection_default_cred:
+    event: 'login_success'
+    cred_class: 'default'
+  selection_service_code:
+    event: 'service_login_success'
+  condition: selection_default_cred or selection_service_code
+falsepositives:
+  - Unchanged default accounts during initial commissioning (remediate immediately)
+  - Declared vendor service sessions (must be gated by maintenance ticket)
+level: critical
+tags:
+  - attack.initial_access
+  - attack.t1078.001
+  - attack.t1190
+  - attack.ics.t0819
