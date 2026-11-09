@@ -13,7 +13,7 @@ limits — is in [`froststrike_report.md`](froststrike_report.md).
 
 ## Notice
 
-Notice. This repository is independent defensive research based exclusively on public sources (CERT-FR, ANSSI statements, press coverage, published CVE advisories). The emulation code does not reproduce any vendor endpoint, protocol, firmware path, password algorithm or CVE exploit chain; it operates only against the synthetic controller defined in this repository, on loopback (the attack module refuses any non-loopback target). It cannot be used against real equipment and adds no capability to anyone seeking to do so. The purpose is detection engineering and hardening, not offense.
+Notice. This case study is independent defensive research based exclusively on public sources (CERT-FR, ANSSI statements, press coverage, published CVE advisories). The emulation code does not reproduce any vendor endpoint, protocol, firmware path, password algorithm or CVE exploit chain; it operates only against the synthetic controller defined in this repository, on loopback (the attack module refuses any non-loopback target). It cannot be used against real equipment and adds no capability to anyone seeking to do so. The purpose is detection engineering and hardening, not offense.
 
 ## What is in this directory
 
@@ -21,12 +21,12 @@ Notice. This repository is independent defensive research based exclusively on p
   controller, an adversary-emulation module (loopback only), a streaming
   detection engine and a write-protecting guard proxy. 100% Python 3 standard
   library, no third-party dependencies.
-- `froststrike_report.md` — the technical report (v1.4).
+- `froststrike_report.md` — the technical report (lab v1.6).
 - `detections/` — reference Sigma, Suricata and Microsoft Sentinel KQL rules.
 - `probe.py`, `improved_detect.py`, `fp_probe.py`, `patient_probe.py` — the
   operator's adversarial validation probes. Each probe round was executed
   against the lab, its finding fixed, and the full regression re-run: the
-  versions v1.0 → v1.4 in the lab changelog record that cycle.
+  versions v1.0 → v1.6 in the lab changelog record that cycle.
 
 ## How to run
 
@@ -40,7 +40,7 @@ python3 froststrike_lab.py guard                  # prevention proxy in front of
 ## Execution-verified vs textual compliance
 
 The Python detection engine and guard proxy **were executed** in this lab, and
-the numbers in the report come from those runs (v1.4 full regression: 32
+the numbers in the report come from those runs (v1.6 full regression, identical since v1.4: 32
 alerts / 14 CRIT per sabotage variant, streaming MTTD 0.25 s, negative case 0
 alerts / 0 false positives, guard blocking the chain at authentication).
 
