@@ -1,6 +1,6 @@
 #!/bin/bash
 # Re-captures one scenario from the synthetic lab on loopback (needs sudo for tcpdump).
-#   bash capture.sh [attack|edge|rawbyte]
+#   bash capture.sh [attack|edge|rawbyte|reqline]
 # Output goes to ./recapture/ (not committed). To verify a fresh capture:
 #   PCAP_DIR=./recapture bash verify.sh
 set -u
@@ -32,6 +32,7 @@ case "$SCENARIO" in
     python3 "$LAB" attack --variant h2 --port "$PORT" ;;
   edge)    python3 "$HERE/edge_client.py" hydro "$PORT" ;;
   rawbyte) python3 "$HERE/rawbyte_client.py" hydro "$PORT" ;;
+  reqline) python3 "$HERE/reqline_client.py" hydro "$PORT" ;;
   *) echo "unknown scenario: $SCENARIO"; ;;
 esac
 sleep 2

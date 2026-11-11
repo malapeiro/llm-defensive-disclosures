@@ -74,7 +74,8 @@ probes `P1–P13B` and `Additions A–D` passing).
 The Suricata rules in `detections/suricata/` **were executed** against Suricata
 8.0.8 by replaying pcaps of the lab (17/17 alerts on the attack chain, 0 in the
 negative case). That run exposed a trailing-byte evasion of two signatures,
-fixed in rev 2; see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
+fixed in rev 2, and a wider request-line tokenisation gap, fixed in the next
+revision with one new signature; see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
 
 The Sigma and KQL rules in [`detections/`](detections/README.md) are **textual
 compliance**: they are written against the lab audit schema and public log

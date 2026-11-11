@@ -2,8 +2,8 @@
 
 **Verification level: execution-verified** (Suricata 8.0.8, offline pcap replay of the
 synthetic HYDROBOX lab). Covers [`../hydrobox.rules`](../hydrobox.rules) only; the Sigma and
-KQL rules of this lab remain textual compliance. The run exposed a trailing-byte evasion of
-sids 2026110701 and 2026110702, fixed in rev 2 (see below).
+KQL rules of this lab remain textual compliance. The run exposed a trailing-byte evasion and
+then a wider request-line tokenisation gap; both are fixed (see below).
 
 ## Method
 
@@ -23,7 +23,8 @@ Python 3.15.2, 2026-11-11, repository at commit `5747111` (attack and edge captu
 
 ## Results
 
-`suricata -T`: 5 rules loaded, 0 failed.
+`suricata -T`: 5 rules loaded, 0 failed (6 rules since sid 2026110706 was added; `verify.sh`
+checks the loaded-rule count on every replay).
 
 ### Attack chain `h1` + `h2` (`pcaps/hydro_attack.pcap`, 285 packets, 20 HTTP requests)
 
@@ -96,6 +97,55 @@ alert and both rejected requests stay silent; the attack-chain and suffix counts
 unchanged (17 / 0, 1). The Python detection engine and the guard proxy are not affected:
 they see the request after `http.server` has dropped the byte.
 
+### Finding 2: request-line tokenisation (rev 2 and the prefix-anchored rules)
+
+The trailing-byte finding was one case of a wider difference. Python's `http.server`
+tokenises the whole request line with `str.split()`: any run of `0x09`-`0x0d`, `0x1c`-`0x20`,
+`0x85` or `0xa0` separates the three words, and leading or trailing runs are dropped.
+Suricata 8.0.8 splits the line differently, so the two can disagree on what the method and
+the URI are.
+
+Measurement first, rules unchanged (rev 2), 25 setpoint request lines, per request from
+`eve.json` (each request carries its case label in the `User-Agent` header). The lab
+executed 22 of them; 10 of those raised no alert:
+
+| Request line (setpoint) | What Suricata 8.0.8 parsed | rev 2 |
+|---|---|---|
+| run of bytes after the path (`\xa0\xa0`, `\x1c\x85`, `\x0b\x1f\xa0`) | bytes stay in the URI | **silent** (3) |
+| lone CR after the path | URI ends at the CR | alert |
+| CR then `\xa0` after the path | both bytes stay in the URI | **silent** |
+| space mixed with `\xa0` (` \xa0 `, `\xa0 \xa0`) | bytes and space stay in the URI | **silent** (2) |
+| `\xa0` or `\x1c` in place of the space before the version | `HTTP/1.1` is glued to the URI, no protocol | **silent** (2) |
+| `\xa0` in place of the space after `POST` (alone, or both separators) | the path ends up in the method token | **silent** (2) |
+| tab as either separator, two spaces, byte before the path, before `POST` or after the version, `HTTP/1.0`, `0.9`, `1.9` | method and URI as expected (a byte before the path stays in the URI) | alert |
+| no version (lab: 400) | URI as expected, no protocol | alert |
+| `\xa0\xa0x`, four words (lab: 400) | bytes stay in the URI | silent |
+
+A byte before the path also breaks a `startswith` match, and `canonicalize_request` accepts a path without its leading slash (`api/valve/out`). That was confirmed on the
+lab side only; the previous rules were not run against those requests.
+
+### Fix (rev 3 of 2026110701/2026110702, rev 2 of 2026110703-2026110705, new 2026110706)
+
+```
+2026110701: http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/";
+2026110702: same pattern with /backwash
+2026110703: http.uri.raw; content:"api/valve/out"; pcre:"/^[\x09-\x0d\x1c-\x20\x85\xa0]*\/?api\/valve\/out/";
+2026110704, 2026110705: same pattern with api/alarm/mute and api/service_login
+2026110706: http.method; content:"/api/";   (new: API path inside the method token)
+```
+
+The anchored rules accept any run of the separator bytes after the path, and a version
+token glued to the URI. The prefix rules accept separator bytes before the path and a
+missing leading slash. The new rule fires when Suricata's method token contains the API
+path, which is what it parses when a separator byte replaces the space after the method.
+
+`pcaps/hydro_reqline.pcap` (`reqline_client.py`, 50 requests over all endpoints that have a rule,
+fresh server), per request from `eve.json`: all 39 requests the lab routes raise an
+alert, by their endpoint sid or by 2026110706. Of the 11 requests the lab rejects, 8 stay
+silent and 3 alert: the setpoint requests without a version (400), with `0x01` before the path (404) and with
+an absolute URI (400). Those three were listed as accepted over-alerts in `verify.sh`
+before the run. Total 42/42; the counts of the other captures are unchanged.
+
 ## Limits
 
 - **Synthetic telemetry.** The traffic comes from the lab in this repository, on loopback.
@@ -108,7 +158,14 @@ they see the request after `http.server` has dropped the byte.
 - **One engine version.** Executed on Suricata 8.0.8 only.
 - **Trailing-byte list.** The bytes in the pcre are the ones Python's `http.server` drops. A
   different controller may parse the request line differently; re-derive the list for your
-  target. Nine trailing bytes and two near misses were tested, one byte per request.
+  target.
+- **Tested request lines only.** The request-line battery covers the forms listed above, mostly
+  with `0xa0` as the odd separator. It is not a proof over every byte in every position, and
+  header lines and bodies were not varied.
+- **Over-alerts on rejected requests.** Three requests that the lab rejects still alert (see
+  Finding 2). The rules match the request, not the response.
+- **Method-token rule.** sid 2026110706 depends on how Suricata 8.0.8 fills `http.method` for a
+  request line it cannot split; another engine version may behave differently.
 - **Raw URI.** Since rev 2 the two anchored rules read `http.uri.raw`, with no percent-decoding,
   which fits this lab's canonicalizer (it rejects encoded paths).
 
@@ -124,7 +181,7 @@ fails the check (rule-liveness). To regenerate a capture instead of using the co
 (needs `sudo` for `tcpdump`):
 
 ```bash
-bash capture.sh attack     # or: edge | rawbyte
+bash capture.sh attack     # or: edge | rawbyte | reqline
 PCAP_DIR=./recapture bash verify.sh
 ```
 
@@ -141,3 +198,11 @@ For the trailing-byte finding: a review by Qwen suggested a further edge battery
 specific cases it proposed did not hold when tested). Claude found the trailing-byte
 behaviour by running the lab without Suricata, wrote the client and the rev 2 candidate, and
 read the logs; the author ran the captures and Suricata.
+
+For the request-line finding: Qwen pointed out, from a Python-side probe, that runs of bytes
+pass the one-byte pattern and proposed a lone CR (runs confirmed; a lone CR alone is not an
+evasion, because Suricata also ends the URI there). Claude extended the battery to the
+separator and prefix forms, wrote the client and the rules, and read the logs; the author ran
+the captures and Suricata. The first run with the fix executed the previous client and rules,
+because the updated files had not reached the working copy; it was repeated after comparing
+file checksums, and `hydro_reqline.pcap` is the repeat.

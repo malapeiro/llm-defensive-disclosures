@@ -5,6 +5,12 @@
 # by a pcre on http.uri.raw that also accepts one trailing byte that Python's
 # http.server drops as whitespace (0x09, 0x0b, 0x0c, 0x1c-0x1f, 0x85, 0xa0).
 # rev 1 could be evaded with e.g. /setpoint\xa0.
+# rev 3 of sids 2026110701/2026110702 and rev 2 of 2026110703-2026110705
+# (2026-11-11): the patterns follow how Python's http.server tokenises the
+# request line (any run of 0x09-0x0d, 0x1c-0x20, 0x85, 0xa0 is a separator) and
+# how canonicalize_request treats a path without its leading slash. sid
+# 2026110706 is new: when such a byte replaces the space after the method,
+# Suricata puts the path in the method token.
 #
 # Address groups (define in suricata.yaml):
 #   MAINT_NET          — authorized OT maintenance / SCADA bastion network(s)
@@ -15,12 +21,14 @@
 # NOTE: http.method and http.uri require plaintext HTTP or TLS termination at
 # the sensor (see detections/README.md).
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$/"; classtype:attempted-admin; sid:2026110701; rev:2;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/"; classtype:attempted-admin; sid:2026110701; rev:3;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/backwash"; pcre:"/\/backwash[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$/"; classtype:attempted-admin; sid:2026110702; rev:2;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/backwash"; pcre:"/\/backwash(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/"; classtype:attempted-admin; sid:2026110702; rev:3;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote outlet valve actuation on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/valve/out"; startswith; classtype:attempted-admin; sid:2026110703; rev:1;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote outlet valve actuation on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"api/valve/out"; pcre:"/^[\x09-\x0d\x1c-\x20\x85\xa0]*\/?api\/valve\/out/"; classtype:attempted-admin; sid:2026110703; rev:2;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote alarm suppression request on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/alarm/mute"; startswith; classtype:attempted-admin; sid:2026110704; rev:1;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote alarm suppression request on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"api/alarm/mute"; pcre:"/^[\x09-\x0d\x1c-\x20\x85\xa0]*\/?api\/alarm\/mute/"; classtype:attempted-admin; sid:2026110704; rev:2;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Access to hidden daily-code service authentication endpoint"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/service_login"; startswith; classtype:attempted-admin; sid:2026110705; rev:1;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Access to hidden daily-code service authentication endpoint"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"api/service_login"; pcre:"/^[\x09-\x0d\x1c-\x20\x85\xa0]*\/?api\/service_login/"; classtype:attempted-admin; sid:2026110705; rev:2;)
+
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Non-compliant request line to water HMI - API path inside method token"; flow:established,to_server; http.method; content:"/api/"; classtype:protocol-command-decode; sid:2026110706; rev:1;)
