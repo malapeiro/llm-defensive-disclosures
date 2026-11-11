@@ -47,7 +47,8 @@ not offense.
   batteries (Probes `P1–P13B` + independent verification `Additions A–D`)
   executed across `v1.0 → v1.3.1`.
 - [`detections/`](detections/README.md) — reference Sigma, Suricata, and
-  Microsoft Sentinel KQL rules (**textual compliance**).
+  Microsoft Sentinel KQL rules (Suricata **execution-verified**; Sigma and KQL
+  **textual compliance**).
 
 ## How to run
 
@@ -70,10 +71,13 @@ pump-stop valve isolation, `GUARD` 9 blocks / 0 controller alerts, `15/15` rules
 in `RULE_ATTACK_MAP` verified reachable by `rule_liveness_check()`, plus all
 probes `P1–P13B` and `Additions A–D` passing).
 
-The Sigma, Suricata, and KQL rules in [`detections/`](detections/README.md)
-are **textual compliance**: they are written against the lab audit schema and
-public log conventions, but were **not** executed against Sigma, Suricata, or
-Microsoft Sentinel engines. Validate them against your own pipeline before
+The Suricata rules in `detections/suricata/` **were executed** against Suricata
+8.0.8 by replaying pcaps of the lab (17/17 alerts on the attack chain, 0 in the
+negative case); see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
+
+The Sigma and KQL rules in [`detections/`](detections/README.md) are **textual
+compliance**: they are written against the lab audit schema and public log
+conventions, but were **not** executed against Sigma or Microsoft Sentinel engines. Validate them against your own pipeline before
 production use.
 
 ## What cannot be claimed (summary — see Section 7 of the report)

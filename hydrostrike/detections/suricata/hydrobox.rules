@@ -1,5 +1,6 @@
 # HYDROBOX reference Suricata signatures — municipal water station web HMIs.
-# Verification level: Textual compliance (not executed against a Suricata engine).
+# Verification level: Execution-verified against Suricata 8.0.8 (offline pcap
+# replay of the synthetic loopback lab; see verification/README.md).
 #
 # Address groups (define in suricata.yaml):
 #   MAINT_NET          — authorized OT maintenance / SCADA bastion network(s)

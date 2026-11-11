@@ -1,4 +1,9 @@
 # FROSTBOX reference signatures — refrigeration supervisory interfaces.
+# Verification level: Execution-verified against Suricata 8.0.8 (offline pcap
+# replay of the synthetic loopback lab; see verification/README.md).
+# rev 3 (2026-11-11), sids 2026110101/2026110102: "endswith" replaced by a pcre
+# that also matches when the path is followed by ?, ; or #. The controller
+# ignores those suffixes, so rev 2 could be evaded with e.g. /setpoint?x=1.
 # Deploy on the sensor that observes traffic toward OT supervisory web UIs.
 #
 # Address groups (define in suricata.yaml):
@@ -14,9 +19,9 @@
 # plaintext HTTP or where TLS is terminated/intercepted at the sensor
 # (see detections/README.md).
 
-alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Config write to refrigeration supervisor - setpoint"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/setpoint"; endswith; classtype:attempted-admin; sid:2026110101; rev:2;)
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Config write to refrigeration supervisor - setpoint"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/setpoint"; pcre:"/\/setpoint(?:[?\x3b#]|$)/"; classtype:attempted-admin; sid:2026110101; rev:3;)
 
-alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Forced defrost command to refrigeration supervisor"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/defrost"; endswith; classtype:attempted-admin; sid:2026110102; rev:2;)
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Forced defrost command to refrigeration supervisor"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/defrost"; pcre:"/\/defrost(?:[?\x3b#]|$)/"; classtype:attempted-admin; sid:2026110102; rev:3;)
 
 alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Alarm configuration change on refrigeration supervisor"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/alarm"; classtype:attempted-admin; sid:2026110103; rev:2;)
 
