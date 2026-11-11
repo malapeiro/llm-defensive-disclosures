@@ -1,6 +1,6 @@
 #!/bin/bash
 # Re-captures one scenario from the synthetic lab on loopback (needs sudo for tcpdump).
-#   bash capture.sh [attack|edge|rawbyte|reqline]
+#   bash capture.sh [attack|edge|rawbyte|reqline|matrix]
 # Output goes to ./recapture/ (not committed). To verify a fresh capture:
 #   PCAP_DIR=./recapture bash verify.sh
 set -u
@@ -33,6 +33,7 @@ case "$SCENARIO" in
   edge)    python3 "$HERE/edge_client.py" hydro "$PORT" ;;
   rawbyte) python3 "$HERE/rawbyte_client.py" hydro "$PORT" ;;
   reqline) python3 "$HERE/reqline_client.py" hydro "$PORT" ;;
+  matrix)  python3 "$HERE/reqline_client.py" hydro "$PORT" matrix --cases "$OUT/${LAB_NAME}_matrix.cases.jsonl" ;;
   *) echo "unknown scenario: $SCENARIO"; ;;
 esac
 sleep 2
@@ -43,3 +44,31 @@ sudo pkill -INT -f "${LAB_NAME}_${SCENARIO}.pcap"
 sleep 1
 sudo chown "$(id -un)" "$PCAP"
 ls -l "$PCAP"
+
+# Manifest: pins the traffic generators (lab and client) of this capture, not the rules.
+# verify.sh refuses to replay a capture whose generators no longer match.
+sha() { if command -v sha256sum >/dev/null; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi; }
+case "$SCENARIO" in
+  evasion) CLIENT="evasion_client.py" ;;
+  edge)    CLIENT="edge_client.py" ;;
+  rawbyte) CLIENT="rawbyte_client.py" ;;
+  reqline|matrix) CLIENT="reqline_client.py" ;;
+  *)       CLIENT="" ;;
+esac
+MANIFEST="$OUT/${LAB_NAME}_${SCENARIO}.manifest.txt"
+{
+  echo "scenario=$SCENARIO"
+  echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "git_rev=$(git -C "$HERE" rev-parse HEAD 2>/dev/null)"
+  echo "git_worktree=$(git -C "$HERE" status --porcelain 2>/dev/null | grep -qv '^??' && echo modified || echo clean)"
+  echo "lab_file=hydrostrike_lab.py"
+  echo "lab_sha256=$(sha "$LAB")"
+  echo "client_file=$CLIENT"
+  [ -n "$CLIENT" ] && echo "client_sha256=$(sha "$HERE/$CLIENT")"
+  echo "python=$(python3 -V 2>&1)"
+  echo "suricata=$(suricata -V 2>&1 | head -1)"
+  echo "os=$(uname -sm)"
+  echo "pcap_sha256=$(sha "$PCAP")"
+  [ -f "$OUT/${LAB_NAME}_${SCENARIO}.cases.jsonl" ] && echo "cases_sha256=$(sha "$OUT/${LAB_NAME}_${SCENARIO}.cases.jsonl")"
+} > "$MANIFEST"
+echo "manifest: $MANIFEST"

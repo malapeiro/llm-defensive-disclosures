@@ -11,6 +11,10 @@
 # how canonicalize_request treats a path without its leading slash. sid
 # 2026110706 is new: when such a byte replaces the space after the method,
 # Suricata puts the path in the method token.
+# rev 4 of sids 2026110701/2026110702 (2026-11-11): a version token glued to the
+# path is accepted whatever its value. rev 2 of 2026110706: matches any "/" in
+# the method token, because canonicalize_request also routes a path without its
+# leading slash (POST<0xa0>api/valve/out), which the "/api/" match missed.
 #
 # Address groups (define in suricata.yaml):
 #   MAINT_NET          — authorized OT maintenance / SCADA bastion network(s)
@@ -21,9 +25,9 @@
 # NOTE: http.method and http.uri require plaintext HTTP or TLS termination at
 # the sensor (see detections/README.md).
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/"; classtype:attempted-admin; sid:2026110701; rev:3;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/[^\x09-\x0d\x1c-\x20\x85\xa0]*)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/"; classtype:attempted-admin; sid:2026110701; rev:4;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/backwash"; pcre:"/\/backwash(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/"; classtype:attempted-admin; sid:2026110702; rev:3;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/backwash"; pcre:"/\/backwash(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/[^\x09-\x0d\x1c-\x20\x85\xa0]*)?[\x09-\x0d\x1c-\x20\x85\xa0]*$/"; classtype:attempted-admin; sid:2026110702; rev:4;)
 
 alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote outlet valve actuation on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"api/valve/out"; pcre:"/^[\x09-\x0d\x1c-\x20\x85\xa0]*\/?api\/valve\/out/"; classtype:attempted-admin; sid:2026110703; rev:2;)
 
@@ -31,4 +35,4 @@ alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote alarm
 
 alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Access to hidden daily-code service authentication endpoint"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"api/service_login"; pcre:"/^[\x09-\x0d\x1c-\x20\x85\xa0]*\/?api\/service_login/"; classtype:attempted-admin; sid:2026110705; rev:2;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Non-compliant request line to water HMI - API path inside method token"; flow:established,to_server; http.method; content:"/api/"; classtype:protocol-command-decode; sid:2026110706; rev:1;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Non-compliant request line to water HMI - path inside method token"; flow:established,to_server; http.method; content:"/"; classtype:protocol-command-decode; sid:2026110706; rev:2;)
