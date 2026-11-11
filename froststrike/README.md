@@ -44,10 +44,15 @@ the numbers in the report come from those runs (v1.6 full regression, identical 
 alerts / 14 CRIT per sabotage variant, streaming MTTD 0.25 s, negative case 0
 alerts / 0 false positives, guard blocking the chain at authentication).
 
-The Sigma, Suricata and KQL rules in `detections/` are **textual compliance**:
-they are written against the lab audit schema and public log-source
-conventions, but were **not** executed against Splunk, Suricata or Sentinel
-instances. Validate them against your own pipeline before production use.
+The Suricata rules in `detections/suricata/` **were executed** against Suricata
+8.0.8 by replaying pcaps of the lab (37/37 alerts on the attack chain, 0 in the
+negative case). That run exposed a URI-suffix evasion of two signatures, fixed
+in rev 3; see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
+
+The Sigma and KQL rules in `detections/` are **textual compliance**: they are
+written against the lab audit schema and public log-source conventions, but
+were **not** executed against Splunk or Sentinel instances. Validate them
+against your own pipeline before production use.
 
 ## What cannot be claimed
 

@@ -1,16 +1,18 @@
 # Detections — Froststrike reference rules
 
 Reference detection content for the FROSTBOX lab audit schema (`evidence/audit_*.jsonl`).
-All rules are **textual compliance** until you validate them against your own pipeline:
-map the log source fields to whatever your forwarder emits, run the positive and
-negative cases from the lab demo, and only then promote to production.
+The Suricata rules are **execution-verified** against Suricata 8.0.8 on pcaps of the
+synthetic lab (see [`suricata/verification/`](suricata/verification/README.md)). The Sigma
+and KQL rules are **textual compliance**. In every case, validate against your own
+pipeline: map the log source fields to whatever your forwarder emits, run the positive
+and negative cases from the lab demo, and only then promote to production.
 
 | File | Engine | Covers |
 |---|---|---|
 | `sigma/frostbox_setpoint_band.yaml` | Sigma | Out-of-band setpoint writes (D-SETPOINT-RANGE) |
 | `sigma/frostbox_service_auth.yaml` | Sigma | Hidden daily-code service auth path (D-SERVICE-AUTH) |
 | `sigma/web_offhours_ot_config.yaml` | Sigma (webserver category) | Off-hours config POSTs via reverse-proxy logs |
-| `suricata/frostbox.rules` | Suricata 5+ | Network-level signatures for config-write and hidden-auth endpoints |
+| `suricata/frostbox.rules` | Suricata 5+ (executed on 8.0.8) | Network-level signatures for config-write and hidden-auth endpoints |
 | `kql/frostbox_hunting.kql` | Microsoft Sentinel KQL | Hunting queries over an ingested audit table |
 
 ## Caveats
