@@ -72,8 +72,9 @@ Sid 2026110103 was never affected because it does not anchor the match.
 ```
 
 `\x3b` is the semicolon, which cannot appear literally inside a Suricata rule option.
-With rev 3 every request the controller executes raises an alert and every request it
-rejects stays silent, and the attack-chain counts are unchanged (37 / 0).
+With rev 3, every tested request that the controller executes raises an alert and every
+tested request that it rejects stays silent (the 12 requests in the table above), and the
+attack-chain counts are unchanged (37 / 0).
 
 To see the rev 2 behaviour again:
 
