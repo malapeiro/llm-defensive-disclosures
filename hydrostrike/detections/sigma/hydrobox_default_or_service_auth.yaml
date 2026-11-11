@@ -6,7 +6,8 @@ description: >
   vendor-default credentials (cred_class=default) or a predictable daily service
   authentication code (service_login_success). Mirrors the initial-access vector
   documented by Poland's ABW and CERT Polska in municipal water station intrusions.
-  Verification level: Textual compliance (validate against target SIEM pipeline).
+  Verification level: execution-verified against the lab audit log (pySigma, SQLite;
+  see sigma/verification/). Validate against your own SIEM pipeline.
 references:
   - https://cert.pl/
   - https://attack.mitre.org/techniques/T1078/001/

@@ -2,10 +2,12 @@
 
 Reference detection content for the `HYDROBOX` lab audit schema (`controller_audit_*.jsonl`).
 The Suricata rules are **execution-verified** against Suricata 8.0.8 on pcaps of the
-synthetic lab (see [`suricata/verification/`](suricata/verification/README.md)). The Sigma
-and KQL rules are **textual compliance** only: they were written against the lab audit
-schema and public log conventions, and have **not** been executed against Sigma or
-Microsoft Sentinel engines. Map the field names to your own forwarder,
+synthetic lab (see [`suricata/verification/`](suricata/verification/README.md)). The two
+audit-log Sigma rules are **execution-verified** against the lab audit log with pySigma and
+SQLite (see [`sigma/verification/`](sigma/verification/README.md)). The webserver-category
+Sigma rule and the KQL queries are **textual compliance** only: they were written against
+public log conventions and the lab audit schema, and have **not** been executed against a
+webserver log or a Microsoft Sentinel engine. Map the field names to your own forwarder,
 run both the positive (`H1`/`H2`) and negative (`NEG`, including legitimate pump-stop
 valve isolation and single daytime backwash) test cases, and validate before production use.
 

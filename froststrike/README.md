@@ -23,7 +23,8 @@ Notice. This case study is independent defensive research based exclusively on p
   library, no third-party dependencies.
 - `froststrike_report.md` — the technical report (lab v1.6).
 - `detections/` — reference Sigma, Suricata and Microsoft Sentinel KQL rules
-  (Suricata **execution-verified**; Sigma and KQL **textual compliance**).
+  (Suricata and the two audit-log Sigma rules **execution-verified**; the webserver
+  Sigma rule and KQL **textual compliance**).
 - `probe.py`, `improved_detect.py`, `fp_probe.py`, `patient_probe.py` — the
   operator's adversarial validation probes. Each probe round was executed
   against the lab, its finding fixed, and the full regression re-run: the
@@ -52,10 +53,13 @@ in rev 3, a trailing-byte evasion of the same two, fixed in rev 4, and a wider
 request-line tokenisation gap, fixed in rev 5 with one new signature (rev 6
 after a 443-request matrix checked per request); see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
 
-The Sigma and KQL rules in `detections/` are **textual compliance**: they are
-written against the lab audit schema and public log-source conventions, but
-were **not** executed against Splunk or Sentinel instances. Validate them
-against your own pipeline before production use.
+The two audit-log Sigma rules are **execution-verified** against the lab audit
+log (pySigma, SQLite backend; see [`detections/sigma/verification/`](detections/sigma/verification/README.md)).
+The webserver-category Sigma rule and the KQL queries in `detections/` are
+**textual compliance**: they are written against public log-source conventions
+and the lab audit schema, but were **not** executed against a webserver log or
+a Sentinel instance. Validate all of them against your own pipeline before
+production use.
 
 ## What cannot be claimed
 

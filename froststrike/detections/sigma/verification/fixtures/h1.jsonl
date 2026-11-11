@@ -1,0 +1,21 @@
+{"device": "FROSTBOX-01", "event": "HTTP_GET", "outcome": 200, "path": "/", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:04.620Z"}
+{"device": "FROSTBOX-01", "event": "HTTP_GET", "outcome": 200, "path": "/api/status", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:04.622Z"}
+{"actor": "admin", "device": "FROSTBOX-01", "event": "AUTH_LOGIN", "outcome": "success", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:04.623Z"}
+{"actor": "admin", "case": "FZ-01", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": 50.0, "old": -20.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:04.623Z"}
+{"actor": "admin", "case": "FZ-01", "device": "FROSTBOX-01", "event": "CMD_DEFROST", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:04.624Z"}
+{"actor": "admin", "case": "FZ-01", "device": "FROSTBOX-01", "enabled": false, "event": "CFG_ALARM", "high": 60.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:04.625Z"}
+{"actor": "admin", "case": "FZ-02", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": 50.0, "old": -20.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.027Z"}
+{"actor": "admin", "case": "FZ-02", "device": "FROSTBOX-01", "event": "CMD_DEFROST", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.032Z"}
+{"actor": "admin", "case": "FZ-02", "device": "FROSTBOX-01", "enabled": false, "event": "CFG_ALARM", "high": 60.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.033Z"}
+{"actor": "admin", "case": "FZ-03", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": 50.0, "old": -20.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.435Z"}
+{"actor": "admin", "case": "FZ-03", "device": "FROSTBOX-01", "event": "CMD_DEFROST", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.437Z"}
+{"actor": "admin", "case": "FZ-03", "device": "FROSTBOX-01", "enabled": false, "event": "CFG_ALARM", "high": 60.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.438Z"}
+{"actor": "admin", "case": "CH-01", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": 50.0, "old": 3.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.840Z"}
+{"actor": "admin", "case": "CH-01", "device": "FROSTBOX-01", "event": "CMD_DEFROST", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.841Z"}
+{"actor": "admin", "case": "CH-01", "device": "FROSTBOX-01", "enabled": false, "event": "CFG_ALARM", "high": 60.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:05.843Z"}
+{"actor": "admin", "case": "CH-02", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": 50.0, "old": 3.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:06.245Z"}
+{"actor": "admin", "case": "CH-02", "device": "FROSTBOX-01", "event": "CMD_DEFROST", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:06.246Z"}
+{"actor": "admin", "case": "CH-02", "device": "FROSTBOX-01", "enabled": false, "event": "CFG_ALARM", "high": 60.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:06.248Z"}
+{"actor": "admin", "case": "CH-03", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": 50.0, "old": 3.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:06.650Z"}
+{"actor": "admin", "case": "CH-03", "device": "FROSTBOX-01", "event": "CMD_DEFROST", "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:06.651Z"}
+{"actor": "admin", "case": "CH-03", "device": "FROSTBOX-01", "enabled": false, "event": "CFG_ALARM", "high": 60.0, "sim_ts": "2026-11-02T02:30:00Z", "source": "http", "ts": "2026-11-11T20:24:06.652Z"}

@@ -1,0 +1,1 @@
+SELECT * FROM logs WHERE event LIKE 'CFG\_SETPOINT' ESCAPE '\' AND ((`case` LIKE 'FZ-%' ESCAPE '\' AND new > -15) OR (`case` LIKE 'FZ-%' ESCAPE '\' AND new < -30) OR (`case` LIKE 'CH-%' ESCAPE '\' AND new > 6) OR (`case` LIKE 'CH-%' ESCAPE '\' AND new < 0))

@@ -1,0 +1,12 @@
+{"event": "login_success", "actor": "tech", "source_ip": "127.0.0.1", "auth": "password", "cred_class": "strong", "role": "tech", "sim_ts": "2025-03-14 10:15:00"}
+{"event": "status_read", "actor": "anon", "source_ip": "127.0.0.1", "sim_ts": "2025-03-14 10:15:00"}
+{"event": "pump_setpoint", "actor": "tech", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 4.0, "new": 4.2, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "dosing_setpoint", "actor": "tech", "source_ip": "127.0.0.1", "old": 0.5, "new": 0.6, "band": [0.2, 1.0], "sim_ts": "2025-03-14 10:15:00"}
+{"event": "filter_backwash", "actor": "tech", "source_ip": "127.0.0.1", "filter": "FLT-01", "trigger": "API", "night": "2025-03-14", "reservoir_after": 66.0, "pressure_after": 3.8, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "reservoir_level", "actor": "tech", "source_ip": "127.0.0.1", "level": 66.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 10:15:00"}
+{"event": "pump_setpoint", "actor": "tech", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 4.2, "new": 4.2, "band": [2.5, 5.5], "valve": "OPEN", "running": false, "any_pump_running": false, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "valve_command", "actor": "tech", "source_ip": "127.0.0.1", "valve": "VLV-OUT", "old": "OPEN", "state": "CLOSED", "pressure": 0.0, "any_pump_running": false, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "valve_command", "actor": "tech", "source_ip": "127.0.0.1", "valve": "VLV-OUT", "old": "CLOSED", "state": "OPEN", "pressure": 0.0, "any_pump_running": false, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "pump_setpoint", "actor": "tech", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 4.2, "new": 4.2, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "alarm_mute", "actor": "tech", "source_ip": "127.0.0.1", "old": false, "muted": false, "sim_ts": "2025-03-14 10:15:00"}
+{"event": "status_read", "actor": "anon", "source_ip": "127.0.0.1", "sim_ts": "2025-03-14 10:15:00"}

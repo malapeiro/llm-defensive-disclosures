@@ -1,0 +1,17 @@
+{"event": "filter_backwash", "actor": "PLC-SCHED", "source_ip": "127.0.0.1", "filter": "FLT-01", "trigger": "SCHEDULED", "night": "2025-03-14", "reservoir_after": 66.0, "pressure_after": 3.6, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "reservoir_level", "actor": "PLC-SCHED", "source_ip": "127.0.0.1", "level": 66.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 03:15:00"}
+{"event": "status_read", "actor": "anon", "source_ip": "127.0.0.1", "sim_ts": "2025-03-14 03:15:00"}
+{"event": "service_login_success", "actor": "svc", "source_ip": "127.0.0.1", "auth": "daily_code", "role": "service", "code_prefix": "SVC-", "sim_ts": "2025-03-14 03:15:00"}
+{"event": "pump_setpoint", "actor": "svc", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 4.0, "new": 8.5, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "dosing_setpoint", "actor": "svc", "source_ip": "127.0.0.1", "old": 0.5, "new": 4.5, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:00"}
+{"event": "valve_command", "actor": "svc", "source_ip": "127.0.0.1", "valve": "VLV-OUT", "old": "OPEN", "state": "CLOSED", "pressure": 8.5, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "filter_backwash", "actor": "svc", "source_ip": "127.0.0.1", "filter": "FLT-01", "trigger": "API", "night": "2025-03-14", "reservoir_after": 54.0, "pressure_after": 8.1, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "reservoir_level", "actor": "svc", "source_ip": "127.0.0.1", "level": 54.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 03:15:00"}
+{"event": "filter_backwash", "actor": "svc", "source_ip": "127.0.0.1", "filter": "FLT-02", "trigger": "API", "night": "2025-03-14", "reservoir_after": 42.0, "pressure_after": 7.7, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "reservoir_level", "actor": "svc", "source_ip": "127.0.0.1", "level": 42.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 03:15:00"}
+{"event": "filter_backwash", "actor": "svc", "source_ip": "127.0.0.1", "filter": "FLT-03", "trigger": "API", "night": "2025-03-14", "reservoir_after": 30.0, "pressure_after": 7.3, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "reservoir_level", "actor": "svc", "source_ip": "127.0.0.1", "level": 30.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 03:15:00"}
+{"event": "filter_backwash", "actor": "svc", "source_ip": "127.0.0.1", "filter": "FLT-04", "trigger": "API", "night": "2025-03-14", "reservoir_after": 18.0, "pressure_after": 6.9, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "reservoir_level", "actor": "svc", "source_ip": "127.0.0.1", "level": 18.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 03:15:00"}
+{"event": "alarm_mute", "actor": "svc", "source_ip": "127.0.0.1", "old": false, "muted": true, "sim_ts": "2025-03-14 03:15:00"}
+{"event": "status_read", "actor": "anon", "source_ip": "127.0.0.1", "sim_ts": "2025-03-14 03:15:00"}

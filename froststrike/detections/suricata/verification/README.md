@@ -1,8 +1,9 @@
 # Suricata verification — Froststrike
 
 **Verification level: execution-verified** (Suricata 8.0.8, offline pcap replay of the
-synthetic FROSTBOX lab). Covers [`../frostbox.rules`](../frostbox.rules) only; the Sigma and
-KQL rules of this lab remain textual compliance.
+synthetic FROSTBOX lab). Covers [`../frostbox.rules`](../frostbox.rules) only. The audit-log Sigma
+rules are checked separately (see [`../../sigma/verification/`](../../sigma/verification/README.md)); the
+webserver Sigma rule and the KQL queries remain textual compliance.
 
 ## Method
 

@@ -1,0 +1,1 @@
+SELECT * FROM logs WHERE `cs-method`='POST' AND (`c-uri` LIKE '%/api/pump/%' ESCAPE '\' OR `c-uri` LIKE '%/api/dosing/setpoint%' ESCAPE '\' OR `c-uri` LIKE '%/api/filter/%' ESCAPE '\' OR `c-uri` LIKE '%/api/valve/out%' ESCAPE '\' OR `c-uri` LIKE '%/api/alarm/mute%' ESCAPE '\' OR `c-uri` LIKE '%/api/service\_login%' ESCAPE '\')

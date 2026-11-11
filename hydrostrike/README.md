@@ -78,10 +78,13 @@ fixed in rev 2, and a wider request-line tokenisation gap, fixed in the next
 revisions with one new signature (a 446-request matrix, checked per request,
 found one more gap in it); see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
 
-The Sigma and KQL rules in [`detections/`](detections/README.md) are **textual
-compliance**: they are written against the lab audit schema and public log
-conventions, but were **not** executed against Sigma or Microsoft Sentinel engines. Validate them against your own pipeline before
-production use.
+The two audit-log Sigma rules are **execution-verified** against the lab audit
+log (pySigma, SQLite backend; see [`detections/sigma/verification/`](detections/sigma/verification/README.md)).
+The webserver-category Sigma rule and the KQL queries in [`detections/`](detections/README.md)
+are **textual compliance**: they are written against public log conventions and
+the lab audit schema, but were **not** executed against a webserver log or a
+Microsoft Sentinel engine. Validate all of them against your own pipeline
+before production use.
 
 ## What cannot be claimed (summary — see Section 7 of the report)
 

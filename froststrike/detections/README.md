@@ -2,8 +2,10 @@
 
 Reference detection content for the FROSTBOX lab audit schema (`evidence/audit_*.jsonl`).
 The Suricata rules are **execution-verified** against Suricata 8.0.8 on pcaps of the
-synthetic lab (see [`suricata/verification/`](suricata/verification/README.md)). The Sigma
-and KQL rules are **textual compliance**. In every case, validate against your own
+synthetic lab (see [`suricata/verification/`](suricata/verification/README.md)). The two
+audit-log Sigma rules are **execution-verified** against the lab audit log with pySigma and
+SQLite (see [`sigma/verification/`](sigma/verification/README.md)). The webserver-category
+Sigma rule and the KQL queries are **textual compliance**. In every case, validate against your own
 pipeline: map the log source fields to whatever your forwarder emits, run the positive
 and negative cases from the lab demo, and only then promote to production.
 

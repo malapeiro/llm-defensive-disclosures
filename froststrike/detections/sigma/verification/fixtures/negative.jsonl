@@ -1,0 +1,3 @@
+{"actor": "tech", "device": "FROSTBOX-01", "event": "AUTH_LOGIN", "outcome": "success", "sim_ts": "2026-11-02T10:15:00Z", "source": "http", "ts": "2026-11-11T20:24:11.692Z"}
+{"actor": "tech", "case": "FZ-01", "device": "FROSTBOX-01", "event": "CFG_SETPOINT", "new": -22.0, "old": -20.0, "sim_ts": "2026-11-02T10:15:00Z", "source": "http", "ts": "2026-11-11T20:24:11.693Z"}
+{"device": "FROSTBOX-01", "event": "HTTP_GET", "outcome": 200, "path": "/api/status", "sim_ts": "2026-11-02T10:15:00Z", "source": "http", "ts": "2026-11-11T20:24:11.694Z"}
