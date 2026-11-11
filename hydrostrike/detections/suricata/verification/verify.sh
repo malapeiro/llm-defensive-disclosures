@@ -7,7 +7,8 @@
 #                               # confirm its alerts disappear
 #
 # Env: SURICATA_YAML (path to suricata.yaml), PCAP_DIR (default: ./pcaps),
-#      RULES (default: the rule file one directory up).
+#      RULES (default: the rule file one directory up),
+#      KEEP=1 (keep the Suricata logs of each scenario, e.g. http.log).
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 RULE_FILE="hydrobox.rules"
@@ -20,6 +21,9 @@ scenarios() {
   check attack_positive hydro_attack.pcap "$ATTACKER_OUTSIDE" 17 "$ATTACK_EXPECT"
   check attack_negative hydro_attack.pcap "$ATTACKER_INSIDE"   0 "2026110701=0 2026110702=0 2026110703=0 2026110704=0 2026110705=0"
   check rejected_uri_suffixes hydro_edge.pcap "$ATTACKER_OUTSIDE" 1 "2026110701=1 2026110702=0 2026110703=0 2026110704=0 2026110705=0"
+  # Expectation written before the first run (2026-11-11): every request the controller
+  # routes must alert. 10 setpoint (control + 9 trailing bytes), 3 backwash (control + 2).
+  [ -f "$PCAP_DIR/hydro_rawbyte.pcap" ] && check trailing_byte hydro_rawbyte.pcap "$ATTACKER_OUTSIDE" 13 "2026110701=10 2026110702=3 2026110703=0 2026110704=0 2026110705=0"
 }
 RULES="${RULES:-$HERE/../$RULE_FILE}"
 PCAP_DIR="${PCAP_DIR:-$HERE/pcaps}"
@@ -97,6 +101,6 @@ if [ "${1:-}" = "--mutation" ]; then
 else
   scenarios
 fi
-rm -rf "$WORK"
+if [ -n "${KEEP:-}" ]; then echo "Suricata logs kept in $WORK"; else rm -rf "$WORK"; fi
 [ "$FAIL" = 0 ] && echo "RESULT: PASS" || echo "RESULT: FAIL"
 exit "$FAIL"

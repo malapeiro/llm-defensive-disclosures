@@ -22,7 +22,8 @@ Notice. This case study is independent defensive research based exclusively on p
   detection engine and a write-protecting guard proxy. 100% Python 3 standard
   library, no third-party dependencies.
 - `froststrike_report.md` — the technical report (lab v1.6).
-- `detections/` — reference Sigma, Suricata and Microsoft Sentinel KQL rules.
+- `detections/` — reference Sigma, Suricata and Microsoft Sentinel KQL rules
+  (Suricata **execution-verified**; Sigma and KQL **textual compliance**).
 - `probe.py`, `improved_detect.py`, `fp_probe.py`, `patient_probe.py` — the
   operator's adversarial validation probes. Each probe round was executed
   against the lab, its finding fixed, and the full regression re-run: the
@@ -47,7 +48,7 @@ alerts / 0 false positives, guard blocking the chain at authentication).
 The Suricata rules in `detections/suricata/` **were executed** against Suricata
 8.0.8 by replaying pcaps of the lab (37/37 alerts on the attack chain, 0 in the
 negative case). That run exposed a URI-suffix evasion of two signatures, fixed
-in rev 3; see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
+in rev 3, and a trailing-byte evasion of the same two, fixed in rev 4; see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
 
 The Sigma and KQL rules in `detections/` are **textual compliance**: they are
 written against the lab audit schema and public log-source conventions, but

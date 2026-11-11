@@ -7,7 +7,8 @@
 #                               # confirm its alerts disappear
 #
 # Env: SURICATA_YAML (path to suricata.yaml), PCAP_DIR (default: ./pcaps),
-#      RULES (default: the rule file one directory up).
+#      RULES (default: the rule file one directory up),
+#      KEEP=1 (keep the Suricata logs of each scenario, e.g. http.log).
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 RULE_FILE="frostbox.rules"
@@ -21,6 +22,9 @@ scenarios() {
   check attack_negative frost_attack.pcap  "$ATTACKER_INSIDE"   0 "2026110101=0 2026110102=0 2026110103=0 2026110104=0"
   check uri_suffix_evasion frost_evasion.pcap "$ATTACKER_OUTSIDE" 7 "2026110101=3 2026110102=3 2026110103=1 2026110104=0"
   check fragment_and_near_miss frost_edge.pcap "$ATTACKER_OUTSIDE" 3 "2026110101=2 2026110102=1 2026110103=0 2026110104=0"
+  # Expectation written before the first run (2026-11-11): every request the controller
+  # executes must alert. 10 setpoint (control + 9 trailing bytes), 3 defrost (control + 2).
+  [ -f "$PCAP_DIR/frost_rawbyte.pcap" ] && check trailing_byte frost_rawbyte.pcap "$ATTACKER_OUTSIDE" 13 "2026110101=10 2026110102=3 2026110103=0 2026110104=0"
 }
 RULES="${RULES:-$HERE/../$RULE_FILE}"
 PCAP_DIR="${PCAP_DIR:-$HERE/pcaps}"
@@ -98,6 +102,6 @@ if [ "${1:-}" = "--mutation" ]; then
 else
   scenarios
 fi
-rm -rf "$WORK"
+if [ -n "${KEEP:-}" ]; then echo "Suricata logs kept in $WORK"; else rm -rf "$WORK"; fi
 [ "$FAIL" = 0 ] && echo "RESULT: PASS" || echo "RESULT: FAIL"
 exit "$FAIL"

@@ -2,7 +2,8 @@
 
 **Verification level: execution-verified** (Suricata 8.0.8, offline pcap replay of the
 synthetic HYDROBOX lab). Covers [`../hydrobox.rules`](../hydrobox.rules) only; the Sigma and
-KQL rules of this lab remain textual compliance. The rules were not changed by this run.
+KQL rules of this lab remain textual compliance. The run exposed a trailing-byte evasion of
+sids 2026110701 and 2026110702, fixed in rev 2 (see below).
 
 ## Method
 
@@ -17,7 +18,8 @@ KQL rules of this lab remain textual compliance. The rules were not changed by t
 5. The expected alert count was written down before each run and compared with the result.
 
 Environment of the recorded run: Suricata 8.0.8 (Homebrew), macOS on Apple Silicon,
-Python 3.15.2, 2026-11-11, repository at commit `5747111`.
+Python 3.15.2, 2026-11-11, repository at commit `5747111` (attack and edge captures) and at
+`4211db6` plus the rev 2 change (trailing-byte capture).
 
 ## Results
 
@@ -40,7 +42,7 @@ rule matches on the request, so they still alert.
 ### URI-suffix evasion attempts (`pcaps/hydro_edge.pcap`)
 
 The suffix evasion found in Froststrike was tried here. HYDROBOX rejects every variant, so
-nothing is executed and there is no detection gap:
+nothing is executed and these suffixes open no detection gap:
 
 | Request | Lab response | Alert |
 |---|---|---|
@@ -52,9 +54,47 @@ nothing is executed and there is no detection gap:
 | `/api/filter/FLT-01/backwash;x` | 404 | no |
 | `/api/filter/FLT-01/backwash#x` | 404 | no |
 
-The rules still use `endswith`. That is safe only because this controller refuses
-non-canonical paths; against a controller that tolerates suffixes the same rules would be
-evadable, as shown in `froststrike/detections/suricata/verification/`.
+After this capture the rules were left on `endswith`, on the reasoning that this controller
+refuses non-canonical paths. That reasoning was incomplete: the canonicalizer only sees the
+path after `http.server` has parsed the request line, as the next section shows.
+
+### Finding: trailing-byte evasion of sids 2026110701 and 2026110702 (rev 1)
+
+Python's `http.server` splits the request line with `str.split()`, which treats `0x09`,
+`0x0b`, `0x0c`, `0x1c`-`0x1f`, `0x85` and `0xa0` as whitespace. One such byte right after
+the path is dropped before `canonicalize_request` runs, so `POST /api/pump/PMP-01/setpoint\xa0`
+is routed as the canonical request. Suricata keeps some of these bytes in the URI, and
+`endswith` then fails.
+
+`pcaps/hydro_rawbyte.pcap` (`rawbyte_client.py`, raw socket, fresh server), per request
+from `eve.json`:
+
+| Byte after the path | Lab response | rev 1 | rev 2 |
+|---|---|---|---|
+| none (control, setpoint and backwash) | 200 | alert | alert |
+| `0x0b`, `0x0c` | 200 (backwash `0x0c`: 403, interlock) | alert | alert |
+| `0xa0`, `0x85` | 200 | **silent** | alert |
+| `0x1c`, `0x1f` | 200 | **silent** | alert |
+| `0x09`, `0x1d`, `0x1e` | 200 | not recorded | alert |
+| `0xa0` then `x` (near miss) | 400 | silent | silent |
+| `0x01` (near miss) | 404 | silent | silent |
+
+The rev 1 column comes from a first capture with six trailing bytes: 5 of the 10 routed
+requests raised no alert (four setpoint writes, one backwash). `0x09`, `0x1d` and `0x1e`
+were added to the client afterwards and were only run against rev 2. Suricata ends the URI
+at `0x09`, `0x0b` and `0x0c` itself, so those requests always looked canonical.
+
+### Fix (rev 2)
+
+```
+2026110701: http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$/";
+2026110702: http.uri.raw; content:"/backwash"; pcre:"/\/backwash[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$/";
+```
+
+With rev 2, each of the 13 requests in the capture that the controller routes raises an
+alert and both rejected requests stay silent; the attack-chain and suffix counts are
+unchanged (17 / 0, 1). The Python detection engine and the guard proxy are not affected:
+they see the request after `http.server` has dropped the byte.
 
 ## Limits
 
@@ -66,6 +106,11 @@ evadable, as shown in `froststrike/detections/suricata/verification/`.
 - **Plaintext HTTP only.** `http.method` / `http.uri` are visible only on plaintext HTTP or
   where TLS is terminated at the sensor.
 - **One engine version.** Executed on Suricata 8.0.8 only.
+- **Trailing-byte list.** The bytes in the pcre are the ones Python's `http.server` drops. A
+  different controller may parse the request line differently; re-derive the list for your
+  target. Nine trailing bytes and two near misses were tested, one byte per request.
+- **Raw URI.** Since rev 2 the two anchored rules read `http.uri.raw`, with no percent-decoding,
+  which fits this lab's canonicalizer (it rejects encoded paths).
 
 ## Reproduce
 
@@ -79,7 +124,7 @@ fails the check (rule-liveness). To regenerate a capture instead of using the co
 (needs `sudo` for `tcpdump`):
 
 ```bash
-bash capture.sh attack     # or: edge
+bash capture.sh attack     # or: edge | rawbyte
 PCAP_DIR=./recapture bash verify.sh
 ```
 
@@ -91,3 +136,8 @@ credentials and session tokens, which are already public in the lab source.
 The runs were executed by the author on his own machine. Claude (Anthropic) wrote the capture
 and verification scripts, read the Suricata logs and drafted this note. Mistral Vibe reviewed
 the claims that rest on reading the lab and rule source code; it did not execute anything.
+
+For the trailing-byte finding: a review by Qwen suggested a further edge battery (the
+specific cases it proposed did not hold when tested). Claude found the trailing-byte
+behaviour by running the lab without Suricata, wrote the client and the rev 2 candidate, and
+read the logs; the author ran the captures and Suricata.
