@@ -1,0 +1,29 @@
+# Requests the lab rejects but that are expected to raise an alert.
+# One label per line (fnmatch patterns allowed). Enumerated before the run;
+# check_requests.py requires each of them to alert when the lab rejects it, and
+# requires every other rejected request to stay silent.
+
+# Version token the lab refuses, separated from the path by a space. The version
+# never reaches the URI buffer, so the endpoint rule cannot tell it from a valid one.
+v-sp-plus1.1
+v-sp-minus1.1
+v-sp-1.1_0
+v-sp-2.0
+v-sp-1.1x
+v-sp-1
+v-sp-1.1.1
+v-sp-lowercase-http
+
+# The same version tokens glued to the path with 0xa0. The rule accepts any glued
+# version on purpose: http.server's version check differs between Python releases
+# (3.10 executes +1.1, -1.1 and 1.1_0; 3.13 answers 400).
+v-glue-plus1.1
+v-glue-minus1.1
+v-glue-1.1_0
+v-glue-2.0
+v-glue-1.1x
+v-glue-1
+v-glue-1.1.1
+
+# Glued version followed by a fourth word (400). Suricata ends the URI before the word.
+v-glue-1.1-then-word

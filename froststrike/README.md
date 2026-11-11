@@ -49,7 +49,8 @@ The Suricata rules in `detections/suricata/` **were executed** against Suricata
 8.0.8 by replaying pcaps of the lab (37/37 alerts on the attack chain, 0 in the
 negative case). That run exposed a URI-suffix evasion of two signatures, fixed
 in rev 3, a trailing-byte evasion of the same two, fixed in rev 4, and a wider
-request-line tokenisation gap, fixed in rev 5 with one new signature; see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
+request-line tokenisation gap, fixed in rev 5 with one new signature (rev 6
+after a 443-request matrix checked per request); see [`detections/suricata/verification/`](detections/suricata/verification/README.md).
 
 The Sigma and KQL rules in `detections/` are **textual compliance**: they are
 written against the lab audit schema and public log-source conventions, but

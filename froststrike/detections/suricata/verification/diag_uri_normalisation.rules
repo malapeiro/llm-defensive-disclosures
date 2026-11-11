@@ -1,0 +1,20 @@
+# Diagnostic rules, not detections. They answer one question: why did rev 3 of
+# sid 2026110101 (http.uri, "/setpoint" followed by ?, ;, # or end) alert on
+# /setpoint<0xa0> and /setpoint<0x85>, but not on /setpoint<0x1c>?
+#
+#   suricata -r pcaps/frost_rawbyte.pcap -c <suricata.yaml> -S diag_uri_normalisation.rules \
+#     --set vars.address-groups.MAINT_NET=10.99.0.0/24 \
+#     --set vars.address-groups.REFRIG_SUPERVISORS=127.0.0.1 -k none -l <logdir>
+#
+# Read eve.json per request (join alerts to http events by flow_id).
+
+# rev 3 of the setpoint rule, as it was at commit 4211db6
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Config write to refrigeration supervisor - setpoint"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/setpoint"; pcre:"/\/setpoint(?:[?\x3b#]|$)/"; classtype:attempted-admin; sid:2026110101; rev:3;)
+
+alert http any any -> any any (msg:"DIAG http.uri ends with /setpoint"; http.uri; content:"/setpoint"; endswith; sid:9999001; rev:1;)
+alert http any any -> any any (msg:"DIAG http.uri.raw contains 0xa0"; http.uri.raw; content:"|a0|"; sid:9999002; rev:1;)
+alert http any any -> any any (msg:"DIAG http.uri contains 0xa0"; http.uri; content:"|a0|"; sid:9999003; rev:1;)
+alert http any any -> any any (msg:"DIAG http.uri contains /setpoint?"; http.uri; content:"/setpoint?"; sid:9999004; rev:1;)
+alert http any any -> any any (msg:"DIAG http.uri.raw contains 0x85"; http.uri.raw; content:"|85|"; sid:9999007; rev:1;)
+alert http any any -> any any (msg:"DIAG http.uri contains 0x85"; http.uri; content:"|85|"; sid:9999008; rev:1;)
+alert http any any -> any any (msg:"DIAG http.uri contains 0x1c"; http.uri; content:"|1c|"; sid:9999009; rev:1;)

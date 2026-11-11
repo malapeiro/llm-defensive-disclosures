@@ -15,6 +15,10 @@ KQL rules of this lab remain textual compliance.
    - **positive case:** `MAINT_NET=10.99.0.0/24`, so the `127.0.0.1` client is outside the maintenance network;
    - **negative case:** `MAINT_NET=127.0.0.1`, so the same traffic comes from a permitted source.
 5. The expected alert count was written down before each run and compared with the result.
+6. From the matrix capture on, the check is per request: `capture.sh` records each request's
+   label, client port and lab status, and writes a manifest with the checksums of the lab and
+   the client; `verify.sh` refuses to replay a capture whose generators no longer match, and
+   `check_requests.py` applies the routed/rejected invariant to every request.
 
 Environment of the recorded run: Suricata 8.0.8 (Homebrew), macOS on Apple Silicon,
 Python 3.15.2, 2026-11-11, repository at commit `5747111` (attack, evasion and edge captures)
@@ -178,6 +182,62 @@ silent and 3 alert: the setpoint request without a version (400), the setpoint a
 leading slash (404; the `/alarm` rule is unanchored, as before). Those three were listed as accepted over-alerts in `verify.sh`
 before the run. Total 41/41; the counts of the other captures are unchanged.
 
+### Finding 4: method-glue without the leading slash, glued version tokens, and a byte x position matrix
+
+Three questions were put to the rules after the request-line fix. The check is now per
+request by construction: `reqline_client.py --cases` records label, client port and lab
+status for every request, and `check_requests.py` joins `eve.json` to those cases by client
+port. The invariant was fixed before the run: a request the lab routes (200, 401, 403) must
+raise at least one alert; a request it rejects must raise none, unless its label is listed
+in [`overalerts_frost.txt`](overalerts_frost.txt), in which case it must alert.
+
+`pcaps/frost_matrix.pcap`, 443 requests, fresh server, Python 3.15.2, Suricata 8.0.8 on macOS:
+
+| Part of the battery | Requests | Result with rev 5 / sid 2026110105 rev 1 | Result with the rules below |
+|---|---|---|---|
+| 10 separator bytes x 5 positions x 4 forms, on setpoint and service login (plus 2 controls) | 402 | no routed request silent | no routed request silent |
+| version tokens, spaced and glued to the path with `0xa0` | 28 | no routed request silent; glued invalid versions silent | no routed request silent; glued invalid versions alert (listed) |
+| `0xa0` after the method, combined with a path without its leading slash | 12 | lab answers 404; silent | lab answers 404; method-token rule alerts (listed) |
+
+The middle column was replayed on a Linux source build of Suricata 8.0.8 against the same
+committed capture, not on macOS.
+
+- **Method-glue without the leading slash.** FROSTBOX answers 404 to `POST<0xa0>api/case/...`,
+  so this is not an evasion here. In HYDROBOX it was (see its verification README), and the
+  method-token rule was widened in both labs for consistency.
+- **Glued version tokens.** `http.server` in Python 3.10 parses the version with `int()` and
+  executes `HTTP/+1.1`, `HTTP/-1.1` and `HTTP/1.1_0`; from 3.11 on (checked on 3.11, 3.12, 3.13
+  and, in this capture, 3.15.2) it answers 400. On a Python 3.10.20 server the three glued
+  forms were executed and rev 5 was silent (Linux capture, not committed). On the reference
+  environment there is no evasion; the pattern was still made independent of the version
+  value, because a version separated by a space never reaches the URI buffer either.
+- **Matrix.** Positions: after the method, before the version, after the path, before the
+  method, after the version. Forms: the byte alone, doubled, after a space, followed by `0xa0`.
+  Bytes: `09 0b 0c 0d 1c 1d 1e 1f 85 a0`. No routed request was silent, with the previous
+  rules or with the new ones.
+
+### Fix (rev 6 of 2026110101/2026110102, rev 2 of 2026110105)
+
+```
+2026110101: ... pcre:"/\/setpoint(?:[?\x3b#]|(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/[^\x09-\x0d\x1c-\x20\x85\xa0]*)?[\x09-\x0d\x1c-\x20\x85\xa0]*$)/";
+2026110105: http.method; content:"/";   (any slash in the method token, not only "/api/")
+```
+
+Result: all 414 routed requests alert. Of the 28 rejected requests, 27 are listed
+over-alerts and all of them alert; the remaining one (service login without its leading slash) is silent.
+The counts of every earlier capture are unchanged, and `verify.sh --mutation` passes.
+
+### What rev 3 matched on 0xa0 (diagnostic)
+
+Rev 3 read the normalised `http.uri` and alerted on `/setpoint<0xa0>`, `/setpoint<0x85>` and
+the rejected `/setpoint<0xa0>x`, but not on `/setpoint<0x1c>`. Replaying
+`pcaps/frost_rawbyte.pcap` with [`diag_uri_normalisation.rules`](diag_uri_normalisation.rules)
+shows why: for those three requests `http.uri` contains `/setpoint?` and no `0xa0`/`0x85`,
+while `http.uri.raw` keeps the byte; `0x1c` stays in `http.uri` as it is. Suricata 8.0.8
+replaces bytes of `0x80` and above with `?` in the normalised URI, and rev 3 accepted `?`
+after the path. Neither "the URI ends at the byte" nor "the byte is removed" holds: the
+`endswith` diagnostic does not match those requests. Same result on macOS and on Linux.
+
 ## Limits
 
 - **Synthetic telemetry.** The traffic comes from the lab in this repository, on loopback.
@@ -195,9 +255,15 @@ before the run. Total 41/41; the counts of the other captures are unchanged.
 - **Raw URI.** Since rev 4 the two anchored rules read `http.uri.raw`, with no percent-decoding.
   That fits this lab, which does not decode the path; a controller that decodes it would
   accept forms these rules do not see.
-- **Tested request lines only.** The request-line battery covers the forms listed above, mostly
-  with `0xa0` as the odd separator. It is not a proof over every byte in every position, and
-  header lines and bodies were not varied.
+- **Tested request lines only.** The batteries cover the forms listed above: ten separator bytes
+  in five positions and four forms on two endpoints, and the other forms mostly with `0xa0`.
+  Longer runs, three or more odd separators at once, header lines and bodies were not varied.
+- **Python version.** The lab's behaviour on a request line depends on the Python release (the
+  version check changed in 3.11). The recorded runs use Python 3.15.2; the manifest of each new
+  capture records the interpreter, and `check_requests.py` takes the lab's own response as the
+  ground truth, so a different interpreter changes the expectation with it.
+- **Manifests.** Only captures made from this change on carry a manifest. The earlier pcaps
+  were captured before manifests existed and are replayed without that check.
 - **Over-alerts on rejected requests.** Three requests that the lab rejects still alert (see
   Finding 3). The rules match the request, not the response.
 - **Method-token rule.** sid 2026110105 depends on how Suricata 8.0.8 fills `http.method` for a
@@ -214,6 +280,11 @@ The first request-line run with the fix executed the previous client and rules, 
 updated files had not reached the working copy. It was repeated after comparing file
 checksums; `frost_reqline.pcap` is the repeat.
 
+`verify.sh` appended to the logs of an earlier run when the same `WORK_DIR` was reused, which
+doubled every count. It now clears each scenario directory first. The matrix battery and the
+rule changes were tried on a Linux source build of Suricata 8.0.8 before the recorded macOS
+run; that build reproduced the counts of every committed capture.
+
 ## Reproduce
 
 ```bash
@@ -226,8 +297,15 @@ fails the check (rule-liveness). To regenerate a capture instead of using the co
 (needs `sudo` for `tcpdump`):
 
 ```bash
-bash capture.sh attack     # or: evasion | edge | rawbyte | reqline
+bash capture.sh attack     # or: evasion | edge | rawbyte | reqline | matrix
 PCAP_DIR=./recapture bash verify.sh
+```
+
+The matrix capture has three files; copy them together, or `verify.sh` fails closed:
+
+```bash
+bash capture.sh matrix && cp recapture/frost_matrix.* pcaps/
+WORK_DIR=./logs bash verify.sh      # per_request.tsv of each scenario is kept in ./logs
 ```
 
 The pcaps contain only loopback traffic of the synthetic lab, including its built-in weak
@@ -249,3 +327,11 @@ pass the one-byte pattern and proposed a lone CR (runs confirmed; a lone CR alon
 evasion, because Suricata also ends the URI there). Claude extended the battery to the
 separator and prefix forms, wrote the client and the rules, and read the logs; the author ran
 the captures and Suricata.
+
+For the matrix finding: Qwen proposed the glued version tokens (from a Python 3.10 probe), the
+method-glue combined with a missing leading slash, the byte x position matrix, the diagnostic
+rules and the manifest. Claude built Suricata 8.0.8 from source on Linux, ran the labs under
+Python 3.10 to 3.13, wrote the client extension, `check_requests.py`, the manifest, the rule
+changes and the over-alert lists, and read the logs. The method-glue case was confirmed in
+HYDROBOX; the version case applies to Python 3.10 only; neither of the two explanations
+proposed for the rev 3 behaviour held. The author ran the captures and Suricata on macOS.

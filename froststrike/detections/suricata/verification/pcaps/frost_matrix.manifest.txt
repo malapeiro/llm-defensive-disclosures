@@ -1,0 +1,13 @@
+scenario=matrix
+captured_utc=2026-11-11T14:02:43Z
+git_rev=e6224102031de520c28403c9168f2f14cec7fe0b
+git_worktree=modified
+lab_file=froststrike_lab.py
+lab_sha256=b7c32174b03b8c456a963c61e273ed6f1669e144dd4f9ea71e43770bcd3ca112
+client_file=reqline_client.py
+client_sha256=e2473563b235006ab33644f978889948ea760d0448a385c78315a50deea8a10c
+python=Python 3.15.2
+suricata=This is Suricata version 8.0.8 RELEASE
+os=Darwin arm64
+pcap_sha256=1999dfecddc7b0ee99726174ac5d8bf9886869f30d6f54b3969e00d1beb81fb9
+cases_sha256=58e37e0acfb675e8b3ee22769bdf5e1d716656d2f64a34e7b6e79f8154e2b3ee

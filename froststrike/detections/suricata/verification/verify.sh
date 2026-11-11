@@ -31,6 +31,11 @@ scenarios() {
   # non-compliant-request-line sid. Requests the lab rejects must stay silent, except these
   # accepted over-alerts of the setpoint sid: n01 (no version, 400) and u03 (no leading slash, 404); and alarm-u03 (404) on the unanchored /alarm sid.
   [ -f "$PCAP_DIR/frost_reqline.pcap" ] && check request_line frost_reqline.pcap "$ATTACKER_OUTSIDE" 41 "2026110101=24 2026110102=3 2026110103=5 2026110104=4 2026110105=5"
+  # Matrix battery (2026-11-11): no per-sid expectation. The invariant in check_requests.py is the
+  # expectation, fixed before the run: routed -> at least one alert; rejected -> silent, except
+  # the labels listed in overalerts_frost.txt, which must alert. Negative case: 0 alerts.
+  [ -f "$PCAP_DIR/frost_matrix.pcap" ] && check_cases matrix_per_request frost_matrix.pcap "$ATTACKER_OUTSIDE"
+  [ -f "$PCAP_DIR/frost_matrix.pcap" ] && check_total matrix_negative frost_matrix.pcap "$ATTACKER_INSIDE" 0
 }
 RULES="${RULES:-$HERE/../$RULE_FILE}"
 PCAP_DIR="${PCAP_DIR:-$HERE/pcaps}"
@@ -50,6 +55,7 @@ WORK="${WORK_DIR:-$(mktemp -d)}"; mkdir -p "$WORK"
 FAIL=0
 
 run() {  # name pcap maint_net rules
+  rm -rf "$WORK/$1"   # a reused WORK_DIR must not append to an older fast.log
   mkdir -p "$WORK/$1"
   suricata -r "$PCAP_DIR/$2" -c "$YAML" -S "$4" \
     --set vars.address-groups.MAINT_NET="$3" \
@@ -66,6 +72,7 @@ total() {  # name
 }
 
 check() {  # name pcap maint_net expected_total "sid=n sid=n ..."
+  if ! manifest_ok "$2"; then echo "FAIL  $1  $MANIFEST_NOTE - recapture before replaying"; FAIL=1; return; fi
   run "$1" "$2" "$3" "$RULES"
   local ok=1 loaded
   loaded="$(grep -o '[0-9]* rules successfully loaded, [0-9]* rules failed' "$WORK/$1/suricata.log")"
@@ -86,6 +93,49 @@ check() {  # name pcap maint_net expected_total "sid=n sid=n ..."
   fi
 }
 
+sha() { if command -v sha256sum >/dev/null; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi; }
+
+manifest_ok() {  # pcap -> 0 if there is no manifest or the generators still match it
+  local m="$PCAP_DIR/${1%.pcap}.manifest.txt" want got client
+  [ -f "$m" ] || { MANIFEST_NOTE="no manifest"; return 0; }
+  want="$(sed -n 's/^lab_sha256=//p' "$m")"; got="$(sha "$HERE/../../../froststrike_lab.py")"
+  [ "$want" = "$got" ] || { MANIFEST_NOTE="lab file differs from manifest"; return 1; }
+  client="$(sed -n 's/^client_file=//p' "$m")"
+  if [ -n "$client" ]; then
+    want="$(sed -n 's/^client_sha256=//p' "$m")"; got="$(sha "$HERE/$client")"
+    [ "$want" = "$got" ] || { MANIFEST_NOTE="$client differs from manifest"; return 1; }
+  fi
+  want="$(sed -n 's/^pcap_sha256=//p' "$m")"; got="$(sha "$PCAP_DIR/$1")"
+  [ "$want" = "$got" ] || { MANIFEST_NOTE="pcap differs from manifest"; return 1; }
+  if [ -f "$PCAP_DIR/${1%.pcap}.cases.jsonl" ]; then
+    want="$(sed -n 's/^cases_sha256=//p' "$m")"; got="$(sha "$PCAP_DIR/${1%.pcap}.cases.jsonl")"
+    [ "$want" = "$got" ] || { MANIFEST_NOTE="cases file differs from manifest"; return 1; }
+  fi
+  MANIFEST_NOTE="manifest ok"; return 0
+}
+
+check_cases() {  # name pcap maint_net : per-request invariant, joined by client port
+  if ! manifest_ok "$2"; then echo "FAIL  $1  $MANIFEST_NOTE - recapture before replaying"; FAIL=1; return; fi
+  run "$1" "$2" "$3" "$RULES"
+  local loaded
+  loaded="$(grep -o '[0-9]* rules successfully loaded, [0-9]* rules failed' "$WORK/$1/suricata.log")"
+  if [ "$loaded" != "$RULE_COUNT rules successfully loaded, 0 rules failed" ]; then
+    echo "FAIL  $1  $loaded"; FAIL=1; return
+  fi
+  if python3 "$HERE/check_requests.py" "$WORK/$1/eve.json" "$PCAP_DIR/${2%.pcap}.cases.jsonl" \
+       "$HERE/overalerts_frost.txt" --out "$WORK/$1/per_request.tsv" > "$WORK/$1/check.txt"; then
+    echo "PASS  $1  [$MANIFEST_NOTE]"; cat "$WORK/$1/check.txt"
+  else
+    echo "FAIL  $1  [$MANIFEST_NOTE]"; cat "$WORK/$1/check.txt"; FAIL=1
+  fi
+}
+
+check_total() {  # name pcap maint_net expected_total
+  if ! manifest_ok "$2"; then echo "FAIL  $1  $MANIFEST_NOTE - recapture before replaying"; FAIL=1; return; fi
+  run "$1" "$2" "$3" "$RULES"
+  if [ "$(total "$1")" = "$4" ]; then echo "PASS  $1  total $(total "$1")/$4"; else echo "FAIL  $1  total $(total "$1")/$4"; FAIL=1; fi
+}
+
 mutation() {  # for each sid: remove its rule, replay the attack pcap, expect 0 alerts for it
   for pair in $ATTACK_EXPECT; do
     local sid="${pair%%=*}" want="${pair##*=}" name="mut_${pair%%=*}" got
@@ -103,6 +153,7 @@ mutation() {  # for each sid: remove its rule, replay the attack pcap, expect 0 
 
 echo "Suricata: $(suricata -V 2>&1 | head -1)"
 echo "Rules:    $RULES"
+echo "Rules sha256: $(sha "$RULES")"
 if [ "${1:-}" = "--mutation" ]; then
   mutation
 else

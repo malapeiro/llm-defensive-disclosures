@@ -1,0 +1,13 @@
+scenario=matrix
+captured_utc=2026-11-11T14:02:52Z
+git_rev=e6224102031de520c28403c9168f2f14cec7fe0b
+git_worktree=modified
+lab_file=hydrostrike_lab.py
+lab_sha256=d55c324f2876256746c7289865e3c3a6cc0824a2e57df0d536e77c351a6f3072
+client_file=reqline_client.py
+client_sha256=e2473563b235006ab33644f978889948ea760d0448a385c78315a50deea8a10c
+python=Python 3.15.2
+suricata=This is Suricata version 8.0.8 RELEASE
+os=Darwin arm64
+pcap_sha256=30c8c4302e870ec0425e115030d7f8c635244764ad03d19ce09c4f1349935bb2
+cases_sha256=297813fe6a81c412af410991d4a68ab186debc1a078968eebdf30479d7958576
