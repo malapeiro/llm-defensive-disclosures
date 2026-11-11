@@ -8,12 +8,13 @@
 #
 # Env: SURICATA_YAML (path to suricata.yaml), PCAP_DIR (default: ./pcaps),
 #      RULES (default: the rule file one directory up),
-#      KEEP=1 (keep the Suricata logs of each scenario, e.g. http.log).
+#      KEEP=1 (keep the Suricata logs of each scenario),
+#      WORK_DIR (write those logs to this directory and keep them).
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 RULE_FILE="frostbox.rules"
 GROUP="REFRIG_SUPERVISORS"
-RULE_COUNT=4
+RULE_COUNT=5
 ATTACK_PCAP="frost_attack.pcap"
 ATTACK_TOTAL=37
 ATTACK_EXPECT="2026110101=12 2026110102=12 2026110103=12 2026110104=1"
@@ -25,6 +26,11 @@ scenarios() {
   # Expectation written before the first run (2026-11-11): every request the controller
   # executes must alert. 10 setpoint (control + 9 trailing bytes), 3 defrost (control + 2).
   [ -f "$PCAP_DIR/frost_rawbyte.pcap" ] && check trailing_byte frost_rawbyte.pcap "$ATTACKER_OUTSIDE" 13 "2026110101=10 2026110102=3 2026110103=0 2026110104=0"
+  # Expectation written before the first run (2026-11-11): every request the lab routes must
+  # alert, by its endpoint sid or, when a byte replaces the space after the method, by the
+  # non-compliant-request-line sid. Requests the lab rejects must stay silent, except these
+  # accepted over-alerts of the setpoint sid: n01 (no version, 400) and u03 (no leading slash, 404); and alarm-u03 (404) on the unanchored /alarm sid.
+  [ -f "$PCAP_DIR/frost_reqline.pcap" ] && check request_line frost_reqline.pcap "$ATTACKER_OUTSIDE" 41 "2026110101=24 2026110102=3 2026110103=5 2026110104=4 2026110105=5"
 }
 RULES="${RULES:-$HERE/../$RULE_FILE}"
 PCAP_DIR="${PCAP_DIR:-$HERE/pcaps}"
@@ -40,7 +46,7 @@ fi
 [ -f "$YAML" ] || { echo "suricata.yaml not found; set SURICATA_YAML"; exit 2; }
 command -v suricata >/dev/null || { echo "suricata not installed"; exit 2; }
 
-WORK="$(mktemp -d)"
+WORK="${WORK_DIR:-$(mktemp -d)}"; mkdir -p "$WORK"
 FAIL=0
 
 run() {  # name pcap maint_net rules
@@ -102,6 +108,6 @@ if [ "${1:-}" = "--mutation" ]; then
 else
   scenarios
 fi
-if [ -n "${KEEP:-}" ]; then echo "Suricata logs kept in $WORK"; else rm -rf "$WORK"; fi
+if [ -n "${KEEP:-}${WORK_DIR:-}" ]; then echo "Suricata logs kept in $WORK"; else rm -rf "$WORK"; fi
 [ "$FAIL" = 0 ] && echo "RESULT: PASS" || echo "RESULT: FAIL"
 exit "$FAIL"

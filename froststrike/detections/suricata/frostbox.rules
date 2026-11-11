@@ -7,6 +7,12 @@
 # rev 4 (2026-11-11), same sids: the match moved to http.uri.raw and also accepts
 # one trailing byte that Python's http.server drops as whitespace (0x09, 0x0b,
 # 0x0c, 0x1c-0x1f, 0x85, 0xa0). rev 3 could be evaded with /setpoint\x1c.
+# rev 5 (2026-11-11), sids 2026110101/2026110102, and rev 3 of 2026110104: the
+# patterns follow how Python's http.server tokenises the request line (any run
+# of 0x09-0x0d, 0x1c-0x20, 0x85, 0xa0 is a separator), so runs of those bytes
+# around the path, or one of them in place of the space before the version,
+# no longer hide the request. sid 2026110105 is new: when such a byte replaces
+# the space after the method, Suricata puts the path in the method token.
 # Deploy on the sensor that observes traffic toward OT supervisory web UIs.
 #
 # Address groups (define in suricata.yaml):
@@ -22,10 +28,12 @@
 # plaintext HTTP or where TLS is terminated/intercepted at the sensor
 # (see detections/README.md).
 
-alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Config write to refrigeration supervisor - setpoint"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint(?:[?\x3b#]|[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$)/"; classtype:attempted-admin; sid:2026110101; rev:4;)
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Config write to refrigeration supervisor - setpoint"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint(?:[?\x3b#]|(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$)/"; classtype:attempted-admin; sid:2026110101; rev:5;)
 
-alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Forced defrost command to refrigeration supervisor"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/defrost"; pcre:"/\/defrost(?:[?\x3b#]|[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$)/"; classtype:attempted-admin; sid:2026110102; rev:4;)
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Forced defrost command to refrigeration supervisor"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/defrost"; pcre:"/\/defrost(?:[?\x3b#]|(?:[\x09-\x0d\x1c-\x20\x85\xa0]+HTTP\/0*[01]\.\d+)?[\x09-\x0d\x1c-\x20\x85\xa0]*$)/"; classtype:attempted-admin; sid:2026110102; rev:5;)
 
 alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Alarm configuration change on refrigeration supervisor"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/alarm"; classtype:attempted-admin; sid:2026110103; rev:2;)
 
-alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Access to hidden service-code authentication path"; flow:established,to_server; http.uri; content:"/api/service/login"; startswith; classtype:attempted-admin; sid:2026110104; rev:2;)
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Access to hidden service-code authentication path"; flow:established,to_server; http.uri.raw; content:"/api/service/login"; pcre:"/^[\x00-\x20\x85\xa0]*(?:[A-Za-z][A-Za-z0-9+.\-]*:\/\/[^\/?#]*)?\/api\/service\/login/"; classtype:attempted-admin; sid:2026110104; rev:3;)
+
+alert http !$MAINT_NET any -> $REFRIG_SUPERVISORS any (msg:"OT-REFRIG Non-compliant request line to refrigeration supervisor - API path inside method token"; flow:established,to_server; http.method; content:"/api/"; classtype:protocol-command-decode; sid:2026110105; rev:1;)
