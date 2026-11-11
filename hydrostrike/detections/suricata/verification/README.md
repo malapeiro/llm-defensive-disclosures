@@ -1,8 +1,9 @@
 # Suricata verification — Hydrostrike
 
 **Verification level: execution-verified** (Suricata 8.0.8, offline pcap replay of the
-synthetic HYDROBOX lab). Covers [`../hydrobox.rules`](../hydrobox.rules) only; the Sigma and
-KQL rules of this lab remain textual compliance. The run exposed a trailing-byte evasion and
+synthetic HYDROBOX lab). Covers [`../hydrobox.rules`](../hydrobox.rules) only. The audit-log Sigma
+rules are checked separately (see [`../../sigma/verification/`](../../sigma/verification/README.md)); the
+webserver Sigma rule and the KQL queries remain textual compliance. The run exposed a trailing-byte evasion and
 then a wider request-line tokenisation gap; both are fixed (see below).
 
 ## Method

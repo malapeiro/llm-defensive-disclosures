@@ -1,0 +1,22 @@
+{"event": "filter_backwash", "actor": "PLC-SCHED", "source_ip": "127.0.0.1", "filter": "FLT-01", "trigger": "SCHEDULED", "night": "2025-03-14", "reservoir_after": 66.0, "pressure_after": 3.6, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "reservoir_level", "actor": "PLC-SCHED", "source_ip": "127.0.0.1", "level": 66.0, "band": [25.0, 95.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "login_success", "actor": "admin", "source_ip": "127.0.0.1", "auth": "password", "cred_class": "default", "role": "admin", "sim_ts": "2025-03-14 03:15:01"}
+{"event": "login_failure", "actor": "admin", "source_ip": "127.0.0.1", "auth": "password", "sim_ts": "2025-03-14 03:15:01"}
+{"event": "service_login_failure", "actor": "svc", "source_ip": "127.0.0.1", "auth": "daily_code", "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 4.0, "new": 1.0, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 1.0, "new": 2.5, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 2.5, "new": 5.5, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 5.5, "new": 5.6, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 5.6, "new": 2.4, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 2.4, "new": 4.0, "band": [2.5, 5.5], "valve": "OPEN", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "dosing_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "old": 0.5, "new": 0.05, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "dosing_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "old": 0.05, "new": 0.2, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "dosing_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "old": 0.2, "new": 1.0, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "dosing_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "old": 1.0, "new": 1.1, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "dosing_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "old": 1.1, "new": 0.19, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "dosing_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "old": 0.19, "new": 0.5, "band": [0.2, 1.0], "sim_ts": "2025-03-14 03:15:01"}
+{"event": "valve_command", "actor": "admin", "source_ip": "127.0.0.1", "valve": "VLV-OUT", "old": "OPEN", "state": "CLOSED", "pressure": 4.0, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "pump_setpoint", "actor": "admin", "source_ip": "127.0.0.1", "pump": "PMP-01", "old": 4.0, "new": 4.2, "band": [2.5, 5.5], "valve": "CLOSED", "running": true, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "valve_command", "actor": "admin", "source_ip": "127.0.0.1", "valve": "VLV-OUT", "old": "CLOSED", "state": "OPEN", "pressure": 4.2, "any_pump_running": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "alarm_mute", "actor": "admin", "source_ip": "127.0.0.1", "old": false, "muted": true, "sim_ts": "2025-03-14 03:15:01"}
+{"event": "alarm_mute", "actor": "admin", "source_ip": "127.0.0.1", "old": true, "muted": false, "sim_ts": "2025-03-14 03:15:01"}

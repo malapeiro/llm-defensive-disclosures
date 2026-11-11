@@ -9,7 +9,9 @@ description: >
   closed valve (deadheading; scoped per v1.3 Addition A so legitimate pump-stopped valve
   isolation stays clean), (4) post-backwash network underpressure (< 2.5 bar) or clear-water
   reservoir drain below 40%, or (5) remote alarm suppression.
-  Verification level: Textual compliance.
+  Verification level: execution-verified against the lab audit log (pySigma, SQLite;
+  see sigma/verification/), except the post-backwash underpressure selection, which the
+  v1.3 controller cannot emit. Validate against your own SIEM pipeline.
 references:
   - https://cert.pl/
   - https://attack.mitre.org/techniques/T0855/
