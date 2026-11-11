@@ -1,6 +1,10 @@
 # HYDROBOX reference Suricata signatures — municipal water station web HMIs.
 # Verification level: Execution-verified against Suricata 8.0.8 (offline pcap
 # replay of the synthetic loopback lab; see verification/README.md).
+# rev 2 (2026-11-11), sids 2026110701/2026110702: "endswith" on http.uri replaced
+# by a pcre on http.uri.raw that also accepts one trailing byte that Python's
+# http.server drops as whitespace (0x09, 0x0b, 0x0c, 0x1c-0x1f, 0x85, 0xa0).
+# rev 1 could be evaded with e.g. /setpoint\xa0.
 #
 # Address groups (define in suricata.yaml):
 #   MAINT_NET          — authorized OT maintenance / SCADA bastion network(s)
@@ -11,9 +15,9 @@
 # NOTE: http.method and http.uri require plaintext HTTP or TLS termination at
 # the sensor (see detections/README.md).
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/setpoint"; endswith; classtype:attempted-admin; sid:2026110701; rev:1;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote pump or chlorine dosing setpoint write to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/setpoint"; pcre:"/\/setpoint[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$/"; classtype:attempted-admin; sid:2026110701; rev:2;)
 
-alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/backwash"; endswith; classtype:attempted-admin; sid:2026110702; rev:1;)
+alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote filter backwash command to water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri.raw; content:"/backwash"; pcre:"/\/backwash[\x09\x0b\x0c\x1c-\x1f\x85\xa0]?$/"; classtype:attempted-admin; sid:2026110702; rev:2;)
 
 alert http !$MAINT_NET any -> $WATER_CONTROLLERS any (msg:"OT-WATER Remote outlet valve actuation on water HMI"; flow:established,to_server; http.method; content:"POST"; http.uri; content:"/api/valve/out"; startswith; classtype:attempted-admin; sid:2026110703; rev:1;)
 
