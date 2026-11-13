@@ -1,0 +1,97 @@
+SUNSTRIKE probes R8 v0.3 (dual-target V071/V072; errata de rotulagem datada — GATEFALL OFICIAL = RUN 1; achado C15 do supervisor, GO à v0.7.2 13-11 ~19:30) — run 20261113T200518Z-58f750 (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V072 (hash 1c433df138b90ba8…)
+
+GATEFALL V072 — PREVISÕES RE-REGISTADAS NESTE FICHEIRO (v0.2) ANTES de qualquer corrida contra a v0.7.2 (1c433df1…): fixes F-C15a/F-C15b do GO à v0.7.2; resíduos P-R8-03/P-R8-10 medidos e DECLARADOS por mandato do GO
+contra sunstrike_lab.py V072 (hash 1c433df138b90ba8…)
+  [P-R8-01/C15-replay-DIA] RESOLVIDO — F-C15b: a WO MNT1 (âmbito frota inteira, in-janela, 12 usos ≤ 12) continua a EXECUTAR (200×12, frota OFF — o fix NÃO bloqueia uso legítimo in-scope) MAS o CRIT D-MASS-SHUTDOWN-WITH-WO dispara count 12 (12 distintos ≥ k E 100 por cento ≥ 30), DIA: shutdowns à escala da frota deixam de ser invisíveis MESMO com WO válida; SEM capacity/onda (o arming s/WO mantém) e SEM WARN s/WO
+  [P-R8-02/C15-replay-NOITE] RESOLVIDO — F-C15a: a MNT2 tem AGORA âmbito {0,1,2}: devs 0,1,2 → 200×3; devs 3..11 → 403 fora_do_ambito ×9 + work_order_invalid reason=fora_do_ambito + WARN D-INVALID-WORK-ORDER count 9; frota fica 9/12 ON; no blackout DEPOIS: 9/12 casas com luz (os 3 desligados às escuras, os 9 defendidos pelo ÂMBITO); SEM D-MASS (3 < k, 20,3/88,8 = 22,9 por cento < 30) — o replay à frota inteira com a WO ERRADA morre no âmbito
+  [P-R8-03/C15-reuso-3x] DECLARADO — RESÍDUO MEDIDO (mandato do GO): off/on/off/on/off com MNT1 no dev 0 → 200×5 (3 usos ≤ 12, âmbito correto), 3 shutdowns COM WO válida, ZERO alertas (1 dispositivo distinto < k E 10,5/88,8 = 11,8 por cento < 30) — o atacante que só desliga < k dispositivos com WO válida de âmbito correto ESCAPA ao CRIT; RESÍDUO DECLARADO para a v0.8
+  [P-R8-04/C15-bulk] RESOLVIDO — F-C15b: /fleet/bulk_shutdown com MNT1 → 200, 12×200, frota OFF, D-AUTH-DEFAULT WARN ×1 (o login default — lição REGISTADA do run 1-bis) E CRIT D-MASS-SHUTDOWN-WITH-WO count 12 — o canal bulk da cloud também deixa de ser invisível à escala da frota
+  [P-R8-05/C15-estatica] RESOLVIDO — F-C15a: WORK_ORDERS ganha devices/window_s/max_uses por WO; existe a validação ÚNICA work_order_check chamada com WORK_ORDERS pelo DISPOSITIVO (remote_inverter_power_off E remote_setpoint) e pelo GATE (check_work_order); contador WORK_ORDER_USES e época WORK_ORDER_EPOCH — a WO deixa de ser uma string solta
+  [P-R8-06/C15-MNT2-6] RESOLVIDO — F-C15a: 6 shutdowns COM MNT2 (âmbito {0,1,2}) → devs 0,1,2: 200×3; devs 3,4,5: 403 fora_do_ambito ×3 + WARN count 3; frota 9/12 ON; SEM D-MASS (3 < k, 22,9 por cento < 30) — a segunda entrada deixa de ser âncora vazia: vale EXATAMENTE o seu âmbito
+  [P-R8-07/C15-janela] RESOLVIDO — F-C15a: relógio +40 dias (fora da janela de 30 dias da MNT1) → shutdown COM MNT1 no dev 3 → 403 fora_da_janela + work_order_invalid reason=fora_da_janela + WARN D-INVALID-WORK-ORDER count 1; dev 3 fica ON — a WO EXPIRA
+  [P-R8-08/C15-usos] RESOLVIDO — F-C15a: MNT2 (max_uses 3) 4× no dev 0 → 200×3 e o 4.º 403 usos_esgotados + WARN count 1; 3 shutdowns executados — o uso da WO é FINITO e contado
+  [P-R8-09/C15-baseline] RESOLVIDO — F-C15b FP: manutenção pontual legítima COM WO DE ÂMBITO CORRETO (MNT3, âmbito {0,2}) nos devs 0 e 2 → 200×2, ZERO alertas (2 < k, 20,3/88,8 = 22,9 por cento < 30) — o caso legítimo de poucos dispositivos com WO de âmbito correto NÃO dispara (FP morto por medição)
+  [P-R8-10/C15-5menores] DECLARADO — RESÍDUO MEDIDO (mandato do GO): 5 menores por kWp (25,68 por cento < 30) COM MNT1 → 200×5, ZERO CRIT (5 < k E < 30 por cento) — o atacante que escolhe os dispositivos PEQUENOS com WO válida escapa ao CRIT de massa; RESÍDUO DECLARADO para a v0.8
+  [P-R8-11/C15-top5] RESOLVIDO — F-C15b GATILHO DE CAPACIDADE: top-5 (58,22 por cento ≥ 30) COM MNT1 → 200×5 MAS CRIT D-MASS-SHUTDOWN-WITH-WO count 5 (5 distintos < k MAS a perda de capacidade ≥ 30 por cento) — 5 dispositivos chegam para o alerta quando a CAPACIDADE é o que está em jogo
+lab v0.7.2 em memória (evidence=False), 12 dispositivos + gate
+
+[P-R8-01] C15 — replay de WO válida aos 12 (DIA)
+  [P-R8-01] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15b: a WO MNT1 (âmbito frota inteira, in-janela, 12 usos ≤ 12) continua a EXECUTAR (200×12, frota OFF — o fix NÃO bloqueia uso legítimo in-scope) MAS o CRIT D-MASS-SHUTDOWN-WITH-WO dispara count 12 (12 distintos ≥ k E 100 por cento ≥ 30), DIA: shutdowns à escala da frota deixam de ser invisíveis MESMO com WO válida; SEM capacity/onda (o arming s/WO mantém) e SEM WARN s/WO
+        POST /mode com WO-20261112-MNT1 aos 12: 200×12 — a WO é IN-SCOPO (âmbito frota inteira, in-janela, 12 usos ≤ 12): o fix F-C15a NÃO bloqueia o uso legítimo; a frota desliga (eventos shutdown: 12, TODOS com wo_valid=true)
+        alertas: [('D-MASS-SHUTDOWN-WITH-WO', 12)] — CRIT D-MASS-SHUTDOWN-WITH-WO count 12 (dispositivos distintos 12) — F-C15b: shutdowns à escala da frota COM WO válida deixam de ser invisíveis (12 ≥ k E 100 por cento ≥ 30)
+        SEM capacity/onda/WARN: o arming s/WO da capacity mantém (snapshots div ≥ 30: 9 saem como evidência SEM CRIT — C12 intacto); div direta 100.00 por cento
+        CONSEQUÊNCIA: o replay de WO válida à frota inteira EXECUTA mas ALERTA (CRIT) — a frase do §7 item 8 passa a ser verdadeira TAMBÉM para WO válida; a manutenção legítima de frota INTEIRA dispara o mesmo CRIT (DECLARADO aceitável por GO)
+
+[P-R8-02] C15 — replay de WO válida aos 12 (NOITE + BLACKOUT)
+  [P-R8-02] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15a: a MNT2 tem AGORA âmbito {0,1,2}: devs 0,1,2 → 200×3; devs 3..11 → 403 fora_do_ambito ×9 + work_order_invalid reason=fora_do_ambito + WARN D-INVALID-WORK-ORDER count 9; frota fica 9/12 ON; no blackout DEPOIS: 9/12 casas com luz (os 3 desligados às escuras, os 9 defendidos pelo ÂMBITO); SEM D-MASS (3 < k, 20,3/88,8 = 22,9 por cento < 30) — o replay à frota inteira com a WO ERRADA morre no âmbito
+        MNT2 (âmbito {0,1,2}) à noite aos 12: devs 0,1,2 → 200×3 EXECUTAM; devs 3..11 → 403 fora_do_ambito ×9 (work_order_invalid com reason, WARN count 9) — o replay à frota inteira com a WO ERRADA morre no ÂMBITO (frota 9/12 ON)
+        D-MASS-SHUTDOWN-WITH-WO ausente (3 distintos < k E 20,3/88,8 = 22,9 por cento < 30) — o F-C15b não dá FP por 3 dispositivos de âmbito correto
+        no blackout DEPOIS: 9/12 casas com luz (os 3 desligados às escuras; os 9 defendidos pelo âmbito da WO)
+        CONSEQUÊNCIA: na v0.7.1 esta WO desligava a frota inteira às escuras SEM um alerta; na v0.7.2 o ÂMBITO trava 9/12 e a tentativa é WARN-visível ×9
+
+[P-R8-03] C15 — reuso da mesma WO 3× no mesmo dispositivo (off/on/off/on/off)
+  [P-R8-03] DECLARADO — PREVISÃO: DECLARADO — RESÍDUO MEDIDO (mandato do GO): off/on/off/on/off com MNT1 no dev 0 → 200×5 (3 usos ≤ 12, âmbito correto), 3 shutdowns COM WO válida, ZERO alertas (1 dispositivo distinto < k E 10,5/88,8 = 11,8 por cento < 30) — o atacante que só desliga < k dispositivos com WO válida de âmbito correto ESCAPA ao CRIT; RESÍDUO DECLARADO para a v0.8
+        off/on/off/on/off no dev 0 com MNT1: 200×5 — 3 usos ≤ 12 (âmbito correto); eventos shutdown: 3 COM WO válida
+        alertas: ZERO — ZERO (1 dispositivo distinto < k E 10,5/88,8 = 11,8 por cento < 30: abaixo dos DOIS gatilhos do F-C15b)
+        RESÍDUO MEDIDO E DECLARADO (mandato do GO): o atacante que só desliga < k dispositivos com WO válida e de âmbito correto ESCAPA ao CRIT de massa — DECLARADO para a v0.8 (limiar mais baixo = FPs de manutenção legítima de poucos dispositivos)
+
+[P-R8-04] C15 — bulk_shutdown do gate com a WO legítima
+  [P-R8-04] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15b: /fleet/bulk_shutdown com MNT1 → 200, 12×200, frota OFF, D-AUTH-DEFAULT WARN ×1 (o login default — lição REGISTADA do run 1-bis) E CRIT D-MASS-SHUTDOWN-WITH-WO count 12 — o canal bulk da cloud também deixa de ser invisível à escala da frota
+        /fleet/bulk_shutdown com MNT1: 200, 12×200, frota OFF — o canal bulk da cloud EXECUTA (âmbito frota inteira)
+        alertas: [('D-AUTH-DEFAULT', 1), ('D-MASS-SHUTDOWN-WITH-WO', 12)] — WARN D-AUTH-DEFAULT ×1 (o login default, lição REGISTADA do run 1-bis) E CRIT D-MASS-SHUTDOWN-WITH-WO count 12 — F-C15b cobre TAMBÉM a via bulk do gate
+        CONSEQUÊNCIA: na v0.7.1 este canal desligava a frota com a WO legítima sem UM alerta de shutdown; na v0.7.2 a operação à escala da frota é CRIT-visível mesmo vinda do canal que exige a WO
+
+[P-R8-05] C15 — prova estática: a WO com âmbito
+  [P-R8-05] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15a: WORK_ORDERS ganha devices/window_s/max_uses por WO; existe a validação ÚNICA work_order_check chamada com WORK_ORDERS pelo DISPOSITIVO (remote_inverter_power_off E remote_setpoint) e pelo GATE (check_work_order); contador WORK_ORDER_USES e época WORK_ORDER_EPOCH — a WO deixa de ser uma string solta
+        zona WORK_ORDERS: devices/window_s/max_uses presentes (True); validação ÚNICA work_order_check na MESMA zona (True); contador WORK_ORDER_USES e época WORK_ORDER_EPOCH (True)
+        DISPOSITIVO: work_order_check(WORK_ORDERS, …) em remote_inverter_power_off (True) E em remote_setpoint (True) — a fonte é passada LITERALMENTE (uma fonte só)
+        GATE: work_order_check(WORK_ORDERS, …) em check_work_order (True) — device e gate validam o MESMO âmbito pela MESMA função
+        CONSEQUÊNCIA: a WO deixou de ser uma string solta — está ligada a dispositivos, tempo e usos
+
+[P-R8-06] C15 — a segunda entrada (6 shutdowns COM MNT2)
+  [P-R8-06] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15a: 6 shutdowns COM MNT2 (âmbito {0,1,2}) → devs 0,1,2: 200×3; devs 3,4,5: 403 fora_do_ambito ×3 + WARN count 3; frota 9/12 ON; SEM D-MASS (3 < k, 22,9 por cento < 30) — a segunda entrada deixa de ser âncora vazia: vale EXATAMENTE o seu âmbito
+        6 shutdowns COM MNT2 (âmbito {0,1,2}): devs 0,1,2 → 200×3; devs 3,4,5 → 403 fora_do_ambito ×3 + WARN count 3; frota 9/12 ON (eventos shutdown: 3)
+        D-MASS ausente (3 distintos < k E 22,9 por cento < 30): a regra nova não dá FP por âmbito correto
+        CONSEQUÊNCIA: a segunda entrada deixa de ser âncora vazia — vale EXATAMENTE o seu âmbito {0,1,2}
+
+[P-R8-07] C15 — janela de validade (relógio +40 dias)
+  [P-R8-07] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15a: relógio +40 dias (fora da janela de 30 dias da MNT1) → shutdown COM MNT1 no dev 3 → 403 fora_da_janela + work_order_invalid reason=fora_da_janela + WARN D-INVALID-WORK-ORDER count 1; dev 3 fica ON — a WO EXPIRA
+        relógio +40 dias (fora da janela de 30 dias da MNT1): shutdown COM MNT1 no dev 3 → 403 reason=fora_da_janela — a WO EXPIRA; dev 3 fica ON (nenhum shutdown executado)
+        WARN D-INVALID-WORK-ORDER count 1 (reason fora_da_janela no evento) — a tentativa é visível
+        CONSEQUÊNCIA: a WO deixa de ser credencial perpétua — o replay tem PRAZO
+
+[P-R8-08] C15 — usos (a mesma WO 4×)
+  [P-R8-08] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15a: MNT2 (max_uses 3) 4× no dev 0 → 200×3 e o 4.º 403 usos_esgotados + WARN count 1; 3 shutdowns executados — o uso da WO é FINITO e contado
+        MNT2 (max_uses 3) 4× no dev 0: 200×3 e o 4.º → 403 usos_esgotados + WARN count 1; shutdowns executados: 3
+        CONSEQUÊNCIA: o uso da WO é FINITO e contado — o reuso ilimitado morre
+
+[P-R8-09] C15 — baseline: pequena manutenção COM WO (2 dispositivos)
+  [P-R8-09] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15b FP: manutenção pontual legítima COM WO DE ÂMBITO CORRETO (MNT3, âmbito {0,2}) nos devs 0 e 2 → 200×2, ZERO alertas (2 < k, 20,3/88,8 = 22,9 por cento < 30) — o caso legítimo de poucos dispositivos com WO de âmbito correto NÃO dispara (FP morto por medição)
+        2 shutdowns COM WO-20261113-MNT3 (âmbito {0,2}): 200×2; alertas: ZERO — ZERO (2 distintos < k E 20,3/88,8 = 22,9 por cento < 30)
+        FP MORTO por medição: a manutenção pontual legítima com WO de âmbito correto NÃO dispara o F-C15b — o caso legítimo e o abuso deixam de ser indistinguíveis (o abuso à escala da frota dispara CRIT; o legítimo pontual não)
+
+[P-R8-10] C15 — subset pequeno COM WO (5 menores, 25,68 por cento < 30)
+  [P-R8-10] DECLARADO — PREVISÃO: DECLARADO — RESÍDUO MEDIDO (mandato do GO): 5 menores por kWp (25,68 por cento < 30) COM MNT1 → 200×5, ZERO CRIT (5 < k E < 30 por cento) — o atacante que escolhe os dispositivos PEQUENOS com WO válida escapa ao CRIT de massa; RESÍDUO DECLARADO para a v0.8
+        5 MENORES por kWp [10, 2, 6, 5, 1] (=22.80 kWp = 25.68 por cento < 30): shutdowns COM MNT1 → 200×5; alertas: ZERO — ZERO CRIT (5 < k E < 30 por cento)
+        RESÍDUO MEDIDO E DECLARADO (mandato do GO): o atacante que escolhe os dispositivos PEQUENOS (< k E < 30 por cento de capacidade) com WO válida escapa ao CRIT de massa — DECLARADO para a v0.8
+
+[P-R8-11] C15 — top-5 COM WO (58,22 por cento ≥ 30)
+  [P-R8-11] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C15b GATILHO DE CAPACIDADE: top-5 (58,22 por cento ≥ 30) COM MNT1 → 200×5 MAS CRIT D-MASS-SHUTDOWN-WITH-WO count 5 (5 distintos < k MAS a perda de capacidade ≥ 30 por cento) — 5 dispositivos chegam para o alerta quando a CAPACIDADE é o que está em jogo
+        top-5 por kWp [4, 11, 0, 8, 3] (=51.70 kWp = 58.22 por cento ≥ 30): shutdowns COM MNT1 → 200×5 MAS CRIT D-MASS-SHUTDOWN-WITH-WO count 5 (distintos 5, capacidade perdida 58.22 por cento) — o GATILHO DE CAPACIDADE apanha 5 dispositivos < k
+        CONSEQUÊNCIA: 58 por cento da capacidade da frota no chão com WO válida era INVISÍVEL na v0.7.1; na v0.7.2 a perda de capacidade ≥ 30 por cento é CRIT mesmo com WO — o que está em jogo é a CAPACIDADE, não a contagem
+
+SUMÁRIO — GATEFALL R8 vs alvo V072 (run 20261113T200518Z-58f750)
+  [P-R8-01] RESOLVIDO
+  [P-R8-02] RESOLVIDO
+  [P-R8-03] DECLARADO
+  [P-R8-04] RESOLVIDO
+  [P-R8-05] RESOLVIDO
+  [P-R8-06] RESOLVIDO
+  [P-R8-07] RESOLVIDO
+  [P-R8-08] RESOLVIDO
+  [P-R8-09] RESOLVIDO
+  [P-R8-10] DECLARADO
+  [P-R8-11] RESOLVIDO
+RESULTADO: 11/11 previsões confirmadas (lab v0.7.2)
+RC=0 — RUN 2 vs v0.7.2 (1c433df1…): F-C15a/F-C15b RESOLVIDOS (com os resíduos P-R8-03/P-R8-10 medidos e DECLARADOS por mandato do GO).

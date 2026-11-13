@@ -1,0 +1,46 @@
+[selftest] anti-tautologia: OK (eventos sinteticos recusados)
+[selftest] rule_liveness_check (trafego real): 24/24 regras vivas, dead=[]
+[selftest] ScopeError: OK (recusa alvo não-loopback)
+[selftest] sign_image round-trip: OK
+[selftest] SoC floor sem /local_confirm: OK (409, SoC intacto)
+[selftest] strip provenance spoof: OK
+[selftest] H3 tipos estritos (bool recusado, direto 400 / guard 400): OK
+[selftest] H1/H2 canonicalizacao fail-closed (nao-ASCII=True //=True %=True ?=True; eventos=4): OK
+[selftest] guard proxy (forward 200=True, local_confirm recusado=True, chunked recusado=True): OK
+[selftest] H5 fisica da ilha v0.5 (SoC 28→24.9136 ABAIXO do floor 25.0, carga SERVIDA=1.2 kW — reserva em uso; clamp_events floor=0/min=0): OK
+[selftest] C10 minimo tecnico da ilha (SoC 6→5.0, carga cai para pv=0.0, evento=1): OK
+[selftest] C10 opcao B (reserva trancada): SoC 28→25.0 clamp NO floor, carga cai para pv=0.0, evento floor=1: OK
+[selftest] C7 irradiancia (NOITE=0, NUVEM=kwp*0.2, DIA=kwp*0.55): OK
+[selftest] I1 release do curtail P(f) (sobe 40=True, desce 0=True, pf_release=12): OK
+[selftest] C8 (FP morto=True [div=10.69%], snapshot continuo grid_monitor=1, regra dispara=True): OK
+[selftest] I4 canonicalizador (0x7F=True, /./=True, /../=True; reasons=['control_char', 'dot_segment']): OK
+[selftest] I5 guard (TE identity recusado=True, estado intacto=True): OK
+[selftest] C4 regra cumulativa [config v0.5] (2 fatias de 30%: SoC 40.0, alerta=True count=2, por-operacao=0): OK
+[selftest] C4-b sem dupla-disparo [config v0.5] (1 operacao de 55%: por-operacao=True, cumulativa=False): OK
+[selftest] v0.6 limite diario (fatia 40%=200 → SoC 60.0; +5%=409+evento; used=40.00%): OK
+[selftest] v0.6 local_confirm alem do daily (SoC 50.0, nao conta: used=40.00%, token consumido=True, seguinte sem confirm=409): OK
+[selftest] v0.6 janela 24 h (+25 h de sim_ts: 40% e depois 30% IN-BAND executam — sem o avanco a 2.a daria 409 daily; SoC 30.0, used=30.00% so o dia novo): OK
+[selftest] v0.6 LEGACY bypass (60% executa, SoC 40.0, ledger vazio=True): OK
+[selftest] v0.6 J4 recarga grid-tied (DIA 1 h: 50→83.6382 com eventos=2; NOITE imovel=83.6; cap=100.0; rele aberto nao integra=100.0): OK
+[selftest] v0.6 J5 telemetria soc_limits (floor=25.0, island_min=5.0 ATIVO, daily=40.0, used=0): OK
+[selftest] v0.7 C12 top-5 shutdown s/WO (div max 58.23%, capacity=True): OK
+[selftest] v0.7 C12 resíduo top-2 (26,35% < 30 → ESCAPA, declarado; capacity=False): OK
+[selftest] v0.7 C12 shutdown COM work-order (snapshots=5 como evidência, CRIT capacity=False): OK
+[selftest] v0.7 C12 P(f) autónomo (div max 0.00% < 30, capacity=False): OK
+[selftest] v0.7.1 F-K1 drain-to-low (40%+25 h+34,9% → SoC 25.1 <= 35, CRIT count=1): OK
+[selftest] v0.7.1 F-K1 atacante lento (3 dias × 23,3% → SoC 30.1 <= 35, CRIT count=1): OK
+[selftest] v0.7.1 F-K1 FP K1-c morto (25%/dia × 3 COM recarga → SoC 100.0, drain-to-low=False): OK
+[selftest] v0.7.1 F-C13 WO falsa (403, frota ON, WARN count=1): OK
+[selftest] v0.7.1 F-C14 noite 5 shutdowns s/WO (WARN count=5, wave=False): OK
+[selftest] v0.7.1 F-C14 FP shutdown COM WO válida (WARN=False): OK
+[selftest] v0.7.1 F-SP frota 60% COM WO (200 ×12, div 40.0% >= 30 SEM CRIT — não arma): OK
+[selftest] v0.7.1 F-SP frota 60% SEM WO (200 ×12, ARMA → CRIT capacity=True — o resíduo DECLARADO): OK
+[selftest] v0.7.2 F-C15a âmbito (MNT2 dev0 200 / dev5 403 fora_do_ambito + WARN, dev5 ON): OK
+[selftest] v0.7.2 F-C15a janela (relógio +40d: MNT1 403 fora_da_janela, dev3 ON, WARN): OK
+[selftest] v0.7.2 F-C15a usos (MNT2 max 3: 200×3, o 4.º 403 usos_esgotados + WARN): OK
+[selftest] v0.7.2 F-C15b massa (12 shutdowns COM MNT1: CRIT D-MASS-SHUTDOWN-WITH-WO count 12, SEM capacity/onda — a WO não é âncora à escala da frota): OK
+[selftest] v0.7.2 F-C15b capacidade (top-5 COM MNT1: 5 < k MAS 58,22% >= 30 → CRIT count 5): OK
+[selftest] v0.7.2 F-C15b FP (MNT3 âmbito {0,2}: 200×2, ZERO alertas — manutenção pontual legítima): OK
+[selftest] v0.7.2 F-C15b RESÍDUO (5 menores COM MNT1: 5 < k E 25,68% < 30 → 0 CRIT — resíduo DECLARADO p/ v0.8): OK
+[selftest] v0.7.2 F-C15a NEG bulk (MNT3: 2 executados, 10 bulk_scope_skip, 0 CRIT): OK
+[selftest] RESULTADO: PASS

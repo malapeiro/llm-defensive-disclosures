@@ -1,0 +1,47 @@
+SUNSTRIKE lab v0.7.2 — demo (grant GRANT-PVTE-20261112-SS-01)
+evidencia: sunstrike_evidence/20261113T195047Z-05c5fc
+
+[H1] passos: 14
+[H2] passos: 8
+[NEG] passos: 7
+[H3] curtailment stealth: 12 setpoints in-band + snapshot de capacidade
+[H4] firmware: 12 rejeicoes fora da janela + 12 assinaturas forjadas; bricked=0 (wiper NAO executa)
+[H5] starvation: drain 60% → 409; abaixo do floor → 409 (invariante: SoC mínimo da frota = 100.0)
+[H4-BLACKOUT] 60/60 comandos recusados (interlock); ilha: carga local servida em 12/12 (pelo SOL — perfil DIA, pv > carga; bateria so em deficit: ver MEASURE/NOITE)
+
+===== ALERTAS =====
+  [EMERG] D-GRID-EMERGENCY-REMOTE-BLOCK x60 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H1] D-AUTH-DEFAULT x1 fleetgate
+  [H1] D-BULK-WITHOUT-WORKORDER x1 fleetgate
+  [H1] D-CAPACITY-DIVERGENCE x9 
+  [H1] D-FLEET-SHUTDOWN-WAVE x6 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H1] D-REMOTE-SHUTDOWN-NO-WO x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H1] D-SLOW-WAVE x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H2] D-AUTH-BROKER-TOKEN x7 sunbox-00,sunbox-03,sunbox-04,sunbox-07...
+  [H2] D-BATTERY-DRAIN-BELOW-FLOOR x1 sunbox-04
+  [H2] D-CAPACITY-DIVERGENCE x4 
+  [H2] D-FLEET-SHUTDOWN-WAVE x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07...
+  [H2] D-PROVENANCE-SPOOF-ATTEMPT x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07...
+  [H2] D-REMOTE-SHUTDOWN-NO-WO x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07...
+  [H3] D-AUTH-DEFAULT x1 fleetgate
+  [H3] D-CAPACITY-DIVERGENCE x2 
+  [H3] D-FLEET-CURTAILMENT-WAVE x6 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H4] D-FIRMWARE-OUT-OF-WINDOW x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H4] D-FIRMWARE-REJECTED x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H4-BLACKOUT] D-GRID-EMERGENCY-REMOTE-BLOCK x60 sunbox-00,sunbox-01,sunbox-02,sunbox-03...
+  [H5] D-BATTERY-DRAIN-BELOW-FLOOR x1 sunbox-00
+  [NEG] D-AUTH-DAILY-CODE x1 fleetgate
+  [STRESS] D-PF-PARAM-CHANGE-IN-STRESS x1 sunbox-00
+
+===== EXPECTATIVAS PRÉ-REGISTADAS =====
+  [H1] PASS (CRIT=28) 
+  [H2] PASS (CRIT=18) 
+  [NEG] PASS (CRIT=0) 
+  [STRESS] PASS (CRIT=1) 
+  [EMERG] PASS (CRIT=60) ilha retida=12/12
+  [H3] PASS (CRIT=9) 
+  [H4] PASS (CRIT=12) 
+  [H5] PASS (CRIT=1) floor intacto=12/12 (SoC >= floor em todos)
+  [H4-BLACKOUT] PASS (CRIT=60) ilha retida=12/12; carga em ilha servida=12/12 (autoconsumo retido — carga servida pelo SOL em perfil DIA; bateria so em deficit: MEASURE/NOITE)
+
+RESULTADO FINAL: PASS (9/9 cenários)

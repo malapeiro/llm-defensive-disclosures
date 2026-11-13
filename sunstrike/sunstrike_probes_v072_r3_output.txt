@@ -1,0 +1,67 @@
+SUNSTRIKE probes R3 v0.5.2 (hexa-target, reconstrucao pos-incidente INFRA-2026-13-11-B) — grant GRANT-PVTE-20261112-SS-01
+run_id           : 20261113T195808Z-ac1128
+hashes esperados : {'V03': 'fe6f59caae442e23…', 'V04': 'cca997578e1f1b10…', 'V05': '052688ee7ee45c55…', 'V06': '698b8cff89cb87c5…', 'V07': 'd3af0d28715d7cdc…', 'V071': '72c894fe579dfc33…', 'V072': '1c433df138b90ba8…'}
+alvo DETETADO    : V072 (hash 1c433df138b90ba8…)
+                   [OK — v0.6; NÃO-REGRESSÃO R3 da R5 — os achados R3 têm de continuar RESOLVIDOS]
+
+GATEFALL — PREVISÕES PRÉ-REGISTADAS (antes de qualquer execução)
+contra sunstrike_lab.py v0.7 (não-regressão R3 da R7) (hash 1c433df138b90ba8…)
+  [P-R3-01/C7] RESOLVIDO — perfis de irradiância DIA/NUVEM/NOITE existem (IRRADIANCE_PROFILES + set_irradiance no GRIDSIM, canal de sensor): NOITE → pv_gross 0.0 em TODOS; NUVEM → kwp*0.20; DIA repõe kwp*0.55 (mínimo 1.76 > carga 1.2 no default)
+  [P-R3-02/C7] RESOLVIDO — com perfil NOITE o DEFICIT é alcançável: ilha + SoC 60.0 + step_island(3600) → SoC DESCE em TODOS (drop% = 100/kwp; pior casa 3.2 kWp → 28.75 > floor 25), 0 eventos island_battery_at_floor — a bateria integra na métrica
+  [P-R3-03/I1] RESOLVIDO — o curtail autónomo tem RELEASE: STRESS → 40 em todos (pf_curtail); NORMAL → curtail_autonomous volta a 0.0 com evento pf_release (a catraca morre; pv volta ao bruto sem comando nenhum)
+  [P-R3-04/C8] RESOLVIDO — FP morto: setpoint LEGÍTIMO 90% + P(f) autónomo (STRESS) + snapshot → div < 30 (o esperado DESCONTA o autónomo), SEM alerta D-CAPACITY-DIVERGENCE; e o snapshot CONTÍNUO existe: 6 setpoints a 0 → transição de banda → capacity_snapshot provenance=grid_monitor → alerta dispara
+  [P-R3-05/I4] RESOLVIDO — canonicalizador fail-closed COMPLETO: 0x01, 0x7F, /./mode e /../mode → 400 + eventos non_canonical_request com reasons control_char e dot_segment (o routing nunca os vê)
+  [P-R3-06/I5] RESOLVIDO — o guard rejeita QUALQUER Transfer-Encoding pela PRESENÇA do header: 'Transfer-Encoding: identity' → 400 + guard_reject (reason transfer_encoding_not_supported), SEM forward ao device
+GATEFALL v0.6 pré-registado na entrada v0.4 do changelog do probe, ANTES desta corrida (critérios idênticos aos da v0.4/v0.5). O GATEFALL OFICIAL da R3 é o RUN 1 contra a v0.3; esta corrida é a NÃO-REGRESSÃO da R5: os fixes da v0.6 (limite diário 40%/24 h, recarga grid-tied, telemetria soc_limits, measure em curva) NÃO podem reabrir C7/I1/C8/I4/I5. C5/C6/C9/H7/I2/I3/I6/C11/J3 ficam para a ronda seguinte.
+
+lab v0.7.2 em memoria (evidence=False), 12 dispositivos + gate
+
+[P-R3-01] C7 — perfis de irradiância: o sol põe-se no lab
+  [P-R3-01] RESOLVIDO — PREVISÃO: RESOLVIDO — perfis de irradiância DIA/NUVEM/NOITE existem (IRRADIANCE_PROFILES + set_irradiance no GRIDSIM, canal de sensor): NOITE → pv_gross 0.0 em TODOS; NUVEM → kwp*0.20; DIA repõe kwp*0.55 (mínimo 1.76 > carga 1.2 no default)
+        NOITE: pv_gross 0.0 em TODOS (12/12)
+        NUVEM: pv_gross == kwp*0.20 em TODOS (12/12); DIA repõe kwp*0.55 (min=1.76 > carga 1.20)
+        IRRADIANCE_PROFILES + set_irradiance no GRIDSIM (canal de sensor, fora da API HTTP): o measure pode exercitar dia E noite
+
+[P-R3-02] C7-b — 1h de ilha em NOITE: bateria gasta (deficit alcançável)
+  [P-R3-02] RESOLVIDO — PREVISÃO: RESOLVIDO — com perfil NOITE o DEFICIT é alcançável: ilha + SoC 60.0 + step_island(3600) → SoC DESCE em TODOS (drop% = 100/kwp; pior casa 3.2 kWp → 28.75 > floor 25), 0 eventos island_battery_at_floor — a bateria integra na métrica
+        1h de ilha em NOITE (SoC de partida 60.0): SoC → min=28.75 max=51.67 — todos DESCEM (a bateria SERVE carga)
+        pior casa (3.2 kWp): 60.0 → 28.75 (drop 31.25% = 100/kwp; acima do floor 25.0); eventos floor: 0
+        consequência: o measure PASSA a distinguir dia de noite — a bateria integra na métrica (MEASURE/NOITE do lab)
+
+[P-R3-03] I1 — curtail autónomo com RELEASE (sobe e desce)
+  [P-R3-03] RESOLVIDO — PREVISÃO: RESOLVIDO — o curtail autónomo tem RELEASE: STRESS → 40 em todos (pf_curtail); NORMAL → curtail_autonomous volta a 0.0 com evento pf_release (a catraca morre; pv volta ao bruto sem comando nenhum)
+        STRESS (f 50.4): curtail_pct=[40.0] em todos (pf_curtail=12)
+        NORMAL (f nominal, >1s): curtail_autonomous=[0.0], curtail_pct=[0.0] — RELEASE (12 eventos pf_release); pv volta ao bruto (casa 3.2 kWp: 1.76) sem comando nenhum
+
+[P-R3-04] C8 — FP morto + snapshot contínuo por transição de banda
+  [P-R3-04] RESOLVIDO — PREVISÃO: RESOLVIDO — FP morto: setpoint LEGÍTIMO 90% + P(f) autónomo (STRESS) + snapshot → div < 30 (o esperado DESCONTA o autónomo), SEM alerta D-CAPACITY-DIVERGENCE; e o snapshot CONTÍNUO existe: 6 setpoints a 0 → transição de banda → capacity_snapshot provenance=grid_monitor → alerta dispara
+        FP MORTO: setpoint 90% legítimo → 200 + P(f) autónomo → divergence=1.21% < 30 (o esperado DESCONTA o curtail autónomo) — 0 alertas D-CAPACITY-DIVERGENCE
+        SNAPSHOT CONTÍNUO: 6 setpoints a 0 → transição de banda → 1 capacity_snapshot provenance=grid_monitor (fora do harness); a regra dispara: [('D-CAPACITY-DIVERGENCE', 1)]
+        o estado já não conta como condição remota: a condição vem de param_change export_limit remote_command (setpoint legítimo 90%% NÃO arma sozinho + div < 30)
+
+[P-R3-05] I4 — canonicalizador fail-closed: 0x01/0x7F, /./, /../ → 400
+  [P-R3-05] RESOLVIDO — PREVISÃO: RESOLVIDO — canonicalizador fail-closed COMPLETO: 0x01, 0x7F, /./mode e /../mode → 400 + eventos non_canonical_request com reasons control_char e dot_segment (o routing nunca os vê)
+        pedidos crus: [('0x01', '400', False), ('0x7F', '400', False), ('/./', '400', False), ('/../', '400', False)] — TODOS 400 antes do routing
+        eventos non_canonical_request: 4, reasons=['control_char', 'dot_segment'] — o canonicalizador rejeita <0x20, 0x7F (control_char) e segmentos . / .. (dot_segment)
+        o routing nunca vê os bytes: fail-closed por construção (a lição gh-87389 estendida ao canonicalizador próprio)
+
+[P-R3-06] I5 — guard rejeita QUALQUER Transfer-Encoding
+  [P-R3-06] RESOLVIDO — PREVISÃO: RESOLVIDO — o guard rejeita QUALQUER Transfer-Encoding pela PRESENÇA do header: 'Transfer-Encoding: identity' → 400 + guard_reject (reason transfer_encoding_not_supported), SEM forward ao device
+        GET /device/0/telemetry com 'Transfer-Encoding: identity' → 400 (REJEITADO no guard)
+        guard_reject=1, guard_forward=0 — o check é pela PRESENÇA do header, não pelo valor; nenhuma codificação de transporte passa na via gerida
+        reason do reject: transfer_encoding_not_supported
+
+========================================================================
+SUMÁRIO GATEFALL — previsão PRÉ-registada vs veredicto OBSERVADO
+========================================================================
+  [P-R3-01/C7] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R3-02/C7] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R3-03/I1] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R3-04/C8] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R3-05/I4] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R3-06/I5] previsto: RESOLVIDO | observado: RESOLVIDO
+------------------------------------------------------------------------
+RESOLVIDOS (não-regressão contra a v0.7): 6/6
+PREVISÕES ERRADAS: 0
+LAB ALVO: v0.7.2 (V072), hash 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4 (INTOCADA — verificado no arranque)
+GATEFALL OFICIAL da R3 = RUN 1 contra a v0.3 (preservado em sunstrike_probes_v03_r3_run1.txt). Esta corrida é a NÃO-REGRESSÃO da R5 (v0.6): o limite diário 40%/24 h, a recarga grid-tied, a telemetria soc_limits e o measure em curva não reabriram nenhum achado R3 (C7/I1/C8/I4/I5 continuam RESOLVIDOS); a R4/R5 são cobertas pelos probes r4/r5.

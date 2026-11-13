@@ -1,0 +1,98 @@
+SUNSTRIKE probes R8 v0.2 (dual-target V071/V072; achado C15 do supervisor, GO à v0.7.2 13-11 ~19:30) — run 20261113T195921Z-174cbc (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V071 (hash 72c894fe579dfc33…)
+
+GATEFALL V071 — PREVISÕES PRÉ-REGISTADAS (v0.1/v0.1.1, CONGELADAS — as do GATEFALL OFICIAL run 1-bis 1c7d1aac…, 10/11 com P-R8-04 errada registada)
+contra sunstrike_lab.py V071 (hash 72c894fe579dfc33…)
+  [P-R8-01/C15-replay-DIA] CONFIRMADO — REPLAY DE WO VÁLIDA (DIA): POST /mode com work_order WO-20261112-MNT1 aos 12 dispositivos → 200×12, frota OFF, ZERO alertas (a WO válida neutraliza a onda, não arma a capacity e não conta no WARN s/WO); snapshots de capacidade com div ≥ 30 saem como evidência SEM alerta (C12: shutdown COM WO não arma) — a mesma WO legítima serve para desligar a frota inteira
+  [P-R8-02/C15-replay-NOITE] CONFIRMADO — REPLAY DE WO VÁLIDA (NOITE+BLACKOUT): idem com WO-20261112-MNT2 à NOITE (em NORMAL) → 200×12, ZERO alertas; e SÓ DEPOIS o blackout → 0/12 casas com luz (a frota desliga às escuras sem UM alerta; em BLACKOUT o interlock bloquearia — a sequência do GO mede o dano PRÉ-apagão)
+  [P-R8-03/C15-reuso-3x] CONFIRMADO — REUSO DA MESMA WO NO MESMO DISPOSITIVO: off/on/off/on/off com WO-20261112-MNT1 no dev 0 → 200×5, ZERO alertas (3 shutdowns COM WO: sem janela, sem contador de usos, sem âncora de confiança alguma)
+  [P-R8-04/C15-bulk] CONFIRMADO — CANAL BULK DO GATE (proposta do BUILDER): /fleet/bulk_shutdown com work_order_id WO-20261112-MNT1 → 200, 12 shutdowns COM WO, ZERO alertas — o próprio canal da cloud desliga a frota com a WO legítima e nenhuma regra vê (o bulk EXIGE WO válida: a exigência é a evasão)
+  [P-R8-05/C15-estatica] CONFIRMADO — PROVA ESTÁTICA DA ÂNCORA VAZIA (proposta do BUILDER): WORK_ORDERS é um dicionário plano de 2 entradas SEM âmbito de dispositivos, SEM janela de validade e SEM contador de usos; o dispositivo e o gate validam APENAS pertença à lista (membership) — a WO não está ligada a nada além do próprio texto
+  [P-R8-06/C15-MNT2-6] CONFIRMADO — A SEGUNDA ENTRADA TAMBÉM É ÂNCORA VAZIA (proposta do BUILDER): 6 shutdowns COM WO-20261112-MNT2 → 200×6, ZERO alertas (qualquer uma das 2 WOs neutraliza a onda; 6 shutdowns COM WO não acendem wave/slow/capacity — a cegueira é por neutralização, não por volume)
+  [P-R8-07/C15-janela] CONFIRMADO — JANELA DE VALIDADE INEXISTENTE (proposta do BUILDER): com o relógio de simulação +40 dias, shutdown COM WO-20261112-MNT1 → 200 e EXECUTA (a WO não expira: uma WO de 12-11 serve para sempre)
+  [P-R8-08/C15-usos] CONFIRMADO — USOS ILIMITADOS (proposta do BUILDER): a MESMA WO-20261112-MNT2 4× no mesmo dispositivo → 200×4, 4 eventos shutdown, ZERO alertas (sem contador de usos a WO é infinitamente reutilizável)
+  [P-R8-09/C15-baseline] CONFIRMADO — BASELINE DE PEQUENA MANUTENÇÃO (proposta do BUILDER): 2 shutdowns COM WO-20261112-MNT1 (devs 0 e 2) → 200×2, ZERO alertas — o caso legítimo de manutenção pontual é INDISTINGUÍVEL do abuso na v0.7.1 (mesma telemetria, mesmos alertas: nenhum)
+  [P-R8-10/C15-5menores] CONFIRMADO — SUBSET PEQUENO COM WO (proposta do BUILDER): shutdown dos 5 MENORES por kWp (22,8/88,8 = 25,68 por cento < 30) COM WO-20261112-MNT1 → 200×5, ZERO alertas (na v0.7.1 invisível; é o RESÍDUO que o F-C15b vai DECLARAR na v0.7.2)
+  [P-R8-11/C15-top5] CONFIRMADO — TOP-5 COM WO (proposta do BUILDER): shutdown do top-5 por kWp (51,7/88,8 = 58,22 por cento ≥ 30) COM WO-20261112-MNT1 → 200×5, ZERO alertas (na v0.7.1 invisível MESMO com 58 por cento da capacidade da frota no chão; é o caso que o gatilho de capacidade do F-C15b vai apanhar na v0.7.2)
+lab v0.7.1 em memória (evidence=False), 12 dispositivos + gate
+
+[P-R8-01] C15 — replay de WO válida aos 12 (DIA)
+  [P-R8-01] CONFIRMADO — PREVISÃO: CONFIRMADO — REPLAY DE WO VÁLIDA (DIA): POST /mode com work_order WO-20261112-MNT1 aos 12 dispositivos → 200×12, frota OFF, ZERO alertas (a WO válida neutraliza a onda, não arma a capacity e não conta no WARN s/WO); snapshots de capacidade com div ≥ 30 saem como evidência SEM alerta (C12: shutdown COM WO não arma) — a mesma WO legítima serve para desligar a frota inteira
+        POST /mode com WO-20261112-MNT1 aos 12: 200×12 — a WO VÁLIDA é aceita por TODOS (membership na lista plana; sem âmbito/janela/usos)
+        frota: 12/12 OFF; eventos shutdown: 12 (TODOS com work_order MNT1)
+        alertas do cenário: ZERO — ZERO: a WO válida neutraliza a onda, não arma a capacity e não conta no WARN s/WO
+        div direta 100.00 por cento (esperado 48.84 kW mantém-se; real 0.00 = 0): snapshots com div ≥ 30: 9 — TODOS sem alerta (C12: shutdown COM WO não arma)
+        CONSEQUÊNCIA: a WO legítima desliga a frota INTEIRA sem um alerta — o C15 existe; a frase do §7 item 8 é FALSA para WO válida (replay)
+
+[P-R8-02] C15 — replay de WO válida aos 12 (NOITE + BLACKOUT)
+  [P-R8-02] CONFIRMADO — PREVISÃO: CONFIRMADO — REPLAY DE WO VÁLIDA (NOITE+BLACKOUT): idem com WO-20261112-MNT2 à NOITE (em NORMAL) → 200×12, ZERO alertas; e SÓ DEPOIS o blackout → 0/12 casas com luz (a frota desliga às escuras sem UM alerta; em BLACKOUT o interlock bloquearia — a sequência do GO mede o dano PRÉ-apagão)
+        idem com WO-20261112-MNT2 à NOITE em NORMAL: 200×12 — o interlock de emergência NÃO bloqueia (eventos interlock_block: 0)
+        frota: 12/12 OFF; eventos shutdown: 12 (TODOS com work_order MNT2)
+        alertas do cenário: ZERO — ZERO
+        casas com luz no apagão: 0/12 (a frota desligada às escuras SEM um alerta)
+        CONSEQUÊNCIA: a SEGUNDA WO da lista tem o MESMO poder — qualquer uma das 2 âncoras desliga a frota num apagão sem telemetria de alerta
+
+[P-R8-03] C15 — reuso da mesma WO 3× no mesmo dispositivo (off/on/off/on/off)
+  [P-R8-03] CONFIRMADO — PREVISÃO: CONFIRMADO — REUSO DA MESMA WO NO MESMO DISPOSITIVO: off/on/off/on/off com WO-20261112-MNT1 no dev 0 → 200×5, ZERO alertas (3 shutdowns COM WO: sem janela, sem contador de usos, sem âncora de confiança alguma)
+        off/on/off/on/off no dev 0 com WO-20261112-MNT1: 200×5 — a MESMA WO 3× no mesmo dispositivo
+        eventos shutdown: 3 (TODOS com a MESMA WO); alertas: ZERO — ZERO (sem contador de usos, sem janela, sem âmbito por dispositivo)
+        CONSEQUÊNCIA: a WO é infinitamente reutilizável no mesmo alvo — replay e reuso são a MESMA evasão não-testada que o design R2 previa
+
+[P-R8-04] C15 — bulk_shutdown do gate com a WO legítima
+  [P-R8-04] PREVISÃO ERRADA (ver detalhe acima) — PREVISÃO: CONFIRMADO — CANAL BULK DO GATE (proposta do BUILDER): /fleet/bulk_shutdown com work_order_id WO-20261112-MNT1 → 200, 12 shutdowns COM WO, ZERO alertas — o próprio canal da cloud desliga a frota com a WO legítima e nenhuma regra vê (o bulk EXIGE WO válida: a exigência é a evasão)
+        /fleet/bulk_shutdown com work_order_id WO-20261112-MNT1: 200 — o gate EXIGE WO válida e despacha aos 12 (statuses [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200])
+        frota: 12/12 OFF; eventos shutdown: 12 COM WO; alertas: [('D-AUTH-DEFAULT', 1)] — ZERO
+        CONSEQUÊNCIA: a EXIGÊNCIA de WO do bulk é a PRÓPRIA evasão — o canal da cloud desliga a frota com a WO legítima e nenhuma regra vê (o atacante É a cloud)
+
+[P-R8-05] C15 — prova estática: a WO não está ligada a nada
+  [P-R8-05] CONFIRMADO — PREVISÃO: CONFIRMADO — PROVA ESTÁTICA DA ÂNCORA VAZIA (proposta do BUILDER): WORK_ORDERS é um dicionário plano de 2 entradas SEM âmbito de dispositivos, SEM janela de validade e SEM contador de usos; o dispositivo e o gate validam APENAS pertença à lista (membership) — a WO não está ligada a nada além do próprio texto
+        zona WORK_ORDERS: 2 entradas, SEM chaves de âmbito (devices), janela (window) ou usos (max_uses/uses) — âncora PLANA: True
+        zona Device.remote_inverter_power_off: valida APENAS membership (True) sem relógio (sim_ts ausente: True)
+        zona FleetGate.check_work_order: True — a MESMA validação de pertença, nada mais
+        CONSEQUÊNCIA: a WO é uma STRING SOLTA — não está ligada a dispositivo, tempo ou uso; qualquer replay da string é indistinguível do uso legítimo
+
+[P-R8-06] C15 — a segunda entrada (6 shutdowns COM MNT2)
+  [P-R8-06] CONFIRMADO — PREVISÃO: CONFIRMADO — A SEGUNDA ENTRADA TAMBÉM É ÂNCORA VAZIA (proposta do BUILDER): 6 shutdowns COM WO-20261112-MNT2 → 200×6, ZERO alertas (qualquer uma das 2 WOs neutraliza a onda; 6 shutdowns COM WO não acendem wave/slow/capacity — a cegueira é por neutralização, não por volume)
+        6 shutdowns COM WO-20261112-MNT2: 200×6; 6/12 OFF; alertas: ZERO — ZERO (a MESMA cegueira com a OUTRA WO da lista: 6 shutdowns COM WO não acendem wave/slow/capacity)
+        CONSEQUÊNCIA: não é um defeito de UMA entrada — a SEMÂNTICA de work-order da v0.7.1 (membership numa lista plana) é a âncora vazia
+
+[P-R8-07] C15 — janela de validade (relógio +40 dias)
+  [P-R8-07] CONFIRMADO — PREVISÃO: CONFIRMADO — JANELA DE VALIDADE INEXISTENTE (proposta do BUILDER): com o relógio de simulação +40 dias, shutdown COM WO-20261112-MNT1 → 200 e EXECUTA (a WO não expira: uma WO de 12-11 serve para sempre)
+        relógio de simulação +40 dias: shutdown COM WO-20261112-MNT1 no dev 3 → 200 e EXECUTA (dev 3 OFF: True) — a WO datada de 12-11 NÃO EXPIRA
+        alertas: ZERO — ZERO
+        CONSEQUÊNCIA: sem janela de validade, a WO é uma credencial PERPÉTUA — o replay não tem prazo
+
+[P-R8-08] C15 — usos (a mesma WO 4×)
+  [P-R8-08] CONFIRMADO — PREVISÃO: CONFIRMADO — USOS ILIMITADOS (proposta do BUILDER): a MESMA WO-20261112-MNT2 4× no mesmo dispositivo → 200×4, 4 eventos shutdown, ZERO alertas (sem contador de usos a WO é infinitamente reutilizável)
+        a MESMA WO-20261112-MNT2 4× no dev 0: 200×4; eventos shutdown: 4; alertas: ZERO — ZERO (sem contador de usos a WO é infinitamente reutilizável)
+        CONSEQUÊNCIA: o reuso ILIMITADO confirma por medição o que o GO mediu com 3 usos — não há rate-limiting semântico na WO
+
+[P-R8-09] C15 — baseline: pequena manutenção COM WO (2 dispositivos)
+  [P-R8-09] CONFIRMADO — PREVISÃO: CONFIRMADO — BASELINE DE PEQUENA MANUTENÇÃO (proposta do BUILDER): 2 shutdowns COM WO-20261112-MNT1 (devs 0 e 2) → 200×2, ZERO alertas — o caso legítimo de manutenção pontual é INDISTINGUÍVEL do abuso na v0.7.1 (mesma telemetria, mesmos alertas: nenhum)
+        2 shutdowns COM WO-20261112-MNT1 (devs 0 e 2): 200×2; alertas: ZERO — ZERO
+        CONSEQUÊNCIA: o caso LEGÍTIMO (manutenção pontual) e o ABUSO (P-R8-01) produzem a MESMA telemetria na v0.7.1 — nenhum alerta em ambos; a discriminação por WO sozinha é impossível por construção
+
+[P-R8-10] C15 — subset pequeno COM WO (5 menores, 25,68 por cento < 30)
+  [P-R8-10] CONFIRMADO — PREVISÃO: CONFIRMADO — SUBSET PEQUENO COM WO (proposta do BUILDER): shutdown dos 5 MENORES por kWp (22,8/88,8 = 25,68 por cento < 30) COM WO-20261112-MNT1 → 200×5, ZERO alertas (na v0.7.1 invisível; é o RESÍDUO que o F-C15b vai DECLARAR na v0.7.2)
+        5 MENORES por kWp [10, 2, 6, 5, 1] (=22.80 kWp = 25.68 por cento < 30): shutdowns COM WO-20261112-MNT1 → 200×5; alertas: ZERO — ZERO
+        CONSEQUÊNCIA: subset pequeno COM WO é invisível na v0.7.1 — é o RESÍDUO que o F-C15b vai MEDIR e DECLARAR na v0.7.2 (< k dispositivos e < 30 por cento de capacidade com WO válida de âmbito correto)
+
+[P-R8-11] C15 — top-5 COM WO (58,22 por cento ≥ 30)
+  [P-R8-11] CONFIRMADO — PREVISÃO: CONFIRMADO — TOP-5 COM WO (proposta do BUILDER): shutdown do top-5 por kWp (51,7/88,8 = 58,22 por cento ≥ 30) COM WO-20261112-MNT1 → 200×5, ZERO alertas (na v0.7.1 invisível MESMO com 58 por cento da capacidade da frota no chão; é o caso que o gatilho de capacidade do F-C15b vai apanhar na v0.7.2)
+        top-5 por kWp [4, 11, 0, 8, 3] (=51.70 kWp = 58.22 por cento ≥ 30): shutdowns COM WO-20261112-MNT1 → 200×5; alertas: ZERO — ZERO (58 por cento da capacidade no chão SEM um alerta)
+        CONSEQUÊNCIA: o gatilho de CAPACIDADE do F-C15b (perda ≥ 30 por cento MESMO com WO válida) é o que fecha este caso na v0.7.2 — 5 dispositivos < k=6 mas 58,22 por cento da frota
+
+SUMÁRIO — GATEFALL R8 vs alvo V071 (run 20261113T195921Z-174cbc)
+  [P-R8-01] CONFIRMADO
+  [P-R8-02] CONFIRMADO
+  [P-R8-03] CONFIRMADO
+  [P-R8-04] PREVISÃO ERRADA (ver detalhe acima)
+  [P-R8-05] CONFIRMADO
+  [P-R8-06] CONFIRMADO
+  [P-R8-07] CONFIRMADO
+  [P-R8-08] CONFIRMADO
+  [P-R8-09] CONFIRMADO
+  [P-R8-10] CONFIRMADO
+  [P-R8-11] CONFIRMADO
+RESULTADO: 10/11 previsões confirmadas (lab v0.7.1)
+RC=1 — há previsões erradas REGISTADAS (método: nunca se ajusta o probe para bater).

@@ -1,0 +1,75 @@
+SUNSTRIKE probes R4 v0.5.1 (penta-target V04/V05/V06/V07/V071; reconstrucao pos-incidente INFRA-2026-13-11-B) — run 20261113T195803Z-3c39de (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V072 (hash 1c433df138b90ba8…)
+
+GATEFALL — PREVISÕES PRÉ-REGISTADAS (antes de qualquer execução)
+contra sunstrike_lab.py v0.6 (o DEPOIS da R5) (hash 1c433df138b90ba8…)
+  [P-R4-01/C10+limite] RESOLVIDO — IGUAL à v0.6/v0.7 (limite diário INTACTO na v0.7.1): fatia 40% executa (100→60), fatia 34% → 409 daily ×12 (40+34 > 40); SEM cumulativa; apagão 1h NOITE: 12/12 servidas, SoC min ~28.75, ZERO eventos de clamp — nenhuma casa às escuras; a DRAIN-TO-LOW fica CALADA (fatia executada aterra 60 > 35; o esvaziamento no apagão é consumo LOCAL em ilha)
+  [P-R4-02/C10 causa 1] RESOLVIDO — o measure v0.7.1 mantém o atacante pré-posicionado: o PRIMEIRO /battery vem ANTES de set_state("BLACKOUT") (braços (b)/(c)/(d) com minutos por casa)
+  [P-R4-03/C10 causa 2] RESOLVIDO — critério idêntico ao V05/V06/V07 (a semântica do step_island não mudou na v0.7.1): ilha + deficit desce ATRAVÉS do floor (28.0 → 24.9136) com a carga servida; consumo LOCAL em ilha NÃO entra na DRAIN-TO-LOW (provenance ≠ remote_command)
+  [P-R4-04/§4.7.2] OK — guarda de regressão (critério idêntico): 999 → 409 floor; fatia que cruza o floor → 409 floor (veri-ficado ANTES do limite diário); SoC intacto; regra BELOW-FLOOR no scan
+  [P-R4-05/C4+limite] RESOLVIDO — IGUAL à v0.6/v0.7: a fatia 40% executa (200) e a 34% dá 409 daily; a única de 60% dá 409 daily TAMBÉM (nem executa); cumulativa e por-operação ausentes (2 eventos remote_daily_limit_block). NOTA v0.7.1: a DRAIN-TO-LOW (que SUBSTITUIU a MULTIDAY) fica CALADA — as fatias executadas aterram SoC 60/100 > 35 e as bloqueadas não emitem param_change
+  [P-R4-06/FP] DECLARADO — IGUAL à v0.6/v0.7: o legítimo de 43.86% dá 409 daily (custo declarado da opção 1); o fluxo /local_confirm abaixo do floor mantém 200/200; ZERO alertas de regra (43.86% num só dia NÃO arma nada; /local_confirm é provenance local_confirm: FORA do ramo da DRAIN-TO-LOW)
+GATEFALL v0.6 pré-registado na entrada v0.3 do changelog do probe, ANTES
+desta corrida (não-regressão da v0.6 + guardas §4.7.2/C10/C4). O GATEFALL
+OFICIAL da R4 é o RUN 1 contra a v0.4; esta corrida é a NÃO-REGRESSÃO da
+v0.6 (cada fix da R5 tem de manter os veredictos da R4 no V05). C5/C6/C9/H7/I2/I3/I6/C11/J3
+ficam para a ronda seguinte.
+
+lab v0.7.2 em memoria (evidence=False), 12 dispositivos + gate
+
+[P-R4-01] C10 — H5 pré-posicionado: a headline não aguenta
+  [P-R4-01] RESOLVIDO — PREVISÃO: RESOLVIDO — IGUAL à v0.6/v0.7 (limite diário INTACTO na v0.7.1): fatia 40% executa (100→60), fatia 34% → 409 daily ×12 (40+34 > 40); SEM cumulativa; apagão 1h NOITE: 12/12 servidas, SoC min ~28.75, ZERO eventos de clamp — nenhuma casa às escuras; a DRAIN-TO-LOW fica CALADA (fatia executada aterra 60 > 35; o esvaziamento no apagão é consumo LOCAL em ilha)
+        fatias: 40%% → 200 ×12 (SoC 100→60, ledger 40); 34%% → 409 remote_discharge_daily_limit ×12 (used 40+34 > 40) — o limite diário ENCERRA a evasão fatiada que sobreviveu ao C4/C10
+        SoC pós-ataque: min=60.00 max=60.00 (~60% em TODAS, não ~26%)
+        alertas ANTES do apagão: [] — SEM cumulativa (superssenção datada: com o limite ativo, DRAIN-LARGE e CUMULATIVE são inatingíveis por remote_command; o bloqueio diário é PREVENÇÃO, o evento é a deteção)
+        apagão 1h NOITE: carga servida 12/12, SoC min 28.75 (a casa 3.2 kWp: 60 − 100/3.2 = 28.75; NENHUMA casa chega ao mínimo técnico 5.0 — eventos de clamp=0)
+        alertas do cenário: []
+        o outcome do C10 fica RESOLVIDO COM MARGEM: com o limite diário + reserva usável até 5%%, o apagão de 1 h deixa de pôr QUALQUER casa às escuras neste cenário
+
+[P-R4-02] C10 causa 1 — o measure não inclui o atacante pré-posicionado (leitura estática)
+  [P-R4-02] RESOLVIDO — PREVISÃO: RESOLVIDO — o measure v0.7.1 mantém o atacante pré-posicionado: o PRIMEIRO /battery vem ANTES de set_state("BLACKOUT") (braços (b)/(c)/(d) com minutos por casa)
+        run_measure: ORDEM DE EXECUÇÃO — atk = attack_b(label) é chamado ANTES de blackout_set() nos DOIS sítios (braço (b) de cada duração e dia 2 do atacante (c)); o helper blackout_set() apenas encapsula o set_state("BLACKOUT") que a v0.5 tinha inline
+        o measure v0.6 mede a CURVA de durações (30 min…3 h) com MINUTOS de luz por casa (J1/J2) em 4 braços, com o atacante (b) pré-posicionado em TODOS, e o atacante (c) de 2 dias (40%%/dia com dia de sol entre eles, recarga grid-tied J4 contando a favor da defesa)
+        não-regressão: a causa 1 do C10 (measure cego) continua RESOLVIDA na v0.7.1
+
+[P-R4-03] C10 causa 2 — a reserva de 25% nunca pode ser usada pela casa
+  [P-R4-03] RESOLVIDO — PREVISÃO: RESOLVIDO — critério idêntico ao V05/V06/V07 (a semântica do step_island não mudou na v0.7.1): ilha + deficit desce ATRAVÉS do floor (28.0 → 24.9136) com a carga servida; consumo LOCAL em ilha NÃO entra na DRAIN-TO-LOW (provenance ≠ remote_command)
+        ilha + deficit (NOITE, 600 s): SoC 28.0 → 24.9136 — a semântica do step_island NÃO mudou na v0.7.1 (critério IDÊNTICO ao V05)
+        carga local servida: 1.20 kW (= LOAD_LOCAL); eventos clamp: floor=0, island_min=0 — a reserva continua USÁVEL pela casa até ISLAND_MIN_SOC 5.0
+        o limite diário da v0.6 conta apenas provenance remote_command: o consumo da CASA em ilha (este teste) NÃO entra no ledger diário por construção
+        não-regressão: a causa 2 do C10 continua RESOLVIDA
+
+[P-R4-04] §4.7.2 — invariante do floor REMOTO (guarda de regressão)
+  [P-R4-04] OK — PREVISÃO: OK — guarda de regressão (critério idêntico): 999 → 409 floor; fatia que cruza o floor → 409 floor (veri-ficado ANTES do limite diário); SoC intacto; regra BELOW-FLOOR no scan
+        force_export 999 sem /local_confirm → 409 (min_emergency_soc_floor); fatia que cruzaria o floor (30→10) → 409; SoC intacto 30.00
+        floor_block auditados: 2; scan: [('D-BATTERY-DRAIN-BELOW-FLOOR', 2)]
+        invariante selada §4.7.2 SEGURA na v0.7.1: o limite diário continua verificado DEPOIS do floor (999 → 409 floor com BELOW-FLOOR preservado) — o F-C13/F-K1/F-C14/F-SP NÃO mexeu na ordem floor→daily
+
+[P-R4-05] C4 — descarga fatiada (cada <50%) evade TODAS as regras
+  [P-R4-05] RESOLVIDO — PREVISÃO: RESOLVIDO — IGUAL à v0.6/v0.7: a fatia 40% executa (200) e a 34% dá 409 daily; a única de 60% dá 409 daily TAMBÉM (nem executa); cumulativa e por-operação ausentes (2 eventos remote_daily_limit_block). NOTA v0.7.1: a DRAIN-TO-LOW (que SUBSTITUIU a MULTIDAY) fica CALADA — as fatias executadas aterram SoC 60/100 > 35 e as bloqueadas não emitem param_change
+        fatias na casa sunbox-03: SoC [100.0, 60.0, 60.0] — a de 40% executa (200) e a de 34% dá 409 remote_discharge_daily_limit (used 40+34 = 74 > 40)
+        operação única de 60% na casa sunbox-04: 409 daily TAMBÉM (60 > 40 — NEM EXECUTA: DRAIN-LARGE fica INATINGÍVEL por remote_command com o limite ativo)
+        alertas do cenário: [] — cumulativa e por-operação AUSENTES (superssenção datada no lab; o bloqueio diário é PREVENÇÃO, os 2 eventos remote_daily_limit_block são a deteção)
+        RULE_ATTACK_MAP: 24 regras (regra cumulativa PRESENTE mas inatingível neste cenário); limite diário 40% /86400 s por remote_command
+
+[P-R4-06] FP — operações legítimas: silêncio por cegueira na v0.4
+  [P-R4-06] DECLARADO — PREVISÃO: DECLARADO — IGUAL à v0.6/v0.7: o legítimo de 43.86% dá 409 daily (custo declarado da opção 1); o fluxo /local_confirm abaixo do floor mantém 200/200; ZERO alertas de regra (43.86% num só dia NÃO arma nada; /local_confirm é provenance local_confirm: FORA do ramo da DRAIN-TO-LOW)
+        export legítimo (2.0 kWh = 43.86%): 409 daily — 43.86 > 40: o limite diário ATINGE também os legítimos (custo DECLARADO da opção 1)
+        o fluxo abaixo do floor COM /local_confirm mantém-se 200 → 200 — a exceção exclusiva §4.7.2 está INTACTA (provenance local_confirm, fora do ledger diário)
+        alertas do cenário: [] — ZERO alertas de REGRA (o evento remote_daily_limit_block é deteção do bloqueio, não regra; nenhuma regra nova por escopo do GO)
+        consequência declarada no GO: operações legítimas >40%%/dia passam a exigir /local_confirm — o J3 (FP WARN) morre por saturação mas nasce o atrito da confirmação física; fica DECLARADO
+
+========================================================================
+SUMÁRIO GATEFALL — previsão PRÉ-registada vs veredicto OBSERVADO
+========================================================================
+  [P-R4-01/C10+limite] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R4-02/C10 causa 1] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R4-03/C10 causa 2] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R4-04/§4.7.2] previsto: OK | observado: OK
+  [P-R4-05/C4+limite] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R4-06/FP] previsto: DECLARADO | observado: DECLARADO
+------------------------------------------------------------------------
+PREVISÕES CONFIRMADAS contra a v0.7.2 (V072): 6/6
+PREVISÕES ERRADAS: 0
+LAB ALVO: v0.7.2 (V072), hash 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4 (INTOCADA — verificado no arranque)
+GATEFALL OFICIAL da R4 = RUN 1 contra a v0.4. ESTE run contra a v0.6 é a NÃO-REGRESSÃO da R5 (previsões V06 pré-registadas na entrada v0.3 do changelog do probe, ANTES desta corrida): o limite diário mantém o C10 resolvido COM MARGEM, as guardas §4.7.2/C10-causa-2 ficam VERDES e o custo da opção 1 nos legítimos fica DECLARADO; C5/C6/C9/H7/I2/I3/I6/C11/J3 ficam para a ronda seguinte.

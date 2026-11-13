@@ -1,0 +1,99 @@
+SUNSTRIKE probes R7 v0.4 (tri-target V07/V071/V072; nao-regressao da v0.7.2, GO 13-11 ~19:30) — run 20261113T195604Z-4dd0e9 (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V072 (hash 1c433df138b90ba8…)
+NOTA v0.4 (display, datada): este run e a NAO-REGRESSAO da v0.7.2; as previsoes SAO as da lista V071 (F-C13/F-K1/F-C14/F-SP mantem-se; o r7 nao exercita nenhum cenario afetado pelo F-C15a/F-C15b — ver changedlog v0.4). Linhas de evidencia herdam o rotulo V071 onde o display era partilhado: rotulagem, nao criterio.
+
+GATEFALL V071 — PREVISÕES RE-REGISTADAS NESTE FICHEIRO (v0.3, reconstrução pós-INFRA-2026-13-11-B) ANTES de qualquer corrida contra a v0.7.1: as MESMAS do GO à v0.7.1 (fixes F-C13/F-K1/F-C14/F-SP; critério estático do P-R7-01 pelo MÉTODO desde o início — lição do run 2 perdido)
+contra sunstrike_lab.py V072 (hash 1c433df138b90ba8…)
+  [P-R7-01/C13] RESOLVIDO — F-C13: POST /mode com work_order "WO-INVENTADA-123" aos 12 → 403×12 + evento work_order_invalid ×12 (provenance remote_command), frota ON (o shutdown NÃO executa; ZERO eventos shutdown), WARN D-INVALID-WORK-ORDER count 12, SEM capacity/onda/snapshots com div >= 30 (div 0: a frota segue ON) — a evasão por WO falsa FECHA; §7 item 8 CORRIGIDO
+  [P-R7-02/K1-b-3d] RESOLVIDO — F-K1: as MESMAS 3 fatias × 23,3% executam (200×36; 23,3 <= 40 daily, 30,1 > 25 floor) MAS a fatia do dia 3 ATERRA SoC 30,1 <= 35 → D-BATTERY-DRAIN-TO-LOW CRIT count 12 PRÉ-apagão (o atacante lento fica VISÍVEL); SoC [76,7; 53,4; 30,1]; apagão 1 h 10/12, 2 h 5/12, 3 h 1/12 (o served NÃO muda — previsão honesta do GO confirmada)
+  [P-R7-03/K1-b-4d] RESOLVIDO — F-K1: 4 dias × 18,7% → 200×48; a fatia do dia 4 ATERRA SoC 25,2 <= 35 → D-BATTERY-DRAIN-TO-LOW CRIT count 12 (dias 1-3: 81,3/62,6/43,9 > 35, caladas); apagão 1 h 9/12, 2 h 3/12
+  [P-R7-04/K1-c] RESOLVIDO — F-K1/K1-c: o dono 25%/dia × 3 dias COM recarga solar → SoC 100 ao fim de cada dia → ZERO alertas (a D-BATTERY-DRAIN-TO-LOW mede o SoC RESULTANTE da descarga executada — 75 > 35; a MULTIDAY de VOLUME foi SUBSTITUÍDA) — o FP morre na semântica: o que posiciona um apagão é o ESTADO, não o volume
+  [P-R7-05/C14-5noite] RESOLVIDO — F-C14: 5 shutdowns s/WO à noite continuam a EXECUTAR (200×5; WO ausente mantém) MAS ficam VISÍVEIS: WARN D-REMOTE-SHUTDOWN-NO-WO count 5 POR EVENTO, < k=6, à NOITE; no apagão 1 h 7/12 com luz (os 5 desligados às escuras); o CRIT noturno da capacity CONTINUA DECLARADO (cegueira física)
+  [P-R7-06/C14-7x61] RESOLVIDO — F-C14: DIA → CAPACITY CRIT div 74,3% (C12 intacto) + WARN NO-WO ×7; NOITE → WARN D-REMOTE-SHUTDOWN-NO-WO count 7 (v0.7: ZERO) — o mesmo ataque deixa de ser invisível à noite; o CRIT noturno continua DECLARADO
+  [P-R7-07/FP-SP-frota] RESOLVIDO — F-SP: export_limit 60% na frota inteira COM WO válida WO-20261112-MNT1 → 200×12 + div 40% MAS SEM CRIT (o param_change carrega a WO; o arming exige setpoint s/WO); e o MESMO setpoint SEM WO → CRIT MANTÉM (resíduo DECLARADO p/ v0.8 — o dono tem de usar a WO, que agora existe)
+  [P-R7-08/FP-SP-6] RESOLVIDO — F-SP: 6 inversores a 60% COM WO válida → 200×6, ZERO alertas (div 20,68% < 30 E a WO não arma)
+NOTA DO INCIDENTE INFRA-2026-13-11-B (13-11 ~18:23): o 2.º reset do ambiente PERDEU o lab v0.7.1 (00e2254f…), o probe dual v0.2-bis.1 (cab5d77b…) e os runs 2/2-b/re-check originais (0366e01a… 7/8+1 critério PRESERVADO na altura, be464ea0… 8/8, 535ad1b9… 8/8). O lab foi restaurado por REPLAY dos scripts de edição preservados + errata J5 re-aplicada (72c894fe…; selftest re-executado BYTE-IDÊNTICO afb98d0c…). ESTE run re-executado é o OFICIAL da recuperação; se divergir das previsões, fica registado como previsão errada — este probe NÃO se ajusta para bater.
+
+lab v0.7.2 em memoria (evidence=False), 12 dispositivos + gate
+
+[P-R7-01] C13 — o dispositivo NÃO valida a work_order
+  [P-R7-01] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C13: POST /mode com work_order "WO-INVENTADA-123" aos 12 → 403×12 + evento work_order_invalid ×12 (provenance remote_command), frota ON (o shutdown NÃO executa; ZERO eventos shutdown), WARN D-INVALID-WORK-ORDER count 12, SEM capacity/onda/snapshots com div >= 30 (div 0: a frota segue ON) — a evasão por WO falsa FECHA; §7 item 8 CORRIGIDO
+        POST /mode {"action":"inverter_power_off", "work_order":"WO-INVENTADA-123"} aos 12: 403×12 — a WO é VALIDADA pelo device (F-C13: a MESMA lista WORK_ORDERS do gate, uma fonte só) e REJEITADA com 403 + evento work_order_invalid ×12
+        frota: 0/12 inversores OFF — ZERO: o shutdown NÃO executa (eventos shutdown no cenário: 0); a frota fica ON com a bateria intacta
+        alertas do cenário: [('D-INVALID-WORK-ORDER', 12)] — WARN D-INVALID-WORK-ORDER count 12 POR EVENTO (a tentativa é VISÍVEL com o ataque MORTO); SEM capacity/onda (div 0.00; snapshots com div >= 30: 0)
+        prova estática (critério v0.3): WORK_ORDERS na zona do MÉTODO Device.remote_inverter_power_off (a validação vive no método, não no handler): True
+        CONSEQUÊNCIA: a evasão por WO falsa FECHA o C13 — a frase do §7 item 8 volta a ser VERDADE (CORRIGIDA pelo GO à v0.7.1)
+
+[P-R7-02] K1-b — mais lento que a janela de 72 h (3 dias)
+    P-R7-02a: 3 fatias → SoC (30.07, 30.13); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão  60 min: served 10/12 (prev 10)
+    P-R7-02b: 3 fatias → SoC (30.07, 30.13); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão 120 min: served  5/12 (prev  5)
+    P-R7-02c: 3 fatias → SoC (30.07, 30.13); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão 180 min: served  1/12 (prev  1)
+  [P-R7-02] RESOLVIDO — PREVISÃO: RESOLVIDO — F-K1: as MESMAS 3 fatias × 23,3% executam (200×36; 23,3 <= 40 daily, 30,1 > 25 floor) MAS a fatia do dia 3 ATERRA SoC 30,1 <= 35 → D-BATTERY-DRAIN-TO-LOW CRIT count 12 PRÉ-apagão (o atacante lento fica VISÍVEL); SoC [76,7; 53,4; 30,1]; apagão 1 h 10/12, 2 h 5/12, 3 h 1/12 (o served NÃO muda — previsão honesta do GO confirmada)
+        200×36 em CADA sub-cenário (3 fatias × 12 devs; 23,3% ≤ 40 do daily e 30,1 > 25 do floor: TUDO executa)
+        SoC fim de cada dia: [('76.69', '76.71'), ('53.38', '53.42'), ('30.07', '30.13')] (prev [76,7; 53,4; 30,1]) — 100−23,3 por dia, SEM dia de sol
+        alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)] — a fatia do dia 3 ATERRA 30,1 <= LOW_SOC_ALERT_PCT 35 → a nova regra DISPARA count 12; os dias 1-2 (76,7/53,4 > 35) ficam calados
+        apagão NOITE: 1 h 10/12 (prev 10), 2 h 5/12 (prev 5), 3 h 1/12 (prev 1) — minutos = 15,06·kwp: a 1 h falham 3,2/3,8 kWp, a 2 h falham os ≤ 7,5 kWp, a 3 h só o 12,0 kWp (180,7 min) passa
+        RESOLVIDO (F-K1): a fatia do dia 3 ATERRA 30,1 <= 35 → D-BATTERY-DRAIN-TO-LOW CRIT count 12 PRÉ-apagão — o atacante lento fica VISÍVEL (alertas: [('D-BATTERY-DRAIN-TO-LOW', 12)])
+
+[P-R7-03] K1-b — mais lento que a janela de 72 h (4 dias)
+    P-R7-03a: 4 fatias → SoC (25.16, 25.24); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão  60 min: served  9/12 (prev  9)
+    P-R7-03b: 4 fatias → SoC (25.16, 25.24); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão 120 min: served  3/12 (prev  3)
+  [P-R7-03] RESOLVIDO — PREVISÃO: RESOLVIDO — F-K1: 4 dias × 18,7% → 200×48; a fatia do dia 4 ATERRA SoC 25,2 <= 35 → D-BATTERY-DRAIN-TO-LOW CRIT count 12 (dias 1-3: 81,3/62,6/43,9 > 35, caladas); apagão 1 h 9/12, 2 h 3/12
+        200×48 em CADA sub-cenário (4 fatias × 12 devs)
+        SoC fim de cada dia: [('81.29', '81.31'), ('62.58', '62.62'), ('43.87', '43.93'), ('25.16', '25.24')] — fim do dia 4: 25,2 (43,9 − 18,7 = 25,2 > floor 25 por 0,2 pontos: a última fatia EXECUTA por pouco)
+        alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)] — só a fatia do dia 4 ATERRA 25,2 <= 35 (dias 1-3: 81,3/62,6/43,9 > 35, caladas)
+        apagão NOITE: 1 h 9/12 (prev 9), 2 h 3/12 (prev 3) — minutos = 12,12·kwp: a 1 h falham 3,2/3,8/4,4 kWp; a 2 h passam só 10,5/11,4/12,0 kWp
+        RESOLVIDO (F-K1): a fatia do dia 4 ATERRA 25,2 <= 35 → D-BATTERY-DRAIN-TO-LOW CRIT count 12 — os dias 1-3 (81,3/62,6/43,9 > 35) ficam calados (alertas: [('D-BATTERY-DRAIN-TO-LOW', 12)])
+
+[P-R7-04] K1-c — dono que RECARREGA dispara a MULTIDAY
+  [P-R7-04] RESOLVIDO — PREVISÃO: RESOLVIDO — F-K1/K1-c: o dono 25%/dia × 3 dias COM recarga solar → SoC 100 ao fim de cada dia → ZERO alertas (a D-BATTERY-DRAIN-TO-LOW mede o SoC RESULTANTE da descarga executada — 75 > 35; a MULTIDAY de VOLUME foi SUBSTITUÍDA) — o FP morre na semântica: o que posiciona um apagão é o ESTADO, não o volume
+        dono: 25%/dia × 3 dias COM recarga solar de 12 h entre dias (J4): 200×36, SoC ao fim de cada dia [('100.00', '100.00'), ('100.00', '100.00'), ('100.00', '100.00')] — a bateria está CHEIA em TODAS as medições
+        regra MULTIDAY na v0.7.1: SUBSTITUÍDA pela D-BATTERY-DRAIN-TO-LOW (F-K1) — não existe no detetor; com SoC 100 nada dispara (alertas: ZERO)
+        outros alertas: ZERO — é UM CRIT de frota para um uso diário LEGÍTIMO com recarga
+        RESOLVIDO (F-K1): ZERO alertas com SoC 100 (ZERO) — a DRAIN-TO-LOW mede o SoC RESULTANTE (75 > 35 após a fatia) e a MULTIDAY de VOLUME foi SUBSTITUÍDA: o FP K1-c MORRE na semântica — o que posiciona um apagão é o ESTADO, não o volume
+
+[P-R7-05] C14 — 5 shutdowns s/WO à noite: invisíveis
+  [P-R7-05] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C14: 5 shutdowns s/WO à noite continuam a EXECUTAR (200×5; WO ausente mantém) MAS ficam VISÍVEIS: WARN D-REMOTE-SHUTDOWN-NO-WO count 5 POR EVENTO, < k=6, à NOITE; no apagão 1 h 7/12 com luz (os 5 desligados às escuras); o CRIT noturno da capacity CONTINUA DECLARADO (cegueira física)
+        top-5 por kWp desligado à NOITE (5 < WAVE_K=6: sem onda; 5 < SLOW_K=8: sem slow): devs [4, 11, 0, 8, 3] = 51.7/88,8 kWp = 58.2% — todos 200
+        alertas do cenário: [('D-REMOTE-SHUTDOWN-NO-WO', 5)] — a capacity está CEGA à noite por construção (esperado = kwp × irr(0) = 0 → div 0), a onda exige k=6 e o slow k=8
+        apagão 1 h: served 7/12 (prev 7) — os 5 desligados ficam às ESCURAS com a bateria CHEIA (o C12 da v0.7 via shutdowns de DIA, não de noite)
+        RESOLVIDO (F-C14): WARN D-REMOTE-SHUTDOWN-NO-WO count 5 POR EVENTO — o subconjunto noturno fica VISÍVEL abaixo de k=6 (alertas: [('D-REMOTE-SHUTDOWN-NO-WO', 5)]); o CRIT noturno da capacity CONTINUA DECLARADO (cegueira física: à noite div=0)
+
+[P-R7-06] C14 — 7 shutdowns espaçados 61 min: DIA vs NOITE
+    dia: 7×200=True, div 74.32%, capacity 1, onda/slow 0
+    noite: 7×200=True, div 0.00%, capacity 0, onda/slow 0
+  [P-R7-06] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C14: DIA → CAPACITY CRIT div 74,3% (C12 intacto) + WARN NO-WO ×7; NOITE → WARN D-REMOTE-SHUTDOWN-NO-WO count 7 (v0.7: ZERO) — o mesmo ataque deixa de ser invisível à noite; o CRIT noturno continua DECLARADO
+        top-7 por kWp desligado SEM work-order, espaçados 61 min (SIM_CLOCK_OFFSET): devs [4, 11, 0, 8, 3, 7, 9] = 66.0/88,8 kWp = 74.32%
+        espaçamento 61 min > WAVE_WINDOW 60 s (sem onda) e > SLOW_WINDOW 3600 s/60 (máx 1-2 no horizonte, sem slow): zero onda/slow nos DOIS sub-cenários
+        DIA: D-CAPACITY-DIVERGENCE CRIT DISPARA (1 alerta(s)) com div direta 74.32% (prev 74,3%) — o fix C12 da v0.7 FUNCIONA de dia (o shutdown s/WO ARMA e o esperado mantém-se com os inversores OFF)
+        NOITE: alertas do cenário: [('D-REMOTE-SHUTDOWN-NO-WO', 7)] — WARN D-REMOTE-SHUTDOWN-NO-WO count 7 POR EVENTO (a capacity segue cega por construção: div 0; a onda/slow não chegam a k pelo espaçamento)
+        RESOLVIDO (F-C14): DIA → CAPACITY CRIT div 74.32% (C12 intacto) + WARN NO-WO count 7; NOITE → WARN D-REMOTE-SHUTDOWN-NO-WO count 7 (v0.7: ZERO) — o mesmo ataque deixa de ser invisível à noite; o CRIT noturno continua DECLARADO
+
+[P-R7-07] FP-SP — setpoint de frota legítimo → CRIT
+  [P-R7-07] RESOLVIDO — PREVISÃO: RESOLVIDO — F-SP: export_limit 60% na frota inteira COM WO válida WO-20261112-MNT1 → 200×12 + div 40% MAS SEM CRIT (o param_change carrega a WO; o arming exige setpoint s/WO); e o MESMO setpoint SEM WO → CRIT MANTÉM (resíduo DECLARADO p/ v0.8 — o dono tem de usar a WO, que agora existe)
+        export_limit 60% em TODOS os 12 (via /setpoint, COM work-order válida WO-20261112-MNT1 — o endpoint passa a ACEITAR o campo, F-SP): 200×12 — a operação de frota legítima PROVA a legitimidade
+        div direta 40.01% (esperado 48.84 kW, real 29.30 kW) — cruza os 30% MAS o param_change carrega a WO → o arming NÃO arma: 0 alerta(s) (o CRIT morre; SEM WO o mesmo setpoint dá CRIT — ver P-R7-07b: cap07b=1)
+        curtailment-wave: ZERO — ZERO (60% > CURTAIL_SETPOINT_MAX=50: a regra de onda de curtailment não conta setpoints de 60%)
+        RESOLVIDO (F-SP): 200×12 COM WO válida WO-20261112-MNT1 e div 40.01% MAS SEM CRIT (param_change carrega a WO: WO em 12/12; o arming exige setpoint s/WO); e SEM WO o MESMO setpoint ARMA → CRIT mantém (cap07b=1) — o resíduo SEM WO fica DECLARADO p/ v0.8
+
+[P-R7-08] FP-SP — 6 inversores a 60%: sem alerta
+  [P-R7-08] RESOLVIDO — PREVISÃO: RESOLVIDO — F-SP: 6 inversores a 60% COM WO válida → 200×6, ZERO alertas (div 20,68% < 30 E a WO não arma)
+        devs 0-5 a 60% (kwp [10.5, 6.0, 3.8, 8.2, 12.0, 5.4]): 200×6 — o setpoint parcial também é uma operação legítima
+        div direta 20.68% (prev 20,68%) < 30 → ZERO alertas no cenário: ZERO
+        CORREÇÃO DO SUPERVISOR AO GEMINI: com 6 inversores a 60% NÃO há CRIT (20,68% < 30%) — a parte do achado R6-03 que dizia CRIT aqui estava ERRADA; o FP real é o da frota INTEIRA (P-R7-07) — RESOLVIDO na v0.7.1: a WO válida não arma (F-SP) e o div 20,68% < 30 mantém ZERO alertas
+
+========================================================================
+SUMÁRIO — GATEFALL R7 vs alvo V072 (run pós-INFRA-2026-13-11-B)
+  [P-R7-01/C13] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-02/K1-b-3d] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-03/K1-b-4d] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-04/K1-c] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-05/C14-5noite] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-06/C14-7x61] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-07/FP-SP-frota] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R7-08/FP-SP-6] previsto: RESOLVIDO | observado: RESOLVIDO
+------------------------------------------------------------------------
+PREVISÕES CONFIRMADAS contra a v0.7.2 (V072): 8/8
+PREVISÕES ERRADAS: 0
+LAB ALVO: v0.7.2 (V072), hash 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4 (INTOCADA — verificado no arranque)
+ESTE É O RUN vs v0.7.1 RE-EXECUTADO (reconstrução pós-INFRA-2026-13-11-B; probe v0.3). Os runs ORIGINAIS contra a v0.7.1 do v0.2-bis.1 perdido — run 2: 7/8 RESOLVIDO + P-R7-01 errada por DEFEITO DE CRITÉRIO (prova estática na zona ERRADA; output 0366e01a…, PRESERVADO como oficial na altura), errata datada e run 2-b: 8/8 (be464ea0…), re-check vs v0.7: 8/8 (535ad1b9…) — foram PERDIDOS no reset; ESTE re-run com o critério de MÉTODO incorporado desde o início é o OFICIAL da recuperação. O que confirma: F-C13 fecha o C13 (403 + WARN, frota ON); F-K1 apanha K1-b 3 e 4 dias (DRAIN-TO-LOW count 12) e mata o FP K1-c (SoC 100, ZERO); F-C14 dá VISIBILIDADE noturna (WARN por evento < k=6; o CRIT noturno continua DECLARADO); F-SP fecha o FP-SP COM WO (o resíduo SEM WO fica DECLARADO p/ v0.8).

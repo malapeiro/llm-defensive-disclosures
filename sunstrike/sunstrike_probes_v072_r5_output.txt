@@ -1,0 +1,86 @@
+SUNSTRIKE probes R5 v0.4.1 (quad-target V05/V06/V07/V071; reconstrucao pos-incidente INFRA-2026-13-11-B) — run 20261113T195729Z-554ece (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V072 (hash 1c433df138b90ba8…)
+
+GATEFALL — PREVISÕES PRÉ-REGISTADAS (antes de qualquer execução)
+contra sunstrike_lab.py V072 (hash 1c433df138b90ba8…)
+  [P-R5-01/J1+limite] RESOLVIDO — IGUAL à v0.6/v0.7 (limite diário 40%/24 h INTACTO na v0.7.1): 999 → 409 floor ×12; fatia 40% executa (100→60); fatia 34% → 409 daily ×12 (30+34 > 40); SEM cumulativa (superssenção datada); curva DEFENDEDV07 [12,12,12,11,8], SoC min [44.38, 28.75, 13.13, 5.00, 5.00] (tol 0.05); soc_pre ~60.00 — as regras novas (F-C13/F-K1/F-C14/F-SP) ficam CALADAS neste cenário: a fatia EXECUTADA aterra SoC 60 > 35, a rejeitada não desce SoC, sem shutdowns nem WO
+  [P-R5-02/J2] RESOLVIDO — minutos de luz IGUAIS à v0.6/v0.7: na 1 h, 12/12 casas com minutos cheios; no apagão de 2 h a casa mais fraca (3.2 kWp) tem ~105.6 min de luz (11/12 cheios) — física INALTERADA pela v0.7.1
+  [P-R5-03/J4] RESOLVIDO — recarga grid-tied INTACTA: step_grid() existe; em DIA+NORMAL carrega (dev0 50 → ~86.3 em 3600 s, evento grid_tied_charge provenance autonomous_charge); em NOITE+NORMAL não carrega
+  [P-R5-04/J5] RESOLVIDO — telemetria soc_limits IGUAL à v0.6 MAS com schema v0.7.1 (F-LIMP AUD-12: docstrings/cabeçalhos atualizados; a v0.7.1 carimba schema "v0.7.1"): island_min_pct 5.0 ATIVO, remote_floor_pct 25.0, remote_daily_limit_pct 40.0, remote_daily_used_pct em tempo real
+  [P-R5-05/C11] CONFIRMADO-DECLARADO — C11 PERSISTE na v0.7.1 (fatias 2×30% espaçadas 4000 s continuam a EVADIR a cumulativa; C11 ficou ABERTO para a v0.8) MAS a 2.ª fatia apanha o limite diário (30+30 = 60 > 40 → 409 daily + evento): dano saturado em 30%/24 h, SoC 70 (a DRAIN-TO-LOW fica CALADA: SoC 70 > 35)
+  [P-R5-06/J3] CONFIRMADO-DECLARADO — J3 continua declarado + custo da opção 1 INTACTO na v0.7.1: 2×30% legítimas → slice1 200, slice2 409 daily; single 43.86% → 409 daily também (43.86 > 40; legítimos >40%/dia exigem /local_confirm); a DRAIN-TO-LOW (que SUBSTITUIU a MULTIDAY) fica CALADA: SoC 70/100 > 35 e DENTRO de 1 dia — só o 409 daily
+DECISÃO DO OPERADOR 13-11 13:23: o GATEFALL OFICIAL da R5 é o RUN 1 desta
+bateria contra a v0.5 (com as previsões erradas que saírem, sejam
+defeitos do probe ou achados reais), NUNCA o run seguinte. A v0.6 (limite
+diário de descarga remota 40%/24 h + recarga grid-tied J4 + measure em
+curva com minutos de luz J1/J2 + atacante (c) 2 dias + telemetria J5) é o
+DEPOIS; este run contra a v0.6 é o run 2 (verificação do DEPOIS). J3 fica
+DECLARADO; C5/C6/C9/H7/I2/I3/I6/C11 ficam para depois.
+
+GO v0.7.1 (operador 13-11 ~17:00, via supervisor): este run contra a v0.7.1 RESTAURADA é a
+NÃO-REGRESSÃO da R5 (run 4; reconstrução pós-INFRA-2026-13-11-B); os critérios V071 são cópia dos
+V07 exceto o schema v0.7.1 do P-R5-04 e a NOTA de que as regras novas (F-C13/F-K1/F-C14/F-SP) ficam
+CALADAS em todos os cenários r5. O GATEFALL OFICIAL da R5 continua a ser o RUN 1 contra a v0.5.
+
+lab v0.7.2 em memoria (evidence=False), 12 dispositivos + gate
+
+[P-R5-01] J1 — o 9/12 depende da duração escolhida
+     30 min: served 12/12, SoC min 44.37, minutos/casa [30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0]
+     60 min: served 12/12, SoC min 28.75, minutos/casa [60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0]
+     90 min: served 12/12, SoC min 13.13, minutos/casa [90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0]
+    120 min: served 11/12, SoC min 5.00, minutos/casa [120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 120.0, 105.6, 120.0]
+    180 min: served  8/12, SoC min 5.00, minutos/casa [180.0, 180.0, 125.4, 180.0, 180.0, 178.2, 145.2, 180.0, 180.0, 180.0, 105.6, 180.0]
+  [P-R5-01] RESOLVIDO — PREVISÃO: RESOLVIDO — IGUAL à v0.6/v0.7 (limite diário 40%/24 h INTACTO na v0.7.1): 999 → 409 floor ×12; fatia 40% executa (100→60); fatia 34% → 409 daily ×12 (30+34 > 40); SEM cumulativa (superssenção datada); curva DEFENDEDV07 [12,12,12,11,8], SoC min [44.38, 28.75, 13.13, 5.00, 5.00] (tol 0.05); soc_pre ~60.00 — as regras novas (F-C13/F-K1/F-C14/F-SP) ficam CALADAS neste cenário: a fatia EXECUTADA aterra SoC 60 > 35, a rejeitada não desce SoC, sem shutdowns nem WO
+        curva medida (mesmo ataque (b)): [12, 12, 12, 11, 8] para [30, 60, 90, 120, 180] min
+        previsão pré-registada: [12, 12, 12, 11, 8] — BATE; SoC min medido [44.37, 28.75, 13.13, 5.0, 5.0] vs previsto [44.38, 28.75, 13.13, 5.0, 5.0] (tol 0.05)
+        ataque (b) na v0.6: 999 → 409 floor (BELOW-FLOOR ×12); fatia 40% EXECUTA (100→60, ledger 40); fatia 34% → 409 daily (used 30+34 > 40) — SEM cumulativa (superssenção datada: com o limite ativo, DRAIN-LARGE e CUMULATIVE são inatingíveis por remote_command)
+        consequência: com o limite diário o atacante só estaciona a frota a 60% — a reserva aguenta a curva toda até 2 h (11/12) e 8/12 às 3 h (estimativa do supervisor ~12/~11/~8 CONFIRMADA MEDIDA na corrida oficial)
+
+[P-R5-02] J2 — a métrica 'luz no fim' esconde minutos servidos
+  [P-R5-02] RESOLVIDO — PREVISÃO: RESOLVIDO — minutos de luz IGUAIS à v0.6/v0.7: na 1 h, 12/12 casas com minutos cheios; no apagão de 2 h a casa mais fraca (3.2 kWp) tem ~105.6 min de luz (11/12 cheios) — física INALTERADA pela v0.7.1
+        na duração de 1 h: 12/12 casas com minutos CHEIOS (60.0, nenhuma às escuras) — com a frota a 60% (limite diário), a reserva serve a hora inteira
+        no apagão de 2 h: 11/12 com minutos cheios; a casa mais fraca (3.2 kWp, dev 10) tem 105.60 min de luz (previsto ~105.6: (60-5)·3.2·0.6 = 105.6)
+        a métrica agora reporta MINUTOS por casa (não só 'luz no fim') — J2 resolvido; a dependência da duração (J1) é reportada como CURVA
+
+[P-R5-03] J4 — em modo ligado à rede a bateria nunca recarrega
+  [P-R5-03] RESOLVIDO — PREVISÃO: RESOLVIDO — recarga grid-tied INTACTA: step_grid() existe; em DIA+NORMAL carrega (dev0 50 → ~86.3 em 3600 s, evento grid_tied_charge provenance autonomous_charge); em NOITE+NORMAL não carrega
+        estático: métodos de passo no lab v0.6: ['def step_grid(self, dt):', 'def step_island(self, dt):'] — step_grid EXISTE (recarga grid-tied)
+        dinâmico DIA+NORMAL: dev0 SoC 50.0 → 86.35 após step_grid(3600) (previsto ~86.35: pv 5.78 kW, excedente 4.58 kW · 1 h ÷ bateria 12.6 kWh = 36.35 pontos), 4.5800 kWh integrados
+        evento grid_tied_charge: provenance autonomous_charge (NÃO é remote_command: por construção NÃO conta no ledger diário)
+        NOITE+NORMAL: SoC 50.0 imóvel após 1 h (50.0) — sem excedente solar não há carga
+        consequência: a bateria REARMA em modo ligado à rede — o atacante (c) multi-dia já encontra frota recarregada (J4 resolvido por GO)
+
+[P-R5-04] J5 — telemetria mostra floor 25, não o limite ativo
+  [P-R5-04] RESOLVIDO — PREVISÃO: RESOLVIDO — telemetria soc_limits IGUAL à v0.6 MAS com schema v0.7.1 (F-LIMP AUD-12: docstrings/cabeçalhos atualizados; a v0.7.1 carimba schema "v0.7.1"): island_min_pct 5.0 ATIVO, remote_floor_pct 25.0, remote_daily_limit_pct 40.0, remote_daily_used_pct em tempo real
+        telemetria em NORMAL: soc_limits {'schema': 'v0.7.1', 'remote_floor_pct': 25.0, 'island_min_pct': 5.0, 'remote_daily_limit_pct': 40.0, 'remote_daily_used_pct': 0} — island_min_pct 5.0 (o limite ATIVO em ilha), remote_floor_pct 25.0, remote_daily_limit_pct 40.0, remote_daily_used_pct contabilizado (0)
+        telemetria em ILHA REAL (relé aberto, relay_closed=False): soc_limits CONTINUA presente — island_min_pct 5.0, remote_daily_limit_pct 40.0 — o operador da casa vê o limite que está ATIVO, não 'floor 25' fixo
+        consequência: J5 resolvido por GO (bloco soc_limits, schema v0.7.1, cabeçalhos atualizados)
+
+[P-R5-05] C11 — fatias espaçadas >1 h evadem a cumulativa
+  [P-R5-05] CONFIRMADO-DECLARADO — PREVISÃO: CONFIRMADO-DECLARADO — C11 PERSISTE na v0.7.1 (fatias 2×30% espaçadas 4000 s continuam a EVADIR a cumulativa; C11 ficou ABERTO para a v0.8) MAS a 2.ª fatia apanha o limite diário (30+30 = 60 > 40 → 409 daily + evento): dano saturado em 30%/24 h, SoC 70 (a DRAIN-TO-LOW fica CALADA: SoC 70 > 35)
+        fatias 30% + 30% separadas 4000 s: slice1 EXECUTA (200, SoC 100→70); slice2 → 409 remote_discharge_daily_limit — o ledger diário NÃO é evadível por espaçamento (janela 24 h; used 30 + pedido 30 > 40)
+        a cumulativa (janela 3600 s) CONTINUA cega às fatias espaçadas — C11 PERSISTE (ficou ABERTO por decisão do operador) — MAS o dano por dia fica SATURADO em 30%: SoC 70.00
+        evento remote_daily_limit_block: used_pct 30.0 (acumulado), requested_pct 30.0, limit_pct 40.0, window_s 86400.0 (deteção POR EVENTO do próprio bloqueio — prevenção primária, não regra)
+        consequência: o C11 deixa de ser canal de esvaziamento (máx. 40%/dia por remote_command), mas a cegueira da janela de 1 h permanece DECLARADA
+
+[P-R5-06] J3 — FP WARN: manutenção legítima dispara a cumulativa
+  [P-R5-06] CONFIRMADO-DECLARADO — PREVISÃO: CONFIRMADO-DECLARADO — J3 continua declarado + custo da opção 1 INTACTO na v0.7.1: 2×30% legítimas → slice1 200, slice2 409 daily; single 43.86% → 409 daily também (43.86 > 40; legítimos >40%/dia exigem /local_confirm); a DRAIN-TO-LOW (que SUBSTITUIU a MULTIDAY) fica CALADA: SoC 70/100 > 35 e DENTRO de 1 dia — só o 409 daily
+        manutenção legítima (2×30%, work_order WO-2026-1113-MNT): slice1 200; slice2 → 409 daily (used 30 + 30 > 40) — o FP WARN morre por SATURAÇÃO neste par (a fatia nem executa, logo não há param_change para a cumulativa acumular)
+        single 43.86% (2.0 kWh, casa 3.8 kWp): 409 daily também (43.86 > 40) — evento 2× no cenário
+        custo DECLARADO da opção 1 (consequência registada no GO): operações legítimas >40%/dia passam a exigir /local_confirm (token físico na casa); o J3 original (FP WARN em 2×30% legítimas) fica coberto pelo limite, mas o pedido de confirmação local é o NOVO atrito
+        J3 fica DECLARADO por decisão do operador; eventos remote_daily_limit_block são deteção DO bloqueio (prevenção primária), não uma regra nova
+
+========================================================================
+SUMÁRIO GATEFALL — previsão PRÉ-registada vs veredicto OBSERVADO
+========================================================================
+  [P-R5-01/J1+limite] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R5-02/J2] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R5-03/J4] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R5-04/J5] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R5-05/C11] previsto: CONFIRMADO-DECLARADO | observado: CONFIRMADO-DECLARADO
+  [P-R5-06/J3] previsto: CONFIRMADO-DECLARADO | observado: CONFIRMADO-DECLARADO
+------------------------------------------------------------------------
+PREVISÕES CONFIRMADAS contra a v0.7.2 (V072): 6/6
+PREVISÕES ERRADAS: 0
+LAB ALVO: v0.7.2 (V072), hash 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4 (INTOCADA — verificado no arranque)
+Este é o RUN 4 (NÃO-REGRESSÃO contra a v0.7.1 RESTAURADA, reconstrução pós-INFRA-2026-13-11-B): o GATEFALL OFICIAL da R5 continua a ser o RUN 1 contra a v0.5 (run 1b 6/6). Previsões V071 confirmadas acima = o limite diário 40%/24 h, a recarga grid-tied (J4), a telemetria soc_limits (agora schema v0.7.1), a curva com minutos (J1/J2) e a saturação do C11/J3 NÃO REGREDIRAM com o F-C13/F-K1/F-C14/F-SP (regras novas CALADAS nos cenários r5). J3 fica declarado; C5/C6/C9/H7/I2/I3/I6/C11/J3 ficam para a v0.8.

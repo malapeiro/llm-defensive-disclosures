@@ -1,0 +1,90 @@
+SUNSTRIKE probes R6 v0.4 (tri-target V06/V07/V071; reconstrucao pos-incidente INFRA-2026-13-11-B) — run 20261113T195650Z-afcd9f (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V072 (hash 1c433df138b90ba8…)
+
+GATEFALL — PREVISÕES PRÉ-REGISTADAS (antes de qualquer execução)
+contra sunstrike_lab.py V072 (hash 1c433df138b90ba8…)
+  [P-R6-01/K1] RESOLVIDO-VISIBILIDADE — a física NÃO muda (200×12 nos dois dias, SoC ~25,10, ZERO 409) e o served é o mesmo (1 h 9/12, 2 h 3/12), mas o scan pré-apagão passa de ZERO alertas para D-BATTERY-DRAIN-TO-LOW ×12 (count 12: a fatia do dia 2 ATERRA 25,1 <= 35) em cada sub-cenário: a v0.7.1 DETETA o ESTADO resultante
+  [P-R6-02/K1-curva] RESOLVIDO-VISIBILIDADE — curva IGUAL (served [12, 9, 6, 3, 0], SoC min [9,47; 5,00; 5,00; 5,00; 5,00], minutos 12,06·kwp) + DRAIN-TO-LOW ×12 (count 12) pré-apagão nas 5 durações
+  [P-R6-03/K1-nuvem] RESOLVIDO-VISIBILIDADE — NUVEM igual (6,8→83,53, ≥7,5→cap 100, ≤6,0 ficam 60; 1 h 9/12, 2 h 7/12) + DRAIN-TO-LOW count 5 pré-apagão (só os 5 devs ≤ 6,0 kwp FICAM a 60 e a fatia de 34,9% os ATERRA a 25,1 <= 35; os recarregados aterram 48,63/65,1 > 35)
+  [P-R6-04/C12] RESOLVIDO — top-5 (58,2% kWp) desligado → D-CAPACITY-DIVERGENCE CRIT (div 58,2% >= 30; esperado 48,84 kW MANTÉM, real cai a 20,44 kW) + WARN D-REMOTE-SHUTDOWN-NO-WO count 5 (F-C14: visível < k=6); resíduo top-2 (26,35% < 30) ESCAPA ao CRIT MAS ganha WARN count 2 (declarado)
+  [P-R6-05/C12-causas] RESOLVIDO — as 3 causas continuam ENDEREÇADAS na v0.7.1 (o código do F-C12 é INALTERADO pelo F-C13/F-K1/F-C14/F-SP): (1) esperado INDEPENDENTE de inverter_on (1 OFF: esperado mantém 48,84 kW, div ~13,5%); (2) armar também por shutdown remote s/WO; (3) snapshot contínuo pós-shutdown/resume com dedupe determinístico
+  [P-R6-06/floor] CONFIRMADO — o floor aguenta IGUAL (3.ª fatia de 20% → 409 min_emergency_soc_floor + BELOW-FLOOR ×12, SoC intacto) E o cenário tem o D-BATTERY-DRAIN-TO-LOW ×12 (count 12: a fatia do dia 2 ATERRA 25,1 <= 35 antes da 3.ª fatia)
+  [P-R6-07/C12-NEG] RESOLVIDO-DECLARADO — v0.7.2/F-C15b (pré-registado v0.5 ANTES do run): o top-5 COM WO VÁLIDA WO-20261112-MNT1 continua a EXECUTAR (200×5; âmbito frota inteira) com 0 CRIT capacity e 0 WARN s/WO (mecanismos C12/C14 intactos), MAS ganha o CRIT D-MASS-SHUTDOWN-WITH-WO count 5 (5 < k MAS 58,22% ≥ 30) POR DESIGN do GO à v0.7.2 — o cenário que na v0.7.1 era NEG silencioso passa a alertar e fica DECLARADO (manutenção legítima de alta capacidade com WO de âmbito correto é o trade-off declarado); P(f) autônomo de frota inteira → 0 CRIT mantém
+ESTE É O RUN de NÃO-REGRESSÃO contra a v0.7.1 RESTAURADA (reconstrução pós-INFRA-2026-13-11-B; probe v0.4): o lab foi restaurado por REPLAY dos edit scripts preservados + errata J5 (72c894fe…; selftest BYTE-IDÊNTICO afb98d0c…). GATEFALL V071 pré-registado acima. O que verifica: o F-K1 SUBSTITUI a MULTIDAY pela DRAIN-TO-LOW (SoC RESULTANTE <= 35: o atacante (d) fica VISÍVEL count 12, no NUVEM count 5), o F-C14 dá WARN por shutdown s/WO (top-5 count 5; top-2 count 2), o F-C12 mantém-se (C12 intacto), o floor mantém-se e o NEG exige WO VÁLIDA (F-C13). O GATEFALL OFICIAL da R6 mantém-se o RUN 1 contra a v0.6 INTOCADA (6/6 CONFIRMADO, output preservado).
+
+lab v0.7.2 em memoria (evidence=False), 12 dispositivos + gate
+
+[P-R6-01] K1 — o limite diário trava o RITMO, não o TOTAL
+    P-R6-01a: d1 40% → 200×12 (SoC (60.0, 60.0)); +25 h SEM sol; d2 34,9% → 200×12 (SoC (25.09, 25.11)); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão 60 min: served 9/12, SoC min 5.00
+    P-R6-01b: d1 40% → 200×12 (SoC (60.0, 60.0)); +25 h SEM sol; d2 34,9% → 200×12 (SoC (25.09, 25.11)); alertas pré-apagão: [('D-BATTERY-DRAIN-TO-LOW', 12)]; apagão 120 min: served 3/12, SoC min 5.00
+  [P-R6-01] RESOLVIDO-VISIBILIDADE — PREVISÃO: RESOLVIDO-VISIBILIDADE — a física NÃO muda (200×12 nos dois dias, SoC ~25,10, ZERO 409) e o served é o mesmo (1 h 9/12, 2 h 3/12), mas o scan pré-apagão passa de ZERO alertas para D-BATTERY-DRAIN-TO-LOW ×12 (count 12: a fatia do dia 2 ATERRA 25,1 <= 35) em cada sub-cenário: a v0.7.1 DETETA o ESTADO resultante
+        dia 1 fatia 40%: 200 em todos, SoC (60.0, 60.0) (ledger 40%/disp); +25 h de SIM_CLOCK_OFFSET (janela INCLUSIVA de 24 h expira — o ledger diário NÃO trava o dia 2)
+        dia 2 fatia 34,9% (máximo que passa o floor a partir de 60: 60−34,9 = 25,1 ≥ 25): 200 em todos, SoC (25.09, 25.11) — o atacante paciente chega ao floor SEM recarga e SEM alerta nenhum
+        alertas ANTES do apagão: D-BATTERY-DRAIN-TO-LOW ×12 (count 12) em CADA sub-cenário — a v0.7.1 (F-K1) DETETA o ESTADO resultante: SoC RESULTANTE <= 35 após a fatia do dia 2 (a do dia 1 ATERRA 60 > 35 e NÃO conta); a física é a mesma; a cumulativa continua evadida pelo espaçamento de 25 h — C11 ABERTO
+        apagão NOITE 1 h: served 9/12 (prev 9) — as casas 3,2/3,8/4,4 kWp apagam dentro da hora (SoC min 5.00, clamp 5,0); minutos das 3: [45.8, 53.0, 38.6]
+        apagão NOITE 2 h: served 3/12 (prev 3) — só 10,5/11,4/12,0 kWp passam os 120 min (= o v0.5 SEM defesa nenhuma: o limite diário NÃO muda este resultado, só o ritmo)
+
+[P-R6-02] K1 — curva de durações do atacante (d)
+     30 min: served 12/12 (prev 12), SoC min   9.47 (prev   9.47), minutos/casa [30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0]
+     60 min: served  9/12 (prev  9), SoC min   5.00 (prev   5.00), minutos/casa [60.0, 60.0, 45.9, 60.0, 60.0, 60.0, 53.0, 60.0, 60.0, 60.0, 38.6, 60.0]
+     90 min: served  6/12 (prev  6), SoC min   5.00 (prev   5.00), minutos/casa [90.0, 72.3, 45.9, 90.0, 90.0, 65.1, 53.0, 90.0, 90.0, 82.0, 38.6, 90.0]
+    120 min: served  3/12 (prev  3), SoC min   5.00 (prev   5.00), minutos/casa [120.0, 72.3, 45.9, 98.9, 120.0, 65.1, 53.0, 90.5, 115.8, 82.0, 38.6, 120.0]
+    180 min: served  0/12 (prev  0), SoC min   5.00 (prev   5.00), minutos/casa [126.7, 72.3, 45.9, 98.9, 144.7, 65.1, 53.0, 90.5, 115.8, 82.0, 38.6, 137.5]
+  [P-R6-02] RESOLVIDO-VISIBILIDADE — PREVISÃO: RESOLVIDO-VISIBILIDADE — curva IGUAL (served [12, 9, 6, 3, 0], SoC min [9,47; 5,00; 5,00; 5,00; 5,00], minutos 12,06·kwp) + DRAIN-TO-LOW ×12 (count 12) pré-apagão nas 5 durações
+        curva medida: served [12, 9, 6, 3, 0] (prev [12, 9, 6, 3, 0])
+        SoC min [9.47, 5.0, 5.0, 5.0, 5.0] (prev [9,47; 5,00; 5,00; 5,00; 5,00])
+        minutos = 12,06·kwp (o mesmo perfil do braço v0.5 da curva (b): a partir de 25,1 com ilha até 5,0 a luz dura (25,1−5)·0,6·kwp; a 1 h falham 3,2/3,8/4,4 kWp = 38,59/45,83/53,06 min — os 40/48/55 do J2)
+        consequência (K1): os "12/12 a 1 h" e "11/12 a 2 h" da v0.6 com dia de sol NÃO valem aqui — sem recarga, o atacante paciente reproduz a curva do v0.5
+
+[P-R6-03] K1 — dia NUVEM intermédio (recarga parcial)
+    P-R6-03a: d1 40% → SoC (60.0, 60.0); NUVEM 12 h → SoC (25.09, 65.1); +25 h; d2 34,9% → 200×12 (SoC (25.09, 65.1)); apagão 60 min: served 9/12
+    P-R6-03b: d1 40% → SoC (60.0, 60.0); NUVEM 12 h → SoC (25.09, 65.1); +25 h; d2 34,9% → 200×12 (SoC (25.09, 65.1)); apagão 120 min: served 7/12
+  [P-R6-03] RESOLVIDO-VISIBILIDADE — PREVISÃO: RESOLVIDO-VISIBILIDADE — NUVEM igual (6,8→83,53, ≥7,5→cap 100, ≤6,0 ficam 60; 1 h 9/12, 2 h 7/12) + DRAIN-TO-LOW count 5 pré-apagão (só os 5 devs ≤ 6,0 kwp FICAM a 60 e a fatia de 34,9% os ATERRA a 25,1 <= 35; os recarregados aterram 48,63/65,1 > 35)
+        NUVEM (irr 0,20): só kwp ≥ 6,8 tem excedente (kwp·0,2 > 1,2): o 6,8 recarrega 60→83,53; os ≥ 7,5 fazem cap 100; os ≤ 6,0 FICAM a 60 (sem carga)
+        dia 2 fatia 34,9%: executa em TODOS (60−34,9 = 25,1 ≥ floor; 83,53−34,9 = 48,63; 100−34,9 = 65,1) → SoC fim dia 2 (25.09, 65.1)
+        apagão 1 h: served 9/12 (prev 9) — passam 5,4 (65,12 min), 6,0 (72,36), 6,8 (178,0) e os seis ≥ 7,5; 2 h: served 7/12 (prev 7) — passam 6,8 (178,0) e os seis ≥ 7,5 (≥ 270 min)
+        números do supervisor (9/12 a 1 h, 7/12 a 2 h) confirmados pela física: o dia NUVEM recarrega SÓ os grandes, e o 6,8 kWp é a casa que muda de lado
+
+[P-R6-04] C12 — D-CAPACITY-DIVERGENCE cega a shutdowns
+  [P-R6-04] RESOLVIDO — PREVISÃO: RESOLVIDO — top-5 (58,2% kWp) desligado → D-CAPACITY-DIVERGENCE CRIT (div 58,2% >= 30; esperado 48,84 kW MANTÉM, real cai a 20,44 kW) + WARN D-REMOTE-SHUTDOWN-NO-WO count 5 (F-C14: visível < k=6); resíduo top-2 (26,35% < 30) ESCAPA ao CRIT MAS ganha WARN count 2 (declarado)
+        top-5 por kWp desligado por service token (5 < WAVE_K: sem onda, sem slow-wave): devs [4, 11, 0, 8, 3] = 51.7/88.8 kWp = 58.2% da potência — todos 200
+        divergência DIRETA: esperado 48.84 kW MANTÉM (independente de inverter_on), real 20.40 kW → div 58.23% ≥ 30: a regra VÊ os kWp desligados (F-C12 a: kwp × irr × (1 − curtail_aut/100))
+        snapshots do cenário: 5 (div máx 58.23%) — contínuos após CADA shutdown remoto (F-C12 c, dedupe determinístico; nunca só por transição de banda)
+        alertas do cenário: [('D-CAPACITY-DIVERGENCE', 3), ('D-REMOTE-SHUTDOWN-NO-WO', 5)] — D-CAPACITY-DIVERGENCE DISPARA: o design §4.4/R3 cumpre agora o subset targeting (C12 endereçado)
+        RESÍDUO (P-R6-04R): top-2 devs [4, 11] = 23.4 kWp = 26.35% < 30% e 2 devs < k=6 → 0 D-CAPACITY-DIVERGENCE, snapshots 3 div máx 26.35% — ESCAPA e fica DECLARADO no what-cannot-be-claimed (o maior subconjunto que ainda escapa)
+        v0.7.1/F-C14: os 5 shutdowns s/WO ganham WARN D-REMOTE-SHUTDOWN-NO-WO count 5 (POR EVENTO, abaixo de k=6) e o resíduo top-2 ganha WARN count 2 — o CRIT continua a ESCAPAR ao subconjunto < 30% (DECLARADO), mas o WARN já VÊ
+
+[P-R6-05] C12 — as 3 causas (1 dinâmica + 2 estáticas)
+  [P-R6-05] RESOLVIDO — PREVISÃO: RESOLVIDO — as 3 causas continuam ENDEREÇADAS na v0.7.1 (o código do F-C12 é INALTERADO pelo F-C13/F-K1/F-C14/F-SP): (1) esperado INDEPENDENTE de inverter_on (1 OFF: esperado mantém 48,84 kW, div ~13,5%); (2) armar também por shutdown remote s/WO; (3) snapshot contínuo pós-shutdown/resume com dedupe determinístico
+        CAUSA 1 ENDEREÇADA (dinâmica): dev 12,0 kWp OFF → pv_gross 0.00, export 0.00 (física INALTERADA), MAS o esperado MANTÉM 48.84 kW, independente de inverter_on (kwp × irr × (1 − curtail_aut/100)) → div 13.51% > 0 (na v0.6 seria 0,0: os dois desciam JUNTOS)
+        CAUSA 2 ENDEREÇADA (estática): o armar tem AGORA remote_shutdown_change — um shutdown remoto SEM work-order ARMA a D-CAPACITY-DIVERGENCE (além do param_change export_limit)
+        CAUSA 3 ENDEREÇADA (estática): snapshot contínuo também APÓS shutdown/resume remoto via emit_capacity_snapshot PARTILHADO com dedupe determinístico (banda+div+nº OFF) — nunca só em transição de banda
+        v0.7: as 3 causas ENDEREÇADAS = C12 fechado por CONSTRUÇÃO e por EXECUÇÃO (ver P-R6-04)
+
+[P-R6-06] o floor aguenta: 3.ª fatia → 409 (controlo)
+  [P-R6-06] CONFIRMADO — PREVISÃO: CONFIRMADO — o floor aguenta IGUAL (3.ª fatia de 20% → 409 min_emergency_soc_floor + BELOW-FLOOR ×12, SoC intacto) E o cenário tem o D-BATTERY-DRAIN-TO-LOW ×12 (count 12: a fatia do dia 2 ATERRA 25,1 <= 35 antes da 3.ª fatia)
+        3.ª fatia de 20% a partir de SoC 25.09: 409 min_emergency_soc_floor em TODOS (25,1−20 = 5,1 < floor 25 — verificado ANTES do daily, P-R4-04)
+        D-BATTERY-DRAIN-BELOW-FLOOR ×12 (count 12) — deteção POR EVENTO do bloqueio; SoC intacto 25.09
+        v0.7.1: o cenário JÁ tinha D-BATTERY-DRAIN-TO-LOW ×12 (count 12) PRÉ-apagão (a fatia do dia 2 ATERRA 25,1 <= 35 — o ESTADO resultante, F-K1; a MULTIDAY de volume foi SUBSTITUÍDA)
+        consequência (K1): o atacante paciente fica PRESO no floor — o padrão 40%+34,9% é o MÁXIMO de 2 dias sem sol; a 3.ª fatia não executa nem conta no ledger
+
+[P-R6-07] C12 — NEG intacto (WO + P(f) autónomo)
+  [P-R6-07] RESOLVIDO — PREVISÃO: RESOLVIDO-DECLARADO — v0.7.2/F-C15b (pré-registado v0.5 ANTES do run): o top-5 COM WO VÁLIDA WO-20261112-MNT1 continua a EXECUTAR (200×5; âmbito frota inteira) com 0 CRIT capacity e 0 WARN s/WO (mecanismos C12/C14 intactos), MAS ganha o CRIT D-MASS-SHUTDOWN-WITH-WO count 5 (5 < k MAS 58,22% ≥ 30) POR DESIGN do GO à v0.7.2 — o cenário que na v0.7.1 era NEG silencioso passa a alertar e fica DECLARADO (manutenção legítima de alta capacidade com WO de âmbito correto é o trade-off declarado); P(f) autônomo de frota inteira → 0 CRIT mantém
+        (a) shutdown top-5 COM work-order WO-20261112-MNT1 (VÁLIDA — o F-C13 exige: a WO inventada da v0.2.1 daria 403 e o NEG exige que o shutdown EXECUTE): todos 200; CRIT do cenário: ['D-MASS-SHUTDOWN-WITH-WO'] (o ARMAR discrimina por work-order); snapshots 4 saem como EVIDÊNCIA neutra (F-C12 c: também em shutdown COM WO)
+        (b) P(f) autónomo de frota inteira (STRESS 0,6 s): CRIT do cenário: ZERO; 0 D-CAPACITY-DIVERGENCE, div máx 0.00% < 30 — o esperado DESCONTA o curtail autónomo (NEG intacto)
+        à NOITE o esperado é 0 → a regra NÃO vê shutdowns noturnos: DECLARADO no what-cannot-be-claimed, não escondido
+
+========================================================================
+SUMÁRIO — GATEFALL R6 vs alvo V072
+  [P-R6-01/K1] previsto: RESOLVIDO-VISIBILIDADE | observado: RESOLVIDO-VISIBILIDADE
+  [P-R6-02/K1-curva] previsto: RESOLVIDO-VISIBILIDADE | observado: RESOLVIDO-VISIBILIDADE
+  [P-R6-03/K1-nuvem] previsto: RESOLVIDO-VISIBILIDADE | observado: RESOLVIDO-VISIBILIDADE
+  [P-R6-04/C12] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R6-05/C12-causas] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R6-06/floor] previsto: CONFIRMADO | observado: CONFIRMADO
+  [P-R6-07/C12-NEG] previsto: RESOLVIDO | observado: RESOLVIDO
+------------------------------------------------------------------------
+PREVISÕES CONFIRMADAS contra a v0.7.2 (V072): 7/7
+PREVISÕES ERRADAS: 0
+LAB ALVO: v0.7.2 (V072), hash 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4 (INTOCADA — verificado no arranque)
+GATEFALL OFICIAL da R6 = RUN 1 contra a v0.6 INTOCADA (6/6 CONFIRMADO, output preservado). ESTE é o RUN de NÃO-REGRESSÃO da recuperação (v0.7.1: F-C13 + F-K1 DRAIN-TO-LOW + F-C14 + F-SP sobre o F-C12). C5/C6/C9/H7/I2/I3/I6/C11/J3 ficam para a v0.8; o resíduo setpoint SEM WO fica DECLARADO.

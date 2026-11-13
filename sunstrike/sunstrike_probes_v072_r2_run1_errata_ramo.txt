@@ -1,0 +1,99 @@
+SUNSTRIKE probes R2 v0.8.1 (hepta-target, reconstrucao pos-incidente INFRA-2026-13-11-B) — grant GRANT-PVTE-20261112-SS-01
+run_id           : 20261113T195835Z-a7f1dd
+hash esperado    : b66de6b7e64b315a9ff5aa821cbec066f82b4cbd97810d06d83be5518056bcc7
+ALVO DETETADO    : v0.7.2
+hash OBSERVADO   : 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4  [OK — v0.7.2]
+
+GATEFALL — PREVISÕES PRÉ-REGISTADAS (antes de qualquer execução)
+contra sunstrike_lab.py v0.7.2 (hash 1c433df138b90ba8…)
+  [P-R2-01/C4] RESOLVIDO — C4 travado pelo LIMITE DIÁRIO da v0.6: as 5 fatias de 15% executam as 2 primeiras (200; SoC 100→70) e as fatias 3-5 dão 409 remote_discharge_daily_limit (used 30+15 > 40; 3 eventos remote_daily_limit_block); SoC final 70.0; cumulativa e por-operação AUSENTES (o limite SATURA o ataque antes de a janela de 1 h acumular 50%)
+  [P-R2-02/C5] CONFIRMADO-DECLARADO — C5 fica para a R2 por decisão do operador: 5 PINs errados no caminho DIRETO continuam a trancar o /local_confirm (PIN correto → 403 pin_locked 600s). Nota: o guard recusa /local_confirm (mitigação parcial da via gerida), mas o endpoint direto permanece
+  [P-R2-03/C6] CONFIRMADO-DECLARADO — C6 fica para a R2 por decisão do operador: o lockout do /fleet/login continua GLOBAL (login correto → 429 login_rate_blocked)
+  [P-R2-04/H1] RESOLVIDO — canonicalizador partilhado fail-closed: byte não-ASCII é rejeitado ANTES do routing (400 + evento non_canonical_request reason=non_ascii); o fail-open do except está morto por construção
+  [P-R2-05/H2] RESOLVIDO — query string rejeitada fail-closed (400 + evento reason=query_or_fragment); o routing nunca mais separa '?'; export_limit intacto
+  [P-R2-06/H3] RESOLVIDO — strict_number(): bool NÃO é número; {'value': false} → 400 + evento strict_type_reject (reason=bool_is_not_a_number); export_limit intacto
+  [P-R2-07/H4] RESOLVIDO — física deixa de ser cega: com export_limit=0 a telemetria reporta export_kw()==0.0 (nada exportado) com pv_gross_kw() intacto (kwp*IRRADIANCE_FACTOR)
+  [P-R2-08/H5] RESOLVIDO — a bateria INTEGRA em modo ilha: SoC desce a 60.0 por 2 fatias remotas de 20%; durante 3s de ilha o surplus (pv_gross 1.76 > carga 1.2) CARREGA a bateria (SoC SOBE)
+  [P-R2-09/H6] RESOLVIDO — os eventos do H6 alimentam regras: 5 logins errados → D-LOGIN-BRUTE-FORCE; 5 PINs errados → D-LOCAL-CONFIRM-BRUTE-FORCE; // crua → D-NON-CANONICAL-REQUEST. O scan do cenário dispara EXATAMENTE estas 3
+  [P-R2-10/H7] CONFIRMADO-DECLARADO — H7 fica para a v0.8 por decisão do operador: (a) token sem TTL; (b) /login device sem lockout; (c) chunked ignorado no caminho DIRETO (o guard rejeita, o device não); (d) BLOCKED_IN_EMERGENCY morto; (e) banner RESOLVIDO na v0.7.2 (F-LIMP c mantém-se: SUNBOX/0.7.2 no device e no gate)
+DECISÃO DO OPERADOR 13-11: C4/C5/C6/H7 ficam para a ronda seguinte; H1/H2/H3 fecham na v0.3 (guard + canonicalizador partilhado); H4/H5 obrigatórios antes da v0.4 (measure).
+
+lab v0.7.2 em memoria (evidence=False), 12 dispositivos + gate
+
+[P-R2-01] C4 — descarga fatiada evade D-BATTERY-DRAIN-LARGE
+  [P-R2-01] PREVISÃO ERRADA (ver detalhe acima) — PREVISÃO: RESOLVIDO — C4 travado pelo LIMITE DIÁRIO da v0.6: as 5 fatias de 15% executam as 2 primeiras (200; SoC 100→70) e as fatias 3-5 dão 409 remote_discharge_daily_limit (used 30+15 > 40; 3 eventos remote_daily_limit_block); SoC final 70.0; cumulativa e por-operação AUSENTES (o limite SATURA o ataque antes de a janela de 1 h acumular 50%)
+        fatias 200=False; SoC: [100.0, 85.0, 70.0, 70.0, 70.0, 70.0]
+        alertas do cenário: []
+        D-BATTERY-DRAIN-LARGE: []
+
+[P-R2-02] C5 — lockout do PIN = DoS à confirmação física
+  [P-R2-02] CONFIRMADO-DECLARADO — PREVISÃO: CONFIRMADO-DECLARADO — C5 fica para a R2 por decisão do operador: 5 PINs errados no caminho DIRETO continuam a trancar o /local_confirm (PIN correto → 403 pin_locked 600s). Nota: o guard recusa /local_confirm (mitigação parcial da via gerida), mas o endpoint direto permanece
+        5x403=5; PIN correto → 403 {'error': 'pin_locked'}
+        local_confirm_lockout no audit: 1
+
+[P-R2-03] C6 — lockout de login GLOBAL = DoS ao operador
+  [P-R2-03] CONFIRMADO-DECLARADO — PREVISÃO: CONFIRMADO-DECLARADO — C6 fica para a R2 por decisão do operador: o lockout do /fleet/login continua GLOBAL (login correto → 429 login_rate_blocked)
+        5x401=5; login CORRETO → 429 {'error': 'login_rate_blocked'}
+
+[P-R2-04] H1 — byte não-ASCII: _canonical_path fail-open
+  [P-R2-04] RESOLVIDO — PREVISÃO: RESOLVIDO — canonicalizador partilhado fail-closed: byte não-ASCII é rejeitado ANTES do routing (400 + evento non_canonical_request reason=non_ascii); o fail-open do except está morto por construção
+        status: HTTP/1.1 400 Bad Request
+        non_canonical_request: 1, reasons=['non_ascii'] (fail-closed: rejeitado com auditoria ANTES do routing)
+        o except fail-open da v0.2 está morto por construção
+
+[P-R2-05] H2 — query string cruza a canonicalização
+  [P-R2-05] RESOLVIDO — PREVISÃO: RESOLVIDO — query string rejeitada fail-closed (400 + evento reason=query_or_fragment); o routing nunca mais separa '?'; export_limit intacto
+        POST /setpoint?x=1 → 400 {'error': 'non_canonical_request', 'reason': 'query_or_fragment'}; export_limit=100.0 (intacto)
+        non_canonical_request reasons=['query_or_fragment']; param_change=0 (nada roteou)
+
+[P-R2-06] H3 — booleano aceite como número (bool != número)
+  [P-R2-06] RESOLVIDO — PREVISÃO: RESOLVIDO — strict_number(): bool NÃO é número; {'value': false} → 400 + evento strict_type_reject (reason=bool_is_not_a_number); export_limit intacto
+        value=false → 400; value=true → 400; export_limit=100.0 (intacto)
+        strict_type_reject: 2, reasons=['bool_is_not_a_number'] (bool NÃO é número)
+
+[P-R2-07] H4 — pv_kw() ignora export_limit/curtail_pct
+  [P-R2-07] RESOLVIDO — PREVISÃO: RESOLVIDO — física deixa de ser cega: com export_limit=0 a telemetria reporta export_kw()==0.0 (nada exportado) com pv_gross_kw() intacto (kwp*IRRADIANCE_FACTOR)
+        export_limit=0 → export_kw=0.0 (NADA exportado), pv_gross_kw=5.28, pv_kw=5.28 (física deixa de ser cega)
+        curtail_pct=0.0 (0 → pv_kw == pv_gross)
+        é isto que a divergência de capacidade (D-CAPACITY-DIVERGENCE) mede — pré-requisito do measure v0.4
+
+[P-R2-09] H6 — eventos novos órfãos de regra no Detector
+  [P-R2-09] RESOLVIDO — PREVISÃO: RESOLVIDO — os eventos do H6 alimentam regras: 5 logins errados → D-LOGIN-BRUTE-FORCE; 5 PINs errados → D-LOCAL-CONFIRM-BRUTE-FORCE; // crua → D-NON-CANONICAL-REQUEST. O scan do cenário dispara EXATAMENTE estas 3
+        regras disparadas: [('D-LOCAL-CONFIRM-BRUTE-FORCE', 2), ('D-LOGIN-BRUTE-FORCE', 2), ('D-NON-CANONICAL-REQUEST', 1)] (esperado: as 3 do H6)
+        count pode ser 2 (evento de lockout + bloco de contagem duplicam o add) — o critério é a PRESENÇA
+        RULE_ATTACK_MAP: 24 regras na v0.3
+
+[P-R2-10] H7 — misc (TTL token, /login device, chunked, código morto, banner)
+  [P-R2-10] CONFIRMADO-DECLARADO — PREVISÃO: CONFIRMADO-DECLARADO — H7 fica para a v0.8 por decisão do operador: (a) token sem TTL; (b) /login device sem lockout; (c) chunked ignorado no caminho DIRETO (o guard rejeita, o device não); (d) BLOCKED_IN_EMERGENCY morto; (e) banner RESOLVIDO na v0.7.2 (F-LIMP c mantém-se: SUNBOX/0.7.2 no device e no gate)
+        (a) OK — token emitido (200=True), sem qualquer campo/controle de expiração no lab (TTL inexistente)
+        (b) OK — 10 logins errados → 10x401=10, SEM lockout e SEM evento de auditoria (o gate audita; o device não)
+        (c) OK — chunked → 400; export_limit intacto (100.0): o corpo foi IGNORADO (sem Content-Length, lê 0 bytes)
+        (d) OK — BLOCKED_IN_EMERGENCY aparece 1 vez(es) no lab: só a definição — lista negra morta do pré-G2, nunca consultada
+        (e) OK — banner 'Server: SUNBOX/0.7.2 Python/3.12.15' == esperado 'SUNBOX/0.7.2' — o server_version ACOMPANHOU o LAB_VERSION (item (e) do H7 RESOLVIDO; (a)-(d) ficam para a v0.8)
+
+[P-R2-08] H5 — bateria não se gasta em modo ilha
+  [P-R2-08] RESOLVIDO — PREVISÃO: RESOLVIDO — a bateria INTEGRA em modo ilha: SoC desce a 60.0 por 2 fatias remotas de 20%; durante 3s de ilha o surplus (pv_gross 1.76 > carga 1.2) CARREGA a bateria (SoC SOBE)
+        fatias remotas: 200=True; SoC: [100.0, 80.0, 60.0]
+        ilha: soc_start(blackout)=60.0022 → soc_end=60.014 (3.0s); taxa observada ~0.0039 pontos/s vs teórica ~0.0041 (pós-errata: kW*s/3600 — o run 3 apanhou a 3600x)
+        relay_closed=False (ilha ativa); pv_gross=1.76 > carga=1.2; SoC acima de 60 = surplus CARREGOU (integração ATIVA)
+        pré-requisito do measure v0.4 cumprido (H5 fechado)
+
+========================================================================
+SUMÁRIO GATEFALL — previsão PRÉ-registada vs veredicto OBSERVADO
+========================================================================
+  [P-R2-01/C4] previsto: RESOLVIDO | observado: PREVISÃO ERRADA (ver detalhe acima)
+  [P-R2-02/C5] previsto: CONFIRMADO-DECLARADO | observado: CONFIRMADO-DECLARADO
+  [P-R2-03/C6] previsto: CONFIRMADO-DECLARADO | observado: CONFIRMADO-DECLARADO
+  [P-R2-04/H1] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R2-05/H2] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R2-06/H3] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R2-07/H4] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R2-08/H5] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R2-09/H6] previsto: RESOLVIDO | observado: RESOLVIDO
+  [P-R2-10/H7] previsto: CONFIRMADO-DECLARADO | observado: CONFIRMADO-DECLARADO
+------------------------------------------------------------------------
+RESOLVIDOS (NAO-REGRESSAO na v0.7: C4 TRAVADO mantem-se; F-C12/F-K1/banner nao reabrem nenhum fix R2): 6/7
+CONFIRMADOS-DECLARADOS (C5/C6 ficam para a ronda seguinte; H7 (a)-(d) ficam para a v0.8 — o item (e) banner ficou RESOLVIDO): 3/3
+PREVISÕES ERRADAS: 1
+LAB ALVO: 0.7.2, hash 1c433df138b90ba8fc7ce8afe28c4298b30206cda00ac38c6e717fd7b40afbd4 (verificado no arranque)
+DECISÃO DO OPERADOR 13-11 13:23: v0.6 = limite diário de descarga remota 40%/24 h (opção 1) + recarga grid-tied (J4) + telemetria soc_limits (J5) + measure em curva com minutos (J1/J2) + atacante (c) 2 dias. Esta corrida R2 é a NÃO-REGRESSÃO dos fixes R2 na v0.6 E a evidência do C4 TRAVADO pelo limite diário (as fatias 3-5 dão 409 daily; a cumulativa fica superssenda). C5/C6/C9/H7/I2/I3/I6/C11/J3 ficam para a ronda seguinte.
