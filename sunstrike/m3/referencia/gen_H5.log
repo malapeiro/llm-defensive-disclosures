@@ -1,0 +1,10 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario H5 — lab mesma pasta (m3/)
+passos: 2
+evidencia: sunstrike_evidence/20261114T154923Z-1a7160
+alertas do detetor INTERNO do lab (informativo):
+  [H5] D-BATTERY-DRAIN-BELOW-FLOOR x1 sunbox-00
+28 packets captured
+56 packets received by filter
+0 packets dropped by kernel
+4866db8cb622fb797bd8962d1092f0e64bbea53606aae519313e75a12460f607  H5.pcap

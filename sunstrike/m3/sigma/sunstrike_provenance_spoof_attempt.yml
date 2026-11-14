@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-PROVENANCE-SPOOF-ATTEMPT — cliente tentou definir campos de provenance/source/reason"
+id: 64a929f1-3cf3-4488-9e0a-a44083757a21
+status: experimental
+description: >
+    cliente tentou definir campos de provenance/source/reason. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1693.001"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: provenance_spoof_attempt
+    condition: sel
+falsepositives:
+    - nenhum cliente legitimo do lab envia campos de provenance
+level: medium

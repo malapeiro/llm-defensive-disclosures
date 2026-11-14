@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-INVALID-WORK-ORDER — work-order presente e invalida rejeitada no dispositivo/gate"
+id: d52993fc-80f7-45b5-9152-3f301c317d4b
+status: experimental
+description: >
+    work-order presente e invalida rejeitada no dispositivo/gate. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1078"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: work_order_invalid
+    condition: sel
+falsepositives:
+    - WO legitima expirada por relogio errado do operador
+level: medium

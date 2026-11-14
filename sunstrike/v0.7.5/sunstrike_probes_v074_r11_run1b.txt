@@ -1,0 +1,112 @@
+SUNSTRIKE probes R11 v0.1 (GO v0.7.5 14-11 ~14:00; achados F-01/F-06/F-05/F-07/F-08/F-09/F-16(1) da 9.a auditoria; previsoes V074 E V075 pre-registadas NESTE ficheiro antes de qualquer corrida) — run 20261114T135819Z-7de1ed (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V074 (hash 1643887c517f94cf…)
+
+GATEFALL R11 — PREVISÕES PRÉ-REGISTRADAS NESTE FICHEIRO (v0.1) ANTES de qualquer corrida: fixes de LÓGICA do GO v0.7.5 §3
+contra sunstrike_lab.py v0.7.4 INTOCADA (o ANTES; run 1 = GATEFALL OFICIAL) (hash 1643887c517f94cf…)
+  [P-R11-F01/F-01-massa-por-contagem] CONFIRMADO — REGRESSÃO da v0.7.4: 5 menores [10,2,6,5,1] OFF com MNT1 + resume nos 5; depois Top-5 [4,11,0,8,3] OFF com MNT1 (58,22% kWp): a D-MASS-SHUTDOWN-WITH-WO guarda o estado de MAIOR CONTAGEM (5 menores, 25,68% < 30%, 5 < k) → ZERO CRIT (a v0.7.3 disparava; o resume dos 5 menores 'congela' o max_off por contagem)
+  [P-R11-F01-CTRL1/F-01-controlo-top5] MANTÉM — controlo: só o Top-5 OFF com WO → CRIT de massa (5 < k MAS 58,22% >= 30%) — a v0.7.4 dispara (estado único, sem concorrência de contagem)
+  [P-R11-F01-CTRL2/F-01-controlo-1a1] MANTÉM — controlo (F-05b): 12 shutdown+resume serializados com WO → ZERO CRIT de massa (max 1 OFF em simultâneo)
+  [P-R11-F06a/F-06-slow-ancorada-com-resume] CONFIRMADO — REGRESSÃO da v0.7.4: 1 shutdown s/WO em t=0; +3601 s; 12 shutdowns s/WO espaçados 61 s COM resume → a D-SLOW-WAVE ancorada no PRIMEIRO evento só vê 1 na janela [t0, t0+3600] → ZERO CRIT slow (a v0.7.3 disparava; 12 distintos cabem em qualquer janela deslizante de 1 h)
+  [P-R11-F06b/F-06-slow-ancorada-sem-resume] CONFIRMADO — idem SEM resume → ZERO CRIT slow; a massa CRIT está PRESENTE (12 OFF no fim — DECLARADO, duas vistas do mesmo incidente)
+  [P-R11-I2/F-06-controlo-lavagem] MANTÉM — controlo I2 ('lavagem'): 8 shutdowns s/WO em 8 min (60 s de espaçamento) + 9.º 2 h depois → CRIT slow-wave (os 8 cabem na janela; o 9.º fica fora — a regra não se deixa lavar)
+  [P-R11-F05/PARKED-F05-reset-aos-90] CONFIRMADO — F-05: descarga remota 10,5% + recarga solar a >= 90,01% (RESET do acumulado aos 90) + 40% + 9,99% → SoC 40,02% <= 45 MAS acumulado 49,99 < 50 → ZERO alertas (uma recarga mínima que toque 90% APAGA o défice)
+  [P-R11-F07/PARKED-F07-fired-não-repõe] CONFIRMADO — F-07: ataque 1 (40% + 24,9% → SoC 35,1) → CRIT count 1; recarga solar a 100%; ataque 2 idêntico → parked_fired NUNCA é reposto → SEM alerta novo → CRIT count 1 (o 2.º ataque fica cego no mesmo cenário)
+  [P-R11-P1/PARKED-P1-controlo] MANTÉM — controlo P1: 40% + 24,9% (SEM recarga) nos 12 → CRIT count 12 (acumulado 64,9 >= 50; SoC 35,1 <= 45)
+  [P-R11-P2/PARKED-P2-controlo] MANTÉM — controlo P2: atacante lento 3 dias × 21,6% → CRIT count 12 (64,8 >= 50; 35,2 <= 45)
+  [P-R11-P3/PARKED-P3-controlo] MANTÉM — controlo P3 (K1-c): dono 25%/dia × 3 COM recarga solar a 100% → ZERO alertas
+  [P-R11-P4/PARKED-P4-controlo] MANTÉM — controlo P4: uma descarga remota de 30% → ZERO alertas (30 < 50)
+  [P-R11-F08/PARKED-F08-dono-remoto] DECLARADO — F-08: dono 25%/dia pelo canal REMOTO com recargas parciais < 90% (40% + recarga ~10 pp + 25% → SoC final ~44,9 <= 45, défice >= 50) → CRIT (o dono que usa o canal remoto é INDISTINGUÍVEL do atacante; trade-off DECLARADO, como o G5c)
+  [P-R11-F09/F-09-wave-por-eventos] CONFIRMADO — F-09: 6 setpoints 100→50 num SÓ inversor com WO (restaurando a 100 entre cortes) → a D-FLEET-CURTAILMENT-WAVE conta EVENTOS (6 >= k na janela de 60 s) → CRIT (contaminação evento-vs-aparelho na onda de curtailment)
+  [P-R11-F09-CTRL/F-09-controlo-6-distintos] MANTÉM — controlo (F-05c): 6 aparelhos DISTINTOS a 50% com WO → CRIT wave mantém-se (por desenho)
+  [P-R11-F16/F-16-melhor-janela-por-contagem] CONFIRMADO — F-16(1): 6 pequenos [10,2,6,5,1,9] cortados a 0% e repostos; +1 h; Top-5 a 0% com WO → o D-MASS-CURTAILMENT reporta a janela de MAIOR CONTAGEM (6 pequenos, 33,33% kWp) em vez da de MAIOR kWp (Top-5, 58,22%) → CRIT com capacity_loss_pct ~33,33 (ERRADO); a capacity CRIT está PRESENTE (arming s/WO dos cortes — DECLARADO)
+
+lab v0.7.4 em memória (evidence=False), 12 dispositivos + gate
+
+[P-R11-F01] F-01 — 5 menores OFF+resume; depois Top-5 OFF (58,22% kWp)
+  [P-R11-F01] CONFIRMADO — PREVISÃO: CONFIRMADO — REGRESSÃO da v0.7.4: 5 menores [10,2,6,5,1] OFF com MNT1 + resume nos 5; depois Top-5 [4,11,0,8,3] OFF com MNT1 (58,22% kWp): a D-MASS-SHUTDOWN-WITH-WO guarda o estado de MAIOR CONTAGEM (5 menores, 25,68% < 30%, 5 < k) → ZERO CRIT (a v0.7.3 disparava; o resume dos 5 menores 'congela' o max_off por contagem)
+        5 menores OFF+resume + Top-5 OFF (58,22%) → alertas: ZERO — ZERO CRIT (o max_off ficou nos 5 menores, 25,68% < 30%)
+
+[P-R11-F01-CTRL1] F-01 controlo — só Top-5 OFF com WO
+  [P-R11-F01-CTRL1] MANTÉM — PREVISÃO: MANTÉM — controlo: só o Top-5 OFF com WO → CRIT de massa (5 < k MAS 58,22% >= 30%) — a v0.7.4 dispara (estado único, sem concorrência de contagem)
+        Top-5 OFF com MNT1 → mass CRIT 58.22%
+
+[P-R11-F01-CTRL2] F-01 controlo — 12 shutdown+resume serializados (F-05b)
+  [P-R11-F01-CTRL2] MANTÉM — PREVISÃO: MANTÉM — controlo (F-05b): 12 shutdown+resume serializados com WO → ZERO CRIT de massa (max 1 OFF em simultâneo)
+        12/12 ON no fim; alertas: ZERO
+
+[P-R11-F06a] F-06 — 1 shutdown t=0; +3601 s; 12 shutdowns espaçados 61 s COM resume
+  [P-R11-F06a] CONFIRMADO — PREVISÃO: CONFIRMADO — REGRESSÃO da v0.7.4: 1 shutdown s/WO em t=0; +3601 s; 12 shutdowns s/WO espaçados 61 s COM resume → a D-SLOW-WAVE ancorada no PRIMEIRO evento só vê 1 na janela [t0, t0+3600] → ZERO CRIT slow (a v0.7.3 disparava; 12 distintos cabem em qualquer janela deslizante de 1 h)
+        13 shutdowns s/WO; slow AUSENTE (ancorada no 1.º evento: 1 distinto na janela); massa AUSENTE
+        alertas: [('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 13)]
+
+[P-R11-F06b] F-06 — 1 shutdown t=0; +3601 s; 12 shutdowns espaçados 61 s SEM resume
+  [P-R11-F06b] CONFIRMADO — PREVISÃO: CONFIRMADO — idem SEM resume → ZERO CRIT slow; a massa CRIT está PRESENTE (12 OFF no fim — DECLARADO, duas vistas do mesmo incidente)
+        13 shutdowns s/WO; slow AUSENTE (ancorada no 1.º evento: 1 distinto na janela); massa presente (12 OFF — DECLARADO)
+        alertas: [('D-CAPACITY-DIVERGENCE', 'CRIT', 9), ('D-MASS-SHUTDOWN-WITH-WO', 'CRIT', 13), ('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 13)]
+
+[P-R11-I2] F-06 controlo — 8 em 8 min + 9.º 2 h depois
+  [P-R11-I2] MANTÉM — PREVISÃO: MANTÉM — controlo I2 ('lavagem'): 8 shutdowns s/WO em 8 min (60 s de espaçamento) + 9.º 2 h depois → CRIT slow-wave (os 8 cabem na janela; o 9.º fica fora — a regra não se deixa lavar)
+        8 shutdowns em 8 min + 9.º 2 h depois → slow CRIT count 8 (o 9.º não lava os 8; massa CRIT presente — DECLARADO)
+
+[P-R11-F05] PARKED F-05 — 10,5% + recarga a 90,01 + 40% + 9,99%
+  [P-R11-F05] CONFIRMADO — PREVISÃO: CONFIRMADO — F-05: descarga remota 10,5% + recarga solar a >= 90,01% (RESET do acumulado aos 90) + 40% + 9,99% → SoC 40,02% <= 45 MAS acumulado 49,99 < 50 → ZERO alertas (uma recarga mínima que toque 90% APAGA o défice)
+        10,5% + recarga a 92.53 (RESET aos 90) + 40% + 9,99% → SoC 42.54; acumulado 49,99 < 50
+        alertas: ZERO — ZERO (a recarga que toca 90 apaga o défice)
+
+[P-R11-F07] PARKED F-07 — 2 ataques separados por recarga a 100%
+  [P-R11-F07] CONFIRMADO — PREVISÃO: CONFIRMADO — F-07: ataque 1 (40% + 24,9% → SoC 35,1) → CRIT count 1; recarga solar a 100%; ataque 2 idêntico → parked_fired NUNCA é reposto → SEM alerta novo → CRIT count 1 (o 2.º ataque fica cego no mesmo cenário)
+        ataque 1 → CRIT; recarga a 100.00; ataque 2 → parked_fired NUNCA reposto → SEM alerta novo
+        CRIT count 1 (o 2.º ataque fica cego); alertas: [('D-BATTERY-PARKED-DRAIN', 'CRIT', 1)]
+
+[P-R11-P1] PARKED P1 — 40% + 24,9% nos 12 (SEM recarga)
+  [P-R11-P1] MANTÉM — PREVISÃO: MANTÉM — controlo P1: 40% + 24,9% (SEM recarga) nos 12 → CRIT count 12 (acumulado 64,9 >= 50; SoC 35,1 <= 45)
+        SoC min 35.10; CRIT count 12
+
+[P-R11-P2] PARKED P2 — 3 dias × 21,6% (SEM recarga)
+  [P-R11-P2] MANTÉM — PREVISÃO: MANTÉM — controlo P2: atacante lento 3 dias × 21,6% → CRIT count 12 (64,8 >= 50; 35,2 <= 45)
+        SoC min 35.20; CRIT count 12
+
+[P-R11-P3] PARKED P3 — dono 25%/dia × 3 COM recarga a 100%
+  [P-R11-P3] MANTÉM — PREVISÃO: MANTÉM — controlo P3 (K1-c): dono 25%/dia × 3 COM recarga solar a 100% → ZERO alertas
+        SoC min 100.00; alertas: ZERO
+
+[P-R11-P4] PARKED P4 — uma descarga remota de 30% (dev9)
+  [P-R11-P4] MANTÉM — PREVISÃO: MANTÉM — controlo P4: uma descarga remota de 30% → ZERO alertas (30 < 50)
+        SoC 70.00; alertas: ZERO
+
+[P-R11-F08] PARKED F-08 — dono 40% + recarga parcial ~10 pp + 25% → SoC ~44,9
+  [P-R11-F08] DECLARADO — PREVISÃO: DECLARADO — F-08: dono 25%/dia pelo canal REMOTO com recargas parciais < 90% (40% + recarga ~10 pp + 25% → SoC final ~44,9 <= 45, défice >= 50) → CRIT (o dono que usa o canal remoto é INDISTINGUÍVEL do atacante; trade-off DECLARADO, como o G5c)
+        40% + recarga a 69.81 (+9.81 pp, < 90) + 25% → SoC 44.81 <= 45; défice >= 50 → CRIT count 1 (trade-off DECLARADO: o canal remoto não distingue dono de atacante)
+
+[P-R11-F09] F-09 — 6 setpoints 100→50 num só inversor com WO
+  [P-R11-F09] CONFIRMADO — PREVISÃO: CONFIRMADO — F-09: 6 setpoints 100→50 num SÓ inversor com WO (restaurando a 100 entre cortes) → a D-FLEET-CURTAILMENT-WAVE conta EVENTOS (6 >= k na janela de 60 s) → CRIT (contaminação evento-vs-aparelho na onda de curtailment)
+        6 cortes 100→50 no dev3 → wave CRIT count 6 (conta EVENTOS, não aparelhos)
+
+[P-R11-F09-CTRL] F-09 controlo — 6 aparelhos distintos a 50% com WO
+  [P-R11-F09-CTRL] MANTÉM — PREVISÃO: MANTÉM — controlo (F-05c): 6 aparelhos DISTINTOS a 50% com WO → CRIT wave mantém-se (por desenho)
+        6 distintos a 50% com WO → wave CRIT count 6 (por desenho)
+
+[P-R11-F16] F-16 — 6 pequenos cortados/repostos; +1 h; Top-5 a 0% com WO
+  [P-R11-F16] CONFIRMADO — PREVISÃO: CONFIRMADO — F-16(1): 6 pequenos [10,2,6,5,1,9] cortados a 0% e repostos; +1 h; Top-5 a 0% com WO → o D-MASS-CURTAILMENT reporta a janela de MAIOR CONTAGEM (6 pequenos, 33,33% kWp) em vez da de MAIOR kWp (Top-5, 58,22%) → CRIT com capacity_loss_pct ~33,33 (ERRADO); a capacity CRIT está PRESENTE (arming s/WO dos cortes — DECLARADO)
+        6 pequenos (33,33%) + Top-5 (58,22%) em janelas SEPARADAS (> 1 h)
+        massa CRIT reporta a janela de MAIOR CONTAGEM: 33.33% (6 pequenos) em vez dos 58,22% do Top-5
+
+SUMÁRIO — GATEFALL R11 vs alvo V074 (run 20261114T135819Z-7de1ed)
+  [P-R11-F01] CONFIRMADO
+  [P-R11-F01-CTRL1] MANTÉM
+  [P-R11-F01-CTRL2] MANTÉM
+  [P-R11-F06a] CONFIRMADO
+  [P-R11-F06b] CONFIRMADO
+  [P-R11-I2] MANTÉM
+  [P-R11-F05] CONFIRMADO
+  [P-R11-F07] CONFIRMADO
+  [P-R11-P1] MANTÉM
+  [P-R11-P2] MANTÉM
+  [P-R11-P3] MANTÉM
+  [P-R11-P4] MANTÉM
+  [P-R11-F08] DECLARADO
+  [P-R11-F09] CONFIRMADO
+  [P-R11-F09-CTRL] MANTÉM
+  [P-R11-F16] CONFIRMADO
+RESULTADO: 16/16 previsões confirmadas (lab v0.7.4)
+RC=0 — GATEFALL R11 RUN 1 vs v0.7.4 INTOCADA (1643887c…): regressões F-01/F-06 e defeitos PARKED/F-09/F-16 CONFIRMADOS (os fixes vêm DEPOIS, por ordem do GO §2).

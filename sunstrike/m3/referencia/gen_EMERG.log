@@ -1,0 +1,10 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario EMERG — lab mesma pasta (m3/)
+passos: 5
+evidencia: sunstrike_evidence/20261114T154941Z-20421f
+alertas do detetor INTERNO do lab (informativo):
+  [EMERG] D-GRID-EMERGENCY-REMOTE-BLOCK x5 sunbox-00
+70 packets captured
+140 packets received by filter
+0 packets dropped by kernel
+d6fde828b586aa10e1e7182c68231fce33668f9ea9e955257ae56b6e4b1a7a11  EMERG.pcap

@@ -1,0 +1,2 @@
+{"cell": "CELL-A", "device": "sunbox-01", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H2", "sim_ts": 1794671346.0935242, "ts": "2026-11-14T15:49:06.093Z"}
+{"cell": "CELL-A", "device": "sunbox-01", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H2", "sim_ts": 1794671346.1192248, "ts": "2026-11-14T15:49:06.119Z"}

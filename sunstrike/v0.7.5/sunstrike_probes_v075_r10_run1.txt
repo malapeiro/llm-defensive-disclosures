@@ -1,0 +1,222 @@
+SUNSTRIKE probes R10 v0.2 (GO v0.7.4 14-11 ~08:45; achados AUD-03/04/08/10 + G5 do GO, F-* da 8.a auditoria Gemini verificados por execucao; previsoes V073 E V074 pre-registadas NESTE ficheiro antes de qualquer corrida) — run 20261114T140627Z-ea296a (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V075 (hash 5162964f2df283fd…)
+
+GATEFALL V074 — previsões pré-registradas NESTE ficheiro (v0.1) ANTES de qualquer corrida: fixes do GO §3/§5 (hash preenchido na entrada v0.2, ANTES do run 2)
+contra sunstrike_lab.py V075 (hash 5162964f2df283fd…)
+  [P-R10-03a/AUD-03-arredondamento] RESOLVIDO — LEDGER REGISTA A QUEDA REAL (GO): 4001 pedidos de 0,0051 pp → 200×4000 e 409 remote_discharge_daily_limit ×1 (o ledger soma a queda REAL de 0,01 pp/pedido: 40,00 + 0,01 > 40); SoC 60,00; ledger 40,00; queda real do dia 40,00 ≤ limite 40; |ledger − queda real| = 0,00 ≤ 0,01; ZERO alertas
+  [P-R10-03b/AUD-03-below-resolution] RESOLVIDO — BELOW_RESOLUTION (GO): 8200 pedidos de 0,0049 pp → 400 below_resolution ×8200 (queda real 0: abaixo da resolução de 0,01 pp), SEM consumir quota (ledger 0,00) e SoC 100,00 INTACTO; ZERO alertas; a quota segue INTACTA (um drain de 40% depois → 200)
+  [P-R10-03c/AUD-03-estaciona-35] RESOLVIDO — QUEDA REMOTA DO DIA NÃO PASSA DE 40 pp (GO): 6499 pedidos de 0,00501 pp → 200×4000 + 409 daily ×2499 (ledger real 40,00); SoC 60,00 (queda real do dia 40,00 ≤ 40 — o estacionamento a 35,01 MORRE: o limite diário passa a contar a queda REAL); ZERO alertas (cumulativa: 40,00 < 50 na janela)
+  [P-R10-04a/AUD-04-broker-login] RESOLVIDO — LOGIN_BROKER DISPARA E A SESSÃO HERDA A MARCA (GO): /login com token de broker → 200; setpoint com a sessão → 200; D-AUTH-BROKER-TOKEN CRIT count 2 (o login_ok method broker_token DISPARA a regra E a sessão fica MARCADA — o comando herdado emite auth_use broker_token: login + setpoint = 2 eventos)
+  [P-R10-04b/AUD-04-login-fails-dev] RESOLVIDO — FALHAS DE /LOGIN AUDITADAS NO DISPOSITIVO (GO): 401×3 + 3 eventos login_fail no audit do dev4 (zero alertas — auditoria sem regra, como no gate)
+  [P-R10-G5/G5-banda-presa] RESOLVIDO — SNAPSHOT APÓS CADA SETPOINT REMOTO + REAVALIAÇÃO COM A REGRA ARMADA (GO): o cenário completo → 200×36, export 0, div 100%; D-CAPACITY-DIVERGENCE CRIT count 32 (cada setpoint s/WO emite snapshot — todos com div ≥ 50,68 ≥ 30 e arming ativo desde o 1.º s/WO) + D-MASS-CURTAILMENT CRIT (regra NOVA F-04a: 12 distintos ≥ k, 100% ≥ 30% — os 4 WO a 0% e os 8 s/WO a ≤ 25% SOMADOS na SLOW_WINDOW; FP da parte legítima declarado em G5c)
+  [P-R10-G5b/G5-controlo] RESOLVIDO — controlo: D-CAPACITY-DIVERGENCE CRIT count 14 (os 14 setpoints s/WO cujo snapshot pós-fix tem div ≥ 30 — computado: a div cruza 30 ao 19.º setpoint de 32) + D-MASS-CURTAILMENT CRIT (8 distintos, 51,01% ≥ 30); o CRIT mantém-se SEM a parte legítima
+  [P-R10-G5c/G5-FP] RESOLVIDO/DECLARADO — FP DA CAPACITY MORTO; FP DA MASSA DECLARADO (verificar FP, GO): SEM CRIT de D-CAPACITY-DIVERGENCE (com WO NUNCA arma — o fix não muda o arming); D-MASS-CURTAILMENT CRIT DISPARA (4 maiores a 0% COM WO = 48,98% ≥ 30% — FP DECLARADO aceitável por desenho, o MESMO tratamento do MNT1 frota-inteira do GO v0.7.2/F-C15b; registado, não escondido)
+  [P-R10-08/AUD-08-onda-1-inversor] RESOLVIDO — DISPOSITIVOS DISTINTOS (GO): 8 shutdowns no MESMO inversor → 200×8; ZERO CRIT de onda (1 distinto < k=6) e ZERO CRIT de slow-wave (1 < SLOW_K=8); o WARN D-REMOTE-SHUTDOWN-NO-WO ×8 MANTÉM-SE (a visibilidade por evento não morre)
+  [P-R10-10a/AUD-10-device-bool] RESOLVIDO — TIPO VALIDADO NO GATE (GO): login default (D-AUTH-DEFAULT CRIT ×1) + /fleet/firmware com {"device": true} → 400 + evento strict_type_reject auditado no gate (bool NÃO é índice); dev1 fw_ver 2.4.1 INTACTO; ZERO outros alertas
+  [P-R10-10b/AUD-10-json-malformado] RESOLVIDO — JSON MALFORMADO AUDITADO (GO): 400 + evento body_json_invalid auditado no gate (a recusa deixa rasto)
+  [P-R10-10c/AUD-10-contadores] RESOLVIDO — REPOSIÇÃO NA VIRAGEM DO DIA E NO HARNESS_RESET (GO): (a) bulk: 200×2 + 429; +25 h → 200 (bulk_used REPOSTO na viragem do dia; os dispositivos devolvem 403 usos_esgotados — os USOS da MNT3 não repõem, só bulk_used; SEM bulk_block_rate_limit após a viragem); (b) o gate TEM harness_reset() e repõe bulk_used/login_fails/lockout (após reset os CONTADORES ficam a 0 — bulk_used=0, login_fails=0; o bulk seguinte devolve 403 usos_esgotados da MNT2, NÃO 429: o reset é dos CONTADORES, não dos usos da WO); (c) login_fails: 4 errados + viragem do dia + 4 errados → SEM lockout (contador reposto: 4 < 5; login_rate_blocked AUSENTE)
+  [P-R10-F04a/F-04a-curtailment-massa-WO] RESOLVIDO — REGRA DE MASSA PARA CORTES DE EXPORTAÇÃO (GO, F-04a): D-MASS-CURTAILMENT CRIT (12 distintos ≥ k OU 100% ≥ 30%, lotes 5+5+2 DENTRO da SLOW_WINDOW de 1 h — o pacing de 61 s não evade); SEM CRIT de capacity (COM WO não arma); SEM CURTAILMENT-WAVE (lotes de 5 < k na janela de 60 s — a onda rápida continua intacta e cega ao pacing LENTO)
+  [P-R10-F04a-CTRL/F-04a-controlo] RESOLVIDO — CONTROLO: 5 menores a 0% COM WO (5 < k E 25,68% < 30) → ZERO alertas (a manutenção pontual legítima fica ABAIXO dos gatilhos somados)
+  [P-R10-P1/P1-bateria-estacionada] RESOLVIDO — D-BATTERY-PARKED-DRAIN (regra NOVA, GO): descarga REMOTA acumulada desde a última recarga a SoC ≥ 90% (sem janela temporal) ≥ 50 pp E SoC atual ≤ 45% → CRIT count 12 (acumulado 64,9 ≥ 50; SoC 35,1 ≤ 45 — a frota estacionada ACENDE antes do apagão); BLACKOUT 4 h → 0/12 (a física não muda; muda a VISIBILIDADE)
+  [P-R10-P2/P2-atacante-lento] RESOLVIDO — atacante lento: D-BATTERY-PARKED-DRAIN CRIT count 12 (64,8 ≥ 50; 35,2 ≤ 45 — a regra NÃO tem janela: o K1-b de 3 dias morre)
+  [P-R10-P3/P3-FP-dono-recarga] RESOLVIDO/FP MORTO — a recarga solar a SoC 100 (≥ 90) REPÕE o acumulador a cada dia (25 < 50 e SoC 75 > 45): ZERO alertas (K1-c continua morto na regra NOVA)
+  [P-R10-P4/P4-FP-descarga-unica] RESOLVIDO/FP MORTO — 30 < 50 e 70 > 45: ZERO alertas (regra de paragem pré-registrada: se P3 ou P4 derem alerta, NÃO há terceira tentativa)
+  [P-R10-F09c/F-09c-assinatura-sem-chave] RESOLVIDO — HMAC-SHA256 COM CHAVE DO FABRICANTE SIMULADO (GO, constante documentada; o Adversário NÃO a usa): imagem arbitrária com a assinatura sha256 pública → 403 + WARN D-FIRMWARE-REJECTED (evento firmware_rejected reason assinatura_invalida; qualquer imagem sem o segredo é RECUSADA); a LEGIT com L.sign_image → 200 (o H4 do demo mantém-se; as docstrings do H4 corrigidas para o que passa a ser verdade)
+  [P-R10-F05b/F-05b-FP-manutencao-1a1] RESOLVIDO — A MASSA CONTA OS DESLIGADOS EM SIMULTÂNEO (GO): 12 shutdown+resume serializados (12/12 ON no fim, NUNCA 2 OFF juntos) → 200×24; ZERO CRIT de massa (máx. 1 OFF em simultâneo < k); ZERO outros alertas
+  [P-R10-F05b-CTRL/F-05b-controlo] RESOLVIDO — CONTROLO: os MESMOS 12 shutdowns SEM resume → 200×12; D-MASS-SHUTDOWN-WITH-WO CRIT (12 OFF EM SIMULTÂNEO no fim — a massa verdadeira continua CRIT)
+  [P-R10-F05d/F-05d-amount-zero] RESOLVIDO — AMOUNT ≤ 0 → 400 (GO): dev0 SoC 30 → 400 strict_type_reject (amount ≤ 0 recusado; SoC intacto 30; SEM param_change) e dev1 SoC 5 → 400 (idem — o pedido NULO nem chega ao floor); ZERO alertas (as regras de descarga exigem drop > 0)
+  [P-R10-F05a/F-05a-blackout-capacity] RESOLVIDO — O ESPERADO CONTA 0 kW PARA RELÉS ABERTOS PELO CANAL AUTÓNOMO (GO): 1 setpoint s/WO + BLACKOUT → esperado 0 (12 relés abertos pelo anti-islanding) → div 0 → ZERO CRIT de capacity (o resíduo 'CRIT noturno/apagão' DECLARADO fecha)
+  [P-R10-F07a/F-07a-work-order-tipo] RESOLVIDO — WORK_ORDER TEM DE SER STRING (GO): direto no dev6 → 400 + evento work_order_invalid reason tipo_invalido (WARN D-INVALID-WORK-ORDER; o shutdown NÃO executa); via GUARD → 400 guard_reject strict_type:work_order (o Guard valida o tipo ANTES de encaminhar)
+  [P-R10-F08a/F-08a-content-length] RESOLVIDO — CL < 0 OU INVÁLIDO → 400 + EVENTO (GO): o GUARD recusa 'Content-Length: -1' com 400 + guard_reject bad_content_length (o body NÃO é lido; dev0 export_limit INTACTO 100; o limite de body volta a ser INEGÁVEL); o JSONHandler direto idem (400 + evento)
+  [P-R10-F08b/F-08b-guard-reject-invisivel] RESOLVIDO — (i) guard_reject não-canónico TRATA-SE como D-NON-CANONICAL-REQUEST (GO): pedido '//' via GUARD → 400 + WARN D-NON-CANONICAL-REQUEST (a via gerida deixa de ser cega); (ii) verificação canónica ANTES do parse: '//setpoint' + JSON malformado no DEVICE → 400 + evento non_canonical_request (o rasto canónico existe mesmo com body ruim)
+  [P-R10-F08c/F-08c-check-consume] RESOLVIDO — CHECK+CONSUME ATÓMICOS SOB LOCK, USANDO O RETORNO (GO): 8 threads simultâneas → EXATAMENTE 3×200 + 5×403 usos_esgotados (WARN D-INVALID-WORK-ORDER count 5; a MNT2 nunca ultrapassa max_uses=3, por mais concorrência)
+  [P-R10-F06b/F-06b-login-fails-gate] RESOLVIDO — LOGIN_OK REPÕE login_fails (GO): 4 errados + 1 correto (D-AUTH-DEFAULT CRIT ×1) + 4 errados → SEM lockout (login_rate_blocked AUSENTE — o contador repõe no login correto; 4 < 5)
+  [P-R10-TEXT/TEXT-16-10-e-contagens] RESOLVIDO — TEXTOS (GO §5): '22,9' AUSENTE do código (16,10 no lugar — 14,3/88,8); cabeçalho v0.7.4; a linha do Detector com o nº REAL de regras; len(RULE_ATTACK_MAP) == 26 (24 + D-MASS-CURTAILMENT + D-BATTERY-PARKED-DRAIN)
+
+lab v0.7.5 em memória (evidence=False), 12 dispositivos + gate
+
+
+[P-R10-03a] AUD-03 — 4001 descargas de 0,0051 pp (dev0)
+  [P-R10-03a] RESOLVIDO — PREVISÃO: RESOLVIDO — LEDGER REGISTA A QUEDA REAL (GO): 4001 pedidos de 0,0051 pp → 200×4000 e 409 remote_discharge_daily_limit ×1 (o ledger soma a queda REAL de 0,01 pp/pedido: 40,00 + 0,01 > 40); SoC 60,00; ledger 40,00; queda real do dia 40,00 ≤ limite 40; |ledger − queda real| = 0,00 ≤ 0,01; ZERO alertas
+        pedidos: 200×4000, 409×1 em 3.0 s
+        SoC 60.00 (queda real 40.00 pp ≤ limite diário 40)
+        ledger 40.00 |ledger − queda real| = 0.00 ≤ 0,01
+        alertas: ZERO
+
+[P-R10-03b] AUD-03 — 8200 descargas de 0,0049 pp (dev1)
+  [P-R10-03b] RESOLVIDO — PREVISÃO: RESOLVIDO — BELOW_RESOLUTION (GO): 8200 pedidos de 0,0049 pp → 400 below_resolution ×8200 (queda real 0: abaixo da resolução de 0,01 pp), SEM consumir quota (ledger 0,00) e SoC 100,00 INTACTO; ZERO alertas; a quota segue INTACTA (um drain de 40% depois → 200)
+        pedidos: 400 below_resolution ×8200 em 5.2 s (queda real 0: < 0,01 pp)
+        SoC 100.00 INTACTO; ledger 0.00 (quota INTACTA)
+        alertas: ZERO
+        quota intacta: drain de 40% depois → 200
+
+[P-R10-03c] AUD-03 — 6499 descargas de 0,00501 pp (dev2)
+  [P-R10-03c] RESOLVIDO — PREVISÃO: RESOLVIDO — QUEDA REMOTA DO DIA NÃO PASSA DE 40 pp (GO): 6499 pedidos de 0,00501 pp → 200×4000 + 409 daily ×2499 (ledger real 40,00); SoC 60,00 (queda real do dia 40,00 ≤ 40 — o estacionamento a 35,01 MORRE: o limite diário passa a contar a queda REAL); ZERO alertas (cumulativa: 40,00 < 50 na janela)
+        pedidos: 200×4000, 409×2499 em 5.7 s
+        SoC 60.00 (queda real do dia 40.00 ≤ 40 — o estacionamento a 35,01 MORRE)
+        ledger 40.00 = queda real (o ledger conta o REAL)
+        alertas: ZERO
+
+[P-R10-04a] AUD-04 — login broker_token + setpoint (dev3)
+  [P-R10-04a] RESOLVIDO — PREVISÃO: RESOLVIDO — LOGIN_BROKER DISPARA E A SESSÃO HERDA A MARCA (GO): /login com token de broker → 200; setpoint com a sessão → 200; D-AUTH-BROKER-TOKEN CRIT count 2 (o login_ok method broker_token DISPARA a regra E a sessão fica MARCADA — o comando herdado emite auth_use broker_token: login + setpoint = 2 eventos)
+        login broker → 200; setpoint com a SESSÃO → 200 (export_limit 50)
+        alertas: [('D-AUTH-BROKER-TOKEN', 'CRIT', 2)] — D-AUTH-BROKER-TOKEN CRIT count 2 (login_ok + auth_use herdado da sessão marcada)
+
+[P-R10-04b] AUD-04 — 3 logins falhados no dev4
+  [P-R10-04b] RESOLVIDO — PREVISÃO: RESOLVIDO — FALHAS DE /LOGIN AUDITADAS NO DISPOSITIVO (GO): 401×3 + 3 eventos login_fail no audit do dev4 (zero alertas — auditoria sem regra, como no gate)
+        401×3; eventos login_fail no device: 3
+        alertas: ZERO (auditoria sem regra, como no gate)
+
+[P-R10-G5] G5 — 4 WO a 0% + 8 s/WO em degraus 75/50/25/0
+  [P-R10-G5] RESOLVIDO — PREVISÃO: RESOLVIDO — SNAPSHOT APÓS CADA SETPOINT REMOTO + REAVALIAÇÃO COM A REGRA ARMADA (GO): o cenário completo → 200×36, export 0, div 100%; D-CAPACITY-DIVERGENCE CRIT count 32 (cada setpoint s/WO emite snapshot — todos com div ≥ 50,68 ≥ 30 e arming ativo desde o 1.º s/WO) + D-MASS-CURTAILMENT CRIT (regra NOVA F-04a: 12 distintos ≥ k, 100% ≥ 30% — os 4 WO a 0% e os 8 s/WO a ≤ 25% SOMADOS na SLOW_WINDOW; FP da parte legítima declarado em G5c)
+        200×36; export 0 kW em todos; div final 100.00% (esperado 48.84 vs real 0.00)
+        alertas: [('D-CAPACITY-DIVERGENCE', 'CRIT', 32), ('D-MASS-CURTAILMENT', 'CRIT', 12)] — capacity CRIT count 32 (snapshots pós-setpoint com div ≥ 30 e arming) + massa de curtailment 12 distintos
+
+[P-R10-G5b] G5 — controlo: 8 s/WO em degraus (sem WO)
+  [P-R10-G5b] RESOLVIDO — PREVISÃO: RESOLVIDO — controlo: D-CAPACITY-DIVERGENCE CRIT count 14 (os 14 setpoints s/WO cujo snapshot pós-fix tem div ≥ 30 — computado: a div cruza 30 ao 19.º setpoint de 32) + D-MASS-CURTAILMENT CRIT (8 distintos, 51,01% ≥ 30); o CRIT mantém-se SEM a parte legítima
+        200×32; div final 51.00%
+        alertas: [('D-CAPACITY-DIVERGENCE', 'CRIT', 14), ('D-MASS-CURTAILMENT', 'CRIT', 8)] — capacity CRIT count 14 (14 snapshots ≥ 30: do 19.º setpoint ao 32.º) + massa de curtailment (8 distintos)
+
+[P-R10-G5c] G5 — FP: 4 WO a 0% nos 4 maiores
+  [P-R10-G5c] RESOLVIDO/DECLARADO — PREVISÃO: RESOLVIDO/DECLARADO — FP DA CAPACITY MORTO; FP DA MASSA DECLARADO (verificar FP, GO): SEM CRIT de D-CAPACITY-DIVERGENCE (com WO NUNCA arma — o fix não muda o arming); D-MASS-CURTAILMENT CRIT DISPARA (4 maiores a 0% COM WO = 48,98% ≥ 30% — FP DECLARADO aceitável por desenho, o MESMO tratamento do MNT1 frota-inteira do GO v0.7.2/F-C15b; registado, não escondido)
+        200×4; div 49.00% (esperado 48.84 vs real 24.91)
+        SEM CRIT de capacity (com WO NUNCA arma — o FP do G5 morre); alertas: [('D-MASS-CURTAILMENT', 'CRIT', 4)]
+        D-MASS-CURTAILMENT CRIT no caso legítimo: 4 maiores = 48,98%% ≥ 30%% com WO — FP DECLARADO aceitável por desenho (o MESMO tratamento do MNT1 frota-inteira, GO v0.7.2/F-C15b); registado, não escondido
+
+[P-R10-08] AUD-08 — 8 shutdowns s/WO no mesmo dev5
+  [P-R10-08] RESOLVIDO — PREVISÃO: RESOLVIDO — DISPOSITIVOS DISTINTOS (GO): 8 shutdowns no MESMO inversor → 200×8; ZERO CRIT de onda (1 distinto < k=6) e ZERO CRIT de slow-wave (1 < SLOW_K=8); o WARN D-REMOTE-SHUTDOWN-NO-WO ×8 MANTÉM-SE (a visibilidade por evento não morre)
+        200×8 no dev5 (1 dispositivo distinto)
+        alertas: [('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 8)] — ZERO CRIT de onda/slow (1 < k=6; 1 < SLOW_K=8); WARN s/WO ×8 MANTÉM-SE
+
+[P-R10-10a] AUD-10 — {"device": true} no /fleet/firmware
+  [P-R10-10a] RESOLVIDO — PREVISÃO: RESOLVIDO — TIPO VALIDADO NO GATE (GO): login default (D-AUTH-DEFAULT CRIT ×1) + /fleet/firmware com {"device": true} → 400 + evento strict_type_reject auditado no gate (bool NÃO é índice); dev1 fw_ver 2.4.1 INTACTO; ZERO outros alertas
+        login default → 200 (D-AUTH-DEFAULT CRIT ×1); /fleet/firmware device:true → 400
+        dev1 fw_ver 2.4.1 (INTACTO); eventos strict_type_reject no gate: 1
+        alertas: [('D-AUTH-DEFAULT', 'CRIT', 1)]
+
+[P-R10-10b] AUD-10 — JSON malformado no gate
+  [P-R10-10b] RESOLVIDO — PREVISÃO: RESOLVIDO — JSON MALFORMADO AUDITADO (GO): 400 + evento body_json_invalid auditado no gate (a recusa deixa rasto)
+        status 'HTTP/1.1 400 Bad Request'; eventos body_json_invalid: 1
+
+[P-R10-10c] AUD-10 — bulk_used/login_fails sem reposição
+  [P-R10-10c] RESOLVIDO — PREVISÃO: RESOLVIDO — REPOSIÇÃO NA VIRAGEM DO DIA E NO HARNESS_RESET (GO): (a) bulk: 200×2 + 429; +25 h → 200 (bulk_used REPOSTO na viragem do dia; os dispositivos devolvem 403 usos_esgotados — os USOS da MNT3 não repõem, só bulk_used; SEM bulk_block_rate_limit após a viragem); (b) o gate TEM harness_reset() e repõe bulk_used/login_fails/lockout (após reset os CONTADORES ficam a 0 — bulk_used=0, login_fails=0; o bulk seguinte devolve 403 usos_esgotados da MNT2, NÃO 429: o reset é dos CONTADORES, não dos usos da WO); (c) login_fails: 4 errados + viragem do dia + 4 errados → SEM lockout (contador reposto: 4 < 5; login_rate_blocked AUSENTE)
+        bulk: 200 200 429 (rate_blocked ×1); +25 h → 4.º bulk 200 (bulk_used REPOSTO na viragem; rate_blocked continua ×1 — os 403 são usos_esgotados da MNT3, NÃO rate)
+        gate.harness_reset() EXISTE; após reset os CONTADORES ficam a 0 (bulk_used=0, login_fails=0); o bulk seguinte → 403 (403 usos_esgotados da MNT2 — o reset é dos CONTADORES, NÃO dos usos da WO; passou o rate limit)
+        login_fails: 4 errados + viragem + 4 errados → login_rate_blocked ×0 (ZERO lockout — contador repõe na viragem)
+
+[P-R10-F04a] F-04a — 12 setpoints 0% COM WO, lotes 5+5+2 espaçados 61 s
+  [P-R10-F04a] RESOLVIDO — PREVISÃO: RESOLVIDO — REGRA DE MASSA PARA CORTES DE EXPORTAÇÃO (GO, F-04a): D-MASS-CURTAILMENT CRIT (12 distintos ≥ k OU 100% ≥ 30%, lotes 5+5+2 DENTRO da SLOW_WINDOW de 1 h — o pacing de 61 s não evade); SEM CRIT de capacity (COM WO não arma); SEM CURTAILMENT-WAVE (lotes de 5 < k na janela de 60 s — a onda rápida continua intacta e cega ao pacing LENTO)
+        200×12 em lotes 5+5+2 (61 s de sim_ts entre lotes); export 0 kW; div 100.00%
+        alertas: [('D-MASS-CURTAILMENT', 'CRIT', 12)] — D-MASS-CURTAILMENT CRIT (12 distintos ≥ k; 100% ≥ 30; dentro da SLOW_WINDOW); SEM capacity (COM WO não arma); SEM wave rápida (lotes de 5 < k na janela de 60 s)
+
+[P-R10-F04a-CTRL] F-04a — controlo: 5 menores a 0% COM WO
+  [P-R10-F04a-CTRL] RESOLVIDO — PREVISÃO: RESOLVIDO — CONTROLO: 5 menores a 0% COM WO (5 < k E 25,68% < 30) → ZERO alertas (a manutenção pontual legítima fica ABAIXO dos gatilhos somados)
+        200×5; div 25.68% (22,8/88,8 kWp = 25,68% < 30; 5 < k)
+        alertas: ZERO — ZERO CRIT (a manutenção pontual legítima fica ABAIXO dos gatilhos somados)
+
+[P-R10-P1] P1 — estacionar 40% + 24,9% nos 12 (SEM recarga)
+  [P-R10-P1] RESOLVIDO — PREVISÃO: RESOLVIDO — D-BATTERY-PARKED-DRAIN (regra NOVA, GO): descarga REMOTA acumulada desde a última recarga a SoC ≥ 90% (sem janela temporal) ≥ 50 pp E SoC atual ≤ 45% → CRIT count 12 (acumulado 64,9 ≥ 50; SoC 35,1 ≤ 45 — a frota estacionada ACENDE antes do apagão); BLACKOUT 4 h → 0/12 (a física não muda; muda a VISIBILIDADE)
+        200×24; SoC min 35.10 (acumulado remoto 64,9 ≥ 50; SoC ≤ 45)
+        alertas: [('D-BATTERY-PARKED-DRAIN', 'CRIT', 12)] — D-BATTERY-PARKED-DRAIN CRIT count 12 ANTES do apagão
+        blackout 4 h: 0/12 casas com luz (0/12 — a física não muda; muda a VISIBILIDADE)
+
+[P-R10-P2] P2 — 3 dias × 21,6% SEM recarga (frota)
+  [P-R10-P2] RESOLVIDO — PREVISÃO: RESOLVIDO — atacante lento: D-BATTERY-PARKED-DRAIN CRIT count 12 (64,8 ≥ 50; 35,2 ≤ 45 — a regra NÃO tem janela: o K1-b de 3 dias morre)
+        200×36; SoC min 35.20 (acumulado 64,8 ≥ 50; ≤ 45)
+        alertas: [('D-BATTERY-PARKED-DRAIN', 'CRIT', 12)] — a regra NÃO tem janela: o atacante lento de 3 dias ACENDE
+
+[P-R10-P3] P3 — FP: dono 25%/dia × 3 COM recarga solar
+  [P-R10-P3] RESOLVIDO/FP MORTO — PREVISÃO: RESOLVIDO/FP MORTO — a recarga solar a SoC 100 (≥ 90) REPÕE o acumulador a cada dia (25 < 50 e SoC 75 > 45): ZERO alertas (K1-c continua morto na regra NOVA)
+        200×36; SoC min 100.00 (recarga solar a 100 ≥ 90 REPÕE o acumulador a cada dia)
+        alertas: ZERO — ZERO (K1-c continua morto na regra NOVA)
+
+[P-R10-P4] P4 — FP: uma descarga remota de 30% (dev9)
+  [P-R10-P4] RESOLVIDO/FP MORTO — PREVISÃO: RESOLVIDO/FP MORTO — 30 < 50 e 70 > 45: ZERO alertas (regra de paragem pré-registrada: se P3 ou P4 derem alerta, NÃO há terceira tentativa)
+        200; SoC 70.00 (30 < 50 e 70 > 45)
+        alertas: ZERO — ZERO
+
+[P-R10-F09c] F-09c — imagem arbitrária com assinatura sha256 pública
+  [P-R10-F09c] RESOLVIDO — PREVISÃO: RESOLVIDO — HMAC-SHA256 COM CHAVE DO FABRICANTE SIMULADO (GO, constante documentada; o Adversário NÃO a usa): imagem arbitrária com a assinatura sha256 pública → 403 + WARN D-FIRMWARE-REJECTED (evento firmware_rejected reason assinatura_invalida; qualquer imagem sem o segredo é RECUSADA); a LEGIT com L.sign_image → 200 (o H4 do demo mantém-se; as docstrings do H4 corrigidas para o que passa a ser verdade)
+        imagem arbitrária com assinatura sha256 pública → 403 (RECUSADA); LEGIT com L.sign_image → 200 (o H4 do demo mantém-se)
+        alertas: [('D-FIRMWARE-REJECTED', 'WARN', 1)] — WARN de assinatura presente
+
+[P-R10-F05b] F-05b — 12 shutdowns COM WO + resume antes do seguinte
+  [P-R10-F05b] RESOLVIDO — PREVISÃO: RESOLVIDO — A MASSA CONTA OS DESLIGADOS EM SIMULTÂNEO (GO): 12 shutdown+resume serializados (12/12 ON no fim, NUNCA 2 OFF juntos) → 200×24; ZERO CRIT de massa (máx. 1 OFF em simultâneo < k); ZERO outros alertas
+        200×24; frota ON no fim: 12/12 (nunca 2 OFF em simultâneo)
+        alertas: ZERO — ZERO CRIT (a massa conta os OFF EM SIMULTÂNEO: máx. 1 < k)
+
+[P-R10-F05b-CTRL] F-05b — controlo: 12 shutdowns SEM resume
+  [P-R10-F05b-CTRL] RESOLVIDO — PREVISÃO: RESOLVIDO — CONTROLO: os MESMOS 12 shutdowns SEM resume → 200×12; D-MASS-SHUTDOWN-WITH-WO CRIT (12 OFF EM SIMULTÂNEO no fim — a massa verdadeira continua CRIT)
+        200×12; frota OFF: 12/12 no fim
+        alertas: [('D-MASS-SHUTDOWN-WITH-WO', 'CRIT', 12)] — a massa VERDADEIRA continua CRIT count 12
+
+[P-R10-F05d] F-05d — amount_kwh=0 com SoC 30 e SoC 5
+  [P-R10-F05d] RESOLVIDO — PREVISÃO: RESOLVIDO — AMOUNT ≤ 0 → 400 (GO): dev0 SoC 30 → 400 strict_type_reject (amount ≤ 0 recusado; SoC intacto 30; SEM param_change) e dev1 SoC 5 → 400 (idem — o pedido NULO nem chega ao floor); ZERO alertas (as regras de descarga exigem drop > 0)
+        dev0 (SoC 30) → 400; dev1 (SoC 5) → 400 (amount ≤ 0 recusado ANTES de tudo; SoC intactos)
+        alertas: ZERO — ZERO (as regras de descarga exigem drop > 0)
+
+[P-R10-F05a] F-05a — 1 setpoint s/WO + BLACKOUT (DIA)
+  [P-R10-F05a] RESOLVIDO — PREVISÃO: RESOLVIDO — O ESPERADO CONTA 0 kW PARA RELÉS ABERTOS PELO CANAL AUTÓNOMO (GO): 1 setpoint s/WO + BLACKOUT → esperado 0 (12 relés abertos pelo anti-islanding) → div 0 → ZERO CRIT de capacity (o resíduo 'CRIT noturno/apagão' DECLARADO fecha)
+        setpoint 0% s/WO → 200; BLACKOUT (12 relés abertos pelo anti-islanding)
+        alertas: ZERO — ZERO CRIT (o esperado conta 0 kW para relés abertos pelo canal autónomo → div 0)
+
+[P-R10-F07a] F-07a — work_order lista/dict no /mode
+  [P-R10-F07a] RESOLVIDO — PREVISÃO: RESOLVIDO — WORK_ORDER TEM DE SER STRING (GO): direto no dev6 → 400 + evento work_order_invalid reason tipo_invalido (WARN D-INVALID-WORK-ORDER; o shutdown NÃO executa); via GUARD → 400 guard_reject strict_type:work_order (o Guard valida o tipo ANTES de encaminhar)
+        direto → 400 + work_order_invalid (1); via guard → 400 + guard_reject (1); dev6 ON=True
+        alertas: [('D-INVALID-WORK-ORDER', 'WARN', 1)] — WARN D-INVALID-WORK-ORDER (o shutdown NÃO executa)
+
+[P-R10-F08a] F-08a — Content-Length: -1 + body 15 KB no guard
+  [P-R10-F08a] RESOLVIDO — PREVISÃO: RESOLVIDO — CL < 0 OU INVÁLIDO → 400 + EVENTO (GO): o GUARD recusa 'Content-Length: -1' com 400 + guard_reject bad_content_length (o body NÃO é lido; dev0 export_limit INTACTO 100; o limite de body volta a ser INEGÁVEL); o JSONHandler direto idem (400 + evento)
+        status 'HTTP/1.1 400 Bad Request'; guard_reject bad_content_length: 1; dev0 export_limit 100.0 (INTACTO)
+
+[P-R10-F08b] F-08b — '//' via guard + '//setpoint' com JSON malformado no device
+  [P-R10-F08b] RESOLVIDO — PREVISÃO: RESOLVIDO — (i) guard_reject não-canónico TRATA-SE como D-NON-CANONICAL-REQUEST (GO): pedido '//' via GUARD → 400 + WARN D-NON-CANONICAL-REQUEST (a via gerida deixa de ser cega); (ii) verificação canónica ANTES do parse: '//setpoint' + JSON malformado no DEVICE → 400 + evento non_canonical_request (o rasto canónico existe mesmo com body ruim)
+        '//' via guard → HTTP/1.1 400 Bad Request (guard_reject 1); '//setpoint'+JSON ruim no device → HTTP/1.1 400 Bad Request (non_canonical_request 1)
+        alertas: [('D-NON-CANONICAL-REQUEST', 'WARN', 2)] — o guard_reject de pedido não canónico ACENDE a regra; o rasto canónico existe mesmo com body ruim
+
+[P-R10-F08c] F-08c — 8 threads simultâneas com WO MNT2 (max_uses 3) ao dev1
+  [P-R10-F08c] RESOLVIDO — PREVISÃO: RESOLVIDO — CHECK+CONSUME ATÓMICOS SOB LOCK, USANDO O RETORNO (GO): 8 threads simultâneas → EXATAMENTE 3×200 + 5×403 usos_esgotados (WARN D-INVALID-WORK-ORDER count 5; a MNT2 nunca ultrapassa max_uses=3, por mais concorrência)
+        200×3, 403×5 (check+consume atômicos: a MNT2 NUNCA ultrapassa max_uses=3)
+        alertas: [('D-INVALID-WORK-ORDER', 'WARN', 5)]
+
+[P-R10-F06b] F-06b — 4 falhas + login correto + 4 falhas no gate
+  [P-R10-F06b] RESOLVIDO — PREVISÃO: RESOLVIDO — LOGIN_OK REPÕE login_fails (GO): 4 errados + 1 correto (D-AUTH-DEFAULT CRIT ×1) + 4 errados → SEM lockout (login_rate_blocked AUSENTE — o contador repõe no login correto; 4 < 5)
+        4×401 + login correto 200 + [401, 401, 401, 401] (a 2.ª série de falhas); login_rate_blocked: 0 (ZERO — o contador repõe no login correto)
+        alertas: [('D-AUTH-DEFAULT', 'CRIT', 1), ('D-LOGIN-BRUTE-FORCE', 'WARN', 1)]
+
+[P-R10-TEXT] TEXT — 22,9 (6 sítios), cabeçalho, '12 regras'
+  [P-R10-TEXT] RESOLVIDO — PREVISÃO: RESOLVIDO — TEXTOS (GO §5): '22,9' AUSENTE do código (16,10 no lugar — 14,3/88,8); cabeçalho v0.7.4; a linha do Detector com o nº REAL de regras; len(RULE_ATTACK_MAP) == 26 (24 + D-MASS-CURTAILMENT + D-BATTERY-PARKED-DRAIN)
+        '22,9' no código: 0 (16,10 no lugar); cabeçalho bate com LAB_VERSION 0.7.5: True; '12 regras' ausente: True; len(RULE_ATTACK_MAP)=26
+
+SUMÁRIO — GATEFALL R10 vs alvo V075 (run 20261114T140627Z-ea296a)
+  [P-R10-03a] RESOLVIDO
+  [P-R10-03b] RESOLVIDO
+  [P-R10-03c] RESOLVIDO
+  [P-R10-04a] RESOLVIDO
+  [P-R10-04b] RESOLVIDO
+  [P-R10-G5] RESOLVIDO
+  [P-R10-G5b] RESOLVIDO
+  [P-R10-G5c] RESOLVIDO/DECLARADO
+  [P-R10-08] RESOLVIDO
+  [P-R10-10a] RESOLVIDO
+  [P-R10-10b] RESOLVIDO
+  [P-R10-10c] RESOLVIDO
+  [P-R10-F04a] RESOLVIDO
+  [P-R10-F04a-CTRL] RESOLVIDO
+  [P-R10-P1] RESOLVIDO
+  [P-R10-P2] RESOLVIDO
+  [P-R10-P3] RESOLVIDO/FP MORTO
+  [P-R10-P4] RESOLVIDO/FP MORTO
+  [P-R10-F09c] RESOLVIDO
+  [P-R10-F05b] RESOLVIDO
+  [P-R10-F05b-CTRL] RESOLVIDO
+  [P-R10-F05d] RESOLVIDO
+  [P-R10-F05a] RESOLVIDO
+  [P-R10-F07a] RESOLVIDO
+  [P-R10-F08a] RESOLVIDO
+  [P-R10-F08b] RESOLVIDO
+  [P-R10-F08c] RESOLVIDO
+  [P-R10-F06b] RESOLVIDO
+  [P-R10-TEXT] RESOLVIDO
+RESULTADO: 29/29 previsões confirmadas (lab v0.7.5)
+RC=0 — RUN 2 vs v0.7.4: fixes do GO §3/§5 RESOLVIDOS (com os FPs declarados registados: G5c massa de curtailment; resíduos por declaração).

@@ -1,0 +1,22 @@
+title: "SUNSTRIKE D-FIRMWARE-OUT-OF-WINDOW — flash de firmware tentado fora da janela NORMAL (mesmo assinado)"
+id: 9487d969-760d-4134-8731-8293c8b07da2
+status: experimental
+description: >
+    flash de firmware tentado fora da janela NORMAL (mesmo assinado). Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0814"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: firmware_rejected
+        reason: fora_da_janela
+    condition: sel
+falsepositives:
+    - nenhum — manutencao de firmware fora da janela e bypass de controlo
+level: critical

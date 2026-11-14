@@ -1,0 +1,5 @@
+{"cell": "CELL-A", "device": "sunbox-00", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H2", "sim_ts": 1794671346.093327, "ts": "2026-11-14T15:49:06.093Z"}
+{"cell": "CELL-A", "device": "sunbox-00", "event": "provenance_spoof_attempt", "fields": ["provenance", "reason"], "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.1150897, "ts": "2026-11-14T15:49:06.115Z"}
+{"cell": "CELL-A", "device": "sunbox-00", "event": "auth_use", "method": "broker_token", "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.1151361, "ts": "2026-11-14T15:49:06.115Z"}
+{"actor": "broker_token", "cell": "CELL-A", "device": "sunbox-00", "event": "shutdown", "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.115167, "ts": "2026-11-14T15:49:06.115Z", "work_order": null}
+{"cell": "CELL-A", "device": "sunbox-00", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H2", "sim_ts": 1794671346.1191764, "ts": "2026-11-14T15:49:06.119Z"}

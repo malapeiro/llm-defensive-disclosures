@@ -1,0 +1,3 @@
+{"cell": "CELL-C", "device": "sunbox-11", "event": "harness_reset", "provenance": "lab_harness", "scenario": "MASS", "sim_ts": 1794671378.2432442, "ts": "2026-11-14T15:49:38.243Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-C", "device": "sunbox-11", "event": "shutdown", "provenance": "remote_command", "scenario": "MASS", "sim_ts": 1794671378.2638884, "ts": "2026-11-14T15:49:38.263Z", "wo_valid": true, "work_order": "WO-20261112-MNT1"}
+{"cell": "CELL-C", "device": "sunbox-11", "event": "harness_reset", "provenance": "lab_harness", "scenario": "MASS", "sim_ts": 1794671378.2647927, "ts": "2026-11-14T15:49:38.264Z"}

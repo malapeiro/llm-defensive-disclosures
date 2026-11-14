@@ -1,0 +1,68 @@
+SUNSTRIKE probes R9 v0.2 (dual-target V072/V073; previsões V073 pré-registadas ANTES de qualquer corrida contra a v0.7.3; achado C16 do supervisor, GO à v0.7.3 13-11 ~21:00) — run 20261114T140837Z-18adde (grant GRANT-PVTE-20261112-SS-01)
+alvo DETETADO    : V075 (hash 5162964f2df283fd…)
+
+GATEFALL V073 — PREVISÕES PRÉ-REGISTADAS NESTE FICHEIRO (v0.2) ANTES de qualquer corrida contra a v0.7.3 (de7f5766…): fix F-C16 do GO (extensão da D-MASS-SHUTDOWN-WITH-WO à UNIÃO dos dois canais); resíduo P-R9-04 medido e DECLARADO por mandato do GO
+contra sunstrike_lab.py V075 (hash 5162964f2df283fd…)
+  [P-R9-01/C16-split-NOITE] RESOLVIDO — F-C16: o mesmo split à NOITE → 200×10 e a UNIÃO acende: D-MASS-SHUTDOWN-WITH-WO CRIT count 10 (10 distintos ≥ k E 73,65% ≥ 30; with_wo 5/without_wo 5) + WARN s/WO count 5; SEM onda (5 s/WO < 6 na janela) e SEM capacity (noite, div=0); no blackout DEPOIS: 10/12 casas às escuras — mas o CRIT de frota chega ANTES do apagão
+  [P-R9-02/C16-split-DIA] RESOLVIDO — F-C16: o mesmo split DE DIA → 200×10; UNIÃO: D-MASS-SHUTDOWN-WITH-WO CRIT count 10 + WARN s/WO count 5 + D-CAPACITY-DIVERGENCE CRIT count 5 (arming s/WO — a telemetria NATURAL, sem emit do probe — lição E-R9-1); SEM onda (5 < 6): de dia a massa VÊ o split somado
+  [P-R9-03/C16-split-CAPACIDADE] RESOLVIDO — F-C16: a variante 2 com WO + 4 s/WO à NOITE → 200×6; D-MASS-SHUTDOWN-WITH-WO CRIT count 6 (6 distintos ≥ k; 60,86% ≥ 30; with_wo 2/without_wo 4) + WARN s/WO count 4; SEM onda (4 < 6) e SEM capacity (noite) — a UNIÃO é o que a extensão conta
+  [P-R9-04/C16-residuo] DECLARADO — RESÍDUO MEDIDO (mandato do GO): 3 com WO + 2 s/WO à NOITE → 200×5; SÓ WARN s/WO count 2, ZERO CRIT (5 distintos < k E 25,68% < 30 SOMANDO os dois canais) — o resíduo do F-C16 é o MESMO da v0.7.2 e fica DECLARADO para a v0.8
+  [P-R9-05/C16-NEG-MNT3] RESOLVIDO — F-C16 FP: bulk MNT3 {0,2} → 200, 2 shutdowns COM WO, 10 bulk_scope_skip; D-AUTH-DEFAULT CRIT ×1 do login default (lição E-R9-2 REGISTADA do run 1b: é CRIT, não WARN) e ZERO outros alertas — a UNIÃO não dispara com 2 < k E 22,9% < 30; frota 10/12 ON
+  [P-R9-06/C16-NEG-frota-MNT1] RESOLVIDO — F-C16 baseline mantém: 12 shutdowns COM MNT1 → 200×12, D-MASS-SHUTDOWN-WITH-WO CRIT count 12 (with_wo 12/without_wo 0 — o FP DECLARADO aceitável do GO da v0.7.2), SEM onda/slow/WARN/capacity — a extensão não muda o caso legítimo de frota inteira
+  [P-R9-07/C16-estatica] RESOLVIDO — F-C16: o scan() da v0.7.3 coleciona TODOS os shutdowns remotos EXECUTADOS na UNIÃO mass_shutdowns (o ramo s/WO E o ramo wo_valid alimentam a MESMA lista por cenário) e a D-MASS-SHUTDOWN-WITH-WO lê a UNIÃO — a prova estática do canal único fechada
+
+lab v0.7.5 em memória (evidence=False), 12 dispositivos + gate
+
+[P-R9-01] C16 — split 5 com WO + 5 s/WO à NOITE (NORMAL)
+  [P-R9-01] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C16: o mesmo split à NOITE → 200×10 e a UNIÃO acende: D-MASS-SHUTDOWN-WITH-WO CRIT count 10 (10 distintos ≥ k E 73,65% ≥ 30; with_wo 5/without_wo 5) + WARN s/WO count 5; SEM onda (5 s/WO < 6 na janela) e SEM capacity (noite, div=0); no blackout DEPOIS: 10/12 casas às escuras — mas o CRIT de frota chega ANTES do apagão
+        com WO MNT1 devs [10, 2, 6, 5, 1] → 200×5; s/WO devs [9, 7, 3, 8, 0] → 200×5; frota OFF: 10/12
+        alertas: [('D-MASS-SHUTDOWN-WITH-WO', 'CRIT', 10), ('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 5)] — a UNIÃO acende: CRIT de massa count 10 (10 distintos ≥ k E 73,65% ≥ 30; com/s WO 5/5) + WARN ×5; SEM onda (5 < 6) e SEM capacity (noite)
+        blackout DEPOIS: 2/12 casas com luz — 10/12 às escuras, MAS o CRIT de frota chegou ANTES do apagão
+        F-C16: o split de canais deixa de deixar cada gatilho abaixo do seu limiar — a massa conta a UNIÃO
+
+[P-R9-02] C16 — split 5 com WO + 5 s/Wo DE DIA (NORMAL)
+  [P-R9-02] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C16: o mesmo split DE DIA → 200×10; UNIÃO: D-MASS-SHUTDOWN-WITH-WO CRIT count 10 + WARN s/WO count 5 + D-CAPACITY-DIVERGENCE CRIT count 5 (arming s/WO — a telemetria NATURAL, sem emit do probe — lição E-R9-1); SEM onda (5 < 6): de dia a massa VÊ o split somado
+        200×10, frota OFF 10/12; div final 73.65% (esperado 48.84 vs real 12.87 kW)
+        alertas: [('D-CAPACITY-DIVERGENCE', 'CRIT', 5), ('D-MASS-SHUTDOWN-WITH-WO', 'CRIT', 10), ('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 5)] — a UNIÃO acende de DIA: massa count 10 + capacity count 5 (arming s/WO, telemetria NATURAL — lição E-R9-1) + WARN ×5; SEM onda (5 < 6)
+        F-C16: de dia a massa VÊ o split somado (10 distintos ≥ k E 73,65% ≥ 30) — o CRIT de frota já não depende só da física do sol
+
+[P-R9-03] C16 — 2 com WO + 4 s/WO à NOITE (variante)
+  [P-R9-03] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C16: a variante 2 com WO + 4 s/WO à NOITE → 200×6; D-MASS-SHUTDOWN-WITH-WO CRIT count 6 (6 distintos ≥ k; 60,86% ≥ 30; with_wo 2/without_wo 4) + WARN s/WO count 4; SEM onda (4 < 6) e SEM capacity (noite) — a UNIÃO é o que a extensão conta
+        com WO devs [11, 0] (21,9 kWp = 24,66%) + s/WO devs [8, 3, 7, 9] (32,1 kWp = 36,15%) → 200×6; frota OFF 6/12
+        alertas: [('D-MASS-SHUTDOWN-WITH-WO', 'CRIT', 6), ('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 4)] — a UNIÃO acende: CRIT de massa count 6 (6 distintos ≥ k; 60,86% ≥ 30; com/s WO 2/4) + WARN ×4
+        F-C16: a variante que na v0.7.2 era invisível MESMO com a união acima dos dois gatilhos agora dispara
+
+[P-R9-04] C16 — resíduo: 3 com WO + 2 s/WO (5 < k, 25,68% < 30)
+  [P-R9-04] DECLARADO — PREVISÃO: DECLARADO — RESÍDUO MEDIDO (mandato do GO): 3 com WO + 2 s/WO à NOITE → 200×5; SÓ WARN s/WO count 2, ZERO CRIT (5 distintos < k E 25,68% < 30 SOMANDO os dois canais) — o resíduo do F-C16 é o MESMO da v0.7.2 e fica DECLARADO para a v0.8
+        com WO devs [10, 2, 6] + s/WO devs [5, 1] → 200×5; frota OFF 5/12 (22,8 kWp = 25,68% somando os dois canais)
+        alertas: [('D-REMOTE-SHUTDOWN-NO-WO', 'WARN', 2)] — ZERO CRIT: total 5 < k E < 30% SOMADO
+        RESÍDUO MEDIDO: qualquer regra de escala deixa escapar total < k E < 30% — fica DECLARADO (mandato do GO)
+
+[P-R9-05] C16 — NEG: bulk do gate com MNT3 (âmbito {0,2})
+  [P-R9-05] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C16 FP: bulk MNT3 {0,2} → 200, 2 shutdowns COM WO, 10 bulk_scope_skip; D-AUTH-DEFAULT CRIT ×1 do login default (lição E-R9-2 REGISTADA do run 1b: é CRIT, não WARN) e ZERO outros alertas — a UNIÃO não dispara com 2 < k E 22,9% < 30; frota 10/12 ON
+        login default → 200 (D-AUTH-DEFAULT CRIT ×1 — lição E-R9-2 REGISTRADA do run 1b: a severidade é CRIT, não WARN); bulk MNT3 → 200: 2 shutdowns COM WO, 10 bulk_scope_skip
+        frota OFF 2/12 (só devs 0 e 2); alertas: [('D-AUTH-DEFAULT', 'CRIT', 1)] — ZERO outros: a UNIÃO não dispara com 2 < k E 22,9% < 30
+        NEG MANTÉM: manutenção legítima de POUCOS dispositivos com WO de âmbito correto fica ABAIXO dos gatilhos de escala somados
+
+[P-R9-06] C16 — NEG: 12 shutdowns COM MNT1 (baseline v0.7.2)
+  [P-R9-06] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C16 baseline mantém: 12 shutdowns COM MNT1 → 200×12, D-MASS-SHUTDOWN-WITH-WO CRIT count 12 (with_wo 12/without_wo 0 — o FP DECLARADO aceitável do GO da v0.7.2), SEM onda/slow/WARN/capacity — a extensão não muda o caso legítimo de frota inteira
+        12 shutdowns COM MNT1 → 200×12; frota OFF 12/12
+        alertas: [('D-MASS-SHUTDOWN-WITH-WO', 'CRIT', 12)] — o CRIT de massa count 12 (com_wo 12, without_wo 0) é o FP DECLARADO aceitável do GO da v0.7.2, MANTIDO pela extensão
+        SEM onda/WARN/capacity (com WO válida não arma) — a extensão não muda o caso legítimo de frota inteira
+
+[P-R9-07] C16 — prova estática: nenhum ramo soma os dois canais
+  [P-R9-07] RESOLVIDO — PREVISÃO: RESOLVIDO — F-C16: o scan() da v0.7.3 coleciona TODOS os shutdowns remotos EXECUTADOS na UNIÃO mass_shutdowns (o ramo s/WO E o ramo wo_valid alimentam a MESMA lista por cenário) e a D-MASS-SHUTDOWN-WITH-WO lê a UNIÃO — a prova estática do canal único fechada
+        scan() da v0.7.3: os ramos s/WO E wo_valid alimentam a MESMA lista mass_shutdowns por cenário (UNIÃO)
+        a massa lê mass_shutdowns.items() — a UNIÃO dos dois canais (com ou sem WO); a onda lê shutdowns (s/WO) INTACTA; o WARN por evento INTACTO
+        F-C16: a prova estática do canal único fechada — nenhum split deixa cada gatilho abaixo do limiar
+
+SUMÁRIO — GATEFALL R9 vs alvo V075 (run 20261114T140837Z-18adde)
+  [P-R9-01] RESOLVIDO
+  [P-R9-02] RESOLVIDO
+  [P-R9-03] RESOLVIDO
+  [P-R9-04] DECLARADO
+  [P-R9-05] RESOLVIDO
+  [P-R9-06] RESOLVIDO
+  [P-R9-07] RESOLVIDO
+RESULTADO: 7/7 previsões confirmadas (lab v0.7.5)
+RC=0 — RUN 2 vs v0.7.3 (de7f5766…): F-C16 RESOLVIDO (com o resíduo P-R9-04 medido e DECLARADO por mandato do GO; o CRIT de frota agora soma os dois canais, dia e noite).

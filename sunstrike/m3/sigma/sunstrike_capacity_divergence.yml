@@ -1,0 +1,22 @@
+title: "SUNSTRIKE D-CAPACITY-DIVERGENCE — divergencia de capacidade >=30% (aproximacao SEM a condicao de arming)"
+id: 65a116bf-ceee-4b2a-83b1-a9aa1c1bd7e0
+status: experimental
+description: >
+    divergencia de capacidade >=30% (aproximacao SEM a condicao de arming). Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0879"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: capacity_snapshot
+        divergence_pct|gte: 30.0
+    condition: sel
+falsepositives:
+    - FP DECLARADO: a regra do lab exige arming por curtail/shutdown remoto s/WO no cenario (estado de correlacao nao expressivel em Sigma) — dispara tambem em massa COM WO (cenario MASS)
+level: critical

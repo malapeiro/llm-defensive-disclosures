@@ -1,0 +1,15 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario NONCANON — lab mesma pasta (m3/)
+passos: 24
+evidencia: sunstrike_evidence/20261114T154933Z-29aedf
+alertas do detetor INTERNO do lab (informativo):
+  [NONCANON] D-AUTH-DAILY-CODE x1 fleetgate
+  [NONCANON] D-INVALID-WORK-ORDER x1 sunbox-00
+  [NONCANON] D-LOCAL-CONFIRM-BRUTE-FORCE x2 sunbox-00
+  [NONCANON] D-LOGIN-BRUTE-FORCE x2 fleetgate
+  [NONCANON] D-NON-CANONICAL-REQUEST x6 fleetgate,guard
+  [NONCANON] D-SETPOINT-OUT-OF-BAND x1 sunbox-00
+504 packets captured
+1008 packets received by filter
+0 packets dropped by kernel
+3e6b6921df4fa35866d925843bea81185187fae9fccdcba88cb672e52ba36f88  NONCANON.pcap

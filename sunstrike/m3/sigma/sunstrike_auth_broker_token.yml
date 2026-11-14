@@ -1,0 +1,24 @@
+title: "SUNSTRIKE D-AUTH-BROKER-TOKEN — uso do token de broker hard-coded num dispositivo"
+id: 084ef24c-b26c-47fd-9d9c-dd5db693a934
+status: experimental
+description: >
+    uso do token de broker hard-coded num dispositivo. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1078"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event:
+            - login_ok
+            - auth_use
+        method: broker_token
+    condition: sel
+falsepositives:
+    - nenhum — o token de broker nunca e via legitima no lab
+level: critical

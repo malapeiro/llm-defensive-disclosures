@@ -1,0 +1,23 @@
+title: "SUNSTRIKE D-BATTERY-DRAIN-BELOW-FLOOR — descarga remota abaixo do min_emergency_soc_floor recusada (409)"
+id: 3284ed58-ee68-4cbb-9c3f-484ad790d7e1
+status: experimental
+description: >
+    descarga remota abaixo do min_emergency_soc_floor recusada (409). Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1485"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event:
+            - floor_block
+            - legacy_bypass_floor
+    condition: sel
+falsepositives:
+    - descarga legitima abaixo do floor usa /local_confirm (provenance local_confirm) e nao gera floor_block
+level: critical
