@@ -203,7 +203,7 @@ During final packaging of `v1.3`, cross-checking `RULE_ATTACK_MAP` against `Dete
 | `G-BAD-PATH` / `G-BAD-BODY` (`canonicalize_request`) | Guard & Controller (`400`) | Input canonicalization | Rejects `NaN`/`Inf` (`P4`), non-bool `muted` (`P5`), and all path variants `/api/login/`, `/api//login`, `%2F`, `?` (`P9/Add. C/D`) | Canonical requests pass |
 | `rule_liveness_check()` (`P13B`) | Demo & Audit Invariant (`15/15`) | Structural meta-check (`RULE_ATTACK_MAP ↔ scan`) | **Invariant that prevents a rule from being removed from, or made unreachable in, the detector (`Detector.scan`)** — fails if `dead_rules != set()` | **Scope limit:** Self-referential synthetic events; guards `RULE_ATTACK_MAP ↔ scan`, **not** `controller ↔ scan` (never a proof that all detections work on live telemetry — see Section 7.4) |
 
-### 6.2 Reference rules in `detections/` (Textual Compliance; Suricata execution-verified since 2026-11-11)
+### 6.2 Reference rules in `detections/` (Textual Compliance; Suricata and the audit-log Sigma rules execution-verified since 2026-11-11)
 
 Reference rules for external SIEM/NIDS pipelines are provided in [`detections/`](detections/README.md):
 - [`detections/sigma/hydrobox_default_or_service_auth.yaml`](detections/sigma/hydrobox_default_or_service_auth.yaml) — Sigma rule for default-credential (`admin`) and hidden daily-code (`service_login_success`) authentication.

@@ -47,8 +47,8 @@ not offense.
   batteries (Probes `P1–P13B` + independent verification `Additions A–D`)
   executed across `v1.0 → v1.3.1`.
 - [`detections/`](detections/README.md) — reference Sigma, Suricata, and
-  Microsoft Sentinel KQL rules (Suricata **execution-verified**; Sigma and KQL
-  **textual compliance**).
+  Microsoft Sentinel KQL rules (Suricata and the two audit-log Sigma rules
+  **execution-verified**; the webserver Sigma rule and KQL **textual compliance**).
 
 ## How to run
 
