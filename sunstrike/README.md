@@ -10,6 +10,7 @@ Remote-command abuse against a synthetic fleet of hybrid solar inverters with ba
 |---|---|
 | `sunstrike_report.md` | the case study |
 | `v0.7.5/sunstrike_lab.py` | final lab (single file, standard library, loopback only) |
+| `v0.7.5/sunstrike_lab_pre_r11_fixes.py` | the preserved v0.7.4 lab, the "before" target of probe R11 (see `REDACTIONS.md`) |
 | `v0.7.5/sunstrike_probes_r*.py` | probe batteries with pre-registered predictions |
 | `pacote_reproducao/` | one-command reproduction of every number (15 steps) |
 | `m3/` | Suricata and Sigma rules, scenario generator, predictions, reference pcaps and verification (see `m3/README.md`) |
