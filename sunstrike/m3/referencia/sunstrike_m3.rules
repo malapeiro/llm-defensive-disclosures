@@ -1,0 +1,49 @@
+# SUNSTRIKE M3 — sunstrike_m3.rules — Suricata 7.0.3 / 8.0.8
+# Lab v0.7.5 (selada 5162964f...) — só loopback 127.0.0.1.
+# Portas: guard 8609, gate 8610, dispositivos 8611-8622 (HTTP/1.1, JSON).
+# msg = ID da regra do detetor do lab. sid 9100001+.
+# Regras request-based vêem o PEDIDO (não a execução); regras response-based
+# vêem a RECUSA do lab (409/403/400/429) — aproximações declaradas no
+# M3_PREVISOES.md. Estado interno (SoC, kWp, STRESS/EMERGENCY, acumuladores)
+# NÃO é visível na rede: regras correspondentes não existem aqui (lacunas
+# declaradas). Mapeamento ATT&CK no metadata é PROVISÓRIO (reconfirmado M5).
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-AUTH-DEFAULT — login no FLEETGATE com credenciais default"; flow:established,to_server; content:"POST /fleet/login"; content:"sunadmin-2026"; metadata:created_at 2026_11_14, attack_technique T0819, attack_technique T1078, sunstrike_rule D-AUTH-DEFAULT; classtype:attempted-admin; sid:9100001; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-AUTH-BROKER-TOKEN — token de broker hard-coded em uso"; flow:established,to_server; content:"Authorization|3a 20|Bearer SUNBRIDGE-BKR-2026-001"; metadata:created_at 2026_11_14, attack_technique T1078, sunstrike_rule D-AUTH-BROKER-TOKEN; classtype:attempted-admin; sid:9100002; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-BULK-WITHOUT-WORKORDER — operacao bulk sem work-order recusada"; flow:established,to_client; content:"work-order exigida para operacoes bulk"; metadata:created_at 2026_11_14, attack_technique T0816, sunstrike_rule D-BULK-WITHOUT-WORKORDER; classtype:policy-violation; sid:9100003; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-REMOTE-SHUTDOWN-NO-WO — shutdown remoto por-dispositivo sem work-order"; flow:established,to_server; pcre:"/(?:POST \/fleet\/device\/\d+\/shutdown|\"action\": \"inverter_power_off\"(?![^}]*\"work_order\"))/"; metadata:created_at 2026_11_14, attack_technique T0816, sunstrike_rule D-REMOTE-SHUTDOWN-NO-WO; classtype:policy-violation; sid:9100004; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-FLEET-SHUTDOWN-WAVE — >= k shutdowns remotos sem work-order em janela de 60 s"; flow:established,to_server; pcre:"/(?:POST \/fleet\/device\/\d+\/shutdown|\"action\": \"inverter_power_off\"(?![^}]*\"work_order\"))/"; threshold: type threshold, track by_src, count 6, seconds 60; metadata:created_at 2026_11_14, attack_technique T0816, sunstrike_rule D-FLEET-SHUTDOWN-WAVE; classtype:attempted-dos; sid:9100005; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-SLOW-WAVE — >= 8 shutdowns remotos sem work-order no horizonte de 3600 s"; flow:established,to_server; pcre:"/(?:POST \/fleet\/device\/\d+\/shutdown|\"action\": \"inverter_power_off\"(?![^}]*\"work_order\"))/"; threshold: type threshold, track by_src, count 8, seconds 3600; metadata:created_at 2026_11_14, attack_technique T0816, sunstrike_rule D-SLOW-WAVE; classtype:attempted-dos; sid:9100006; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-MASS-SHUTDOWN-WITH-WO — bulk shutdown executado em >= k dispositivos (COM ou SEM work-order)"; flow:established,to_client; pcre:"/\"devices\": \{\"sunbox-00\": 200, \"sunbox-01\": 200, \"sunbox-02\": 200, \"sunbox-03\": 200, \"sunbox-04\": 200, \"sunbox-05\": 200/"; metadata:created_at 2026_11_14, attack_technique T0816, sunstrike_rule D-MASS-SHUTDOWN-WITH-WO; classtype:attempted-dos; sid:9100007; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-FLEET-CURTAILMENT-WAVE — >= k setpoints de export_limit em janela de 60 s"; flow:established,to_server; pcre:"/(?:POST \/fleet\/device\/\d+\/export_limit|POST \/setpoint)/"; threshold: type threshold, track by_src, count 6, seconds 60; metadata:created_at 2026_11_14, attack_technique T0879, sunstrike_rule D-FLEET-CURTAILMENT-WAVE; classtype:attempted-dos; sid:9100008; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-MASS-CURTAILMENT — >= k setpoints de export_limit no horizonte de 3600 s"; flow:established,to_server; pcre:"/(?:POST \/fleet\/device\/\d+\/export_limit|POST \/setpoint)/"; threshold: type threshold, track by_src, count 6, seconds 3600; metadata:created_at 2026_11_14, attack_technique T0879, sunstrike_rule D-MASS-CURTAILMENT; classtype:attempted-dos; sid:9100009; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-BATTERY-DRAIN-BELOW-FLOOR — descarga remota abaixo do min_emergency_soc_floor recusada"; flow:established,to_client; content:"min_emergency_soc_floor"; metadata:created_at 2026_11_14, attack_technique T1485, sunstrike_rule D-BATTERY-DRAIN-BELOW-FLOOR; classtype:attempted-admin; sid:9100010; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-PROVENANCE-SPOOF-ATTEMPT — cliente tentou definir provenance/source/reason"; flow:established,to_server; pcre:"/\"(?:provenance|source|reason)\":/"; metadata:created_at 2026_11_14, attack_technique T1693.001, sunstrike_rule D-PROVENANCE-SPOOF-ATTEMPT; classtype:policy-violation; sid:9100011; rev:1;)
+
+alert tcp any any -> 127.0.0.0/8 [8609,8610,8611:8622] (msg:"SUNSTRIKE D-NON-CANONICAL-REQUEST — pedido nao-canonico (//, %, ?, #, dot-segment, nao-ASCII)"; flow:established,to_server; pcre:"/(?:^|\r\n)(?:GET|POST|PUT|DELETE|HEAD) [^\r\n]*(?:\/\/|%|\?|#|\/\.(?:\.[\/\r\n ]|[\/\r\n ])|[\x80-\xff])/"; metadata:created_at 2026_11_14, attack_technique T1693.002, sunstrike_rule D-NON-CANONICAL-REQUEST; classtype:bad-unknown; sid:9100012; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-LOGIN-BRUTE-FORCE — lockout de login no gate apos falhas acumuladas"; flow:established,to_client; content:"login_rate_blocked"; metadata:created_at 2026_11_14, attack_technique T1110, sunstrike_rule D-LOGIN-BRUTE-FORCE; classtype:policy-violation; sid:9100013; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-LOCAL-CONFIRM-BRUTE-FORCE — PINs fisicos falhados em sequencia"; flow:established,to_client; content:"pin invalido"; threshold: type threshold, track by_dst, count 5, seconds 600; metadata:created_at 2026_11_14, attack_technique T1110, sunstrike_rule D-LOCAL-CONFIRM-BRUTE-FORCE; classtype:policy-violation; sid:9100014; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-INVALID-WORK-ORDER — work-order presente e invalida rejeitada"; flow:established,to_client; content:"work_order_invalid"; metadata:created_at 2026_11_14, attack_technique T1078, sunstrike_rule D-INVALID-WORK-ORDER; classtype:policy-violation; sid:9100015; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-SETPOINT-OUT-OF-BAND — setpoint fora da banda segura recusado"; flow:established,to_client; content:"fora da banda segura"; metadata:created_at 2026_11_14, attack_technique T0879, sunstrike_rule D-SETPOINT-OUT-OF-BAND; classtype:policy-violation; sid:9100016; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-PF-PARAM-CHANGE-IN-STRESS — alteracao remota da curva P(f) recusada em STRESS"; flow:established,to_client; content:"pf_params_locked_in_stress"; metadata:created_at 2026_11_14, attack_technique T0879, sunstrike_rule D-PF-PARAM-CHANGE-IN-STRESS; classtype:attempted-admin; sid:9100017; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-GRID-EMERGENCY-REMOTE-BLOCK — interlock recusou comando remoto em emergencia"; flow:established,to_client; content:"grid_emergency_interlock"; metadata:created_at 2026_11_14, attack_technique T0879, sunstrike_rule D-GRID-EMERGENCY-REMOTE-BLOCK; classtype:attempted-admin; sid:9100018; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-FIRMWARE-OUT-OF-WINDOW — flash de firmware fora da janela NORMAL recusado"; flow:established,to_client; content:"firmware_window"; metadata:created_at 2026_11_14, attack_technique T0814, sunstrike_rule D-FIRMWARE-OUT-OF-WINDOW; classtype:attempted-admin; sid:9100019; rev:1;)
+
+alert tcp 127.0.0.0/8 [8609,8610,8611:8622] -> any (msg:"SUNSTRIKE D-FIRMWARE-REJECTED — assinatura de firmware invalida recusada"; flow:established,to_client; content:"assinatura invalida"; metadata:created_at 2026_11_14, attack_technique T1485, sunstrike_rule D-FIRMWARE-REJECTED; classtype:policy-violation; sid:9100020; rev:1;)

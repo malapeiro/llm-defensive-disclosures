@@ -1,0 +1,3 @@
+{"cell": "CELL-A", "device": "sunbox-00", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H1", "sim_ts": 1794671341.469308, "ts": "2026-11-14T15:49:01.469Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-A", "device": "sunbox-00", "event": "shutdown", "provenance": "remote_command", "scenario": "H1", "sim_ts": 1794671341.4796555, "ts": "2026-11-14T15:49:01.479Z", "work_order": null}
+{"cell": "CELL-A", "device": "sunbox-00", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H1", "sim_ts": 1794671341.4976892, "ts": "2026-11-14T15:49:01.497Z"}

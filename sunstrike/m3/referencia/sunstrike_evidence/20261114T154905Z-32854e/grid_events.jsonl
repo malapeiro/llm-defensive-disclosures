@@ -1,0 +1,2 @@
+{"event": "grid_state_change", "grid_state": "NORMAL", "scenario": "HARNESS", "sim_ts": 1794671345.592708, "ts": "2026-11-14T15:49:05.592Z"}
+{"event": "irradiance_change", "irradiance": 0.55, "profile": "DIA", "scenario": "HARNESS", "sim_ts": 1794671345.5930717, "ts": "2026-11-14T15:49:05.593Z"}

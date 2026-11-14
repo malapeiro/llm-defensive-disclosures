@@ -1,0 +1,4 @@
+{"cell": "CELL-A", "device": "sunbox-03", "event": "harness_reset", "provenance": "lab_harness", "scenario": "EMERG", "sim_ts": 1794671382.8646219, "ts": "2026-11-14T15:49:42.864Z"}
+{"cell": "CELL-A", "device": "sunbox-03", "event": "anti_islanding", "provenance": "autonomous_safety", "relay": "open", "scenario": "EMERG", "sim_ts": 1794671382.8652394, "ts": "2026-11-14T15:49:42.865Z", "v_grid": 188.0}
+{"cell": "CELL-A", "device": "sunbox-03", "event": "emergency_latch", "f_grid": 48.8, "latch_s": 600.0, "provenance": "autonomous_safety", "scenario": "EMERG", "sim_ts": 1794671382.8652623, "ts": "2026-11-14T15:49:42.865Z", "v_grid": 188.0}
+{"cell": "CELL-A", "device": "sunbox-03", "event": "harness_reset", "provenance": "lab_harness", "scenario": "EMERG", "sim_ts": 1794671384.5798006, "ts": "2026-11-14T15:49:44.579Z"}

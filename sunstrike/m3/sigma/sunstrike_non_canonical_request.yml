@@ -1,0 +1,24 @@
+title: "SUNSTRIKE D-NON-CANONICAL-REQUEST — pedido nao-canonico rejeitado (precursor de bypass) nas vias direta e guard"
+id: 675e15cf-ec83-483e-9fd4-73963f2d8846
+status: experimental
+description: >
+    pedido nao-canonico rejeitado (precursor de bypass) nas vias direta e guard. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1693.002"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel_direct:
+        event: non_canonical_request
+    sel_guard:
+        event: guard_reject
+        reason|startswith: non_canonical
+    condition: 1 of sel_*
+falsepositives:
+    - clientes HTTP mal comportados (nao observados no lab)
+level: medium

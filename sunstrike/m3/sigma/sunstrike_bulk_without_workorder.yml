@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-BULK-WITHOUT-WORKORDER — operacao bulk sem work-order recusada pelo FLEETGATE"
+id: 139334e3-e6b2-4610-bd3b-fd666e323984
+status: experimental
+description: >
+    operacao bulk sem work-order recusada pelo FLEETGATE. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0816"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: bulk_block_no_workorder
+    condition: sel
+falsepositives:
+    - nenhum — bulk exige sempre work-order no lab
+level: medium

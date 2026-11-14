@@ -1,0 +1,14 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario SLOW — lab mesma pasta (m3/)
+passos: 9
+evidencia: sunstrike_evidence/20261114T154952Z-924428
+alertas do detetor INTERNO do lab (informativo):
+  [SLOW] D-AUTH-DAILY-CODE x1 fleetgate
+  [SLOW] D-CAPACITY-DIVERGENCE x5 
+  [SLOW] D-MASS-SHUTDOWN-WITH-WO x8 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+  [SLOW] D-REMOTE-SHUTDOWN-NO-WO x8 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+  [SLOW] D-SLOW-WAVE x8 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+238 packets captured
+476 packets received by filter
+0 packets dropped by kernel
+25810fd645f1d5526970f5cc70a81aa9bb450170ce404f90b977822e1ece9be4  SLOW.pcap

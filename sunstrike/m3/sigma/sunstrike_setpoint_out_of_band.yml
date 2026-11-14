@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-SETPOINT-OUT-OF-BAND — setpoint fora da banda segura [0,100] recusado"
+id: a6c838ca-85ed-4e20-b2d8-dc5a074d6ba4
+status: experimental
+description: >
+    setpoint fora da banda segura [0,100] recusado. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0879"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: setpoint_rejected
+    condition: sel
+falsepositives:
+    - operador legitimo pode errar o valor uma vez; volume e que e sinal
+level: medium

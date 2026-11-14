@@ -1,0 +1,6 @@
+{"cell": "CELL-A", "device": "sunbox-02", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H4", "sim_ts": 1794671360.3272142, "ts": "2026-11-14T15:49:20.327Z"}
+{"cell": "CELL-A", "curtail_pct": 40.0, "device": "sunbox-02", "event": "pf_curtail", "f_grid": 50.4, "provenance": "autonomous_pf", "scenario": "H4", "sim_ts": 1794671360.3277862, "ts": "2026-11-14T15:49:20.327Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-A", "device": "sunbox-02", "event": "firmware_rejected", "grid_state": "STRESS", "provenance": "remote_command", "reason": "fora_da_janela", "scenario": "H4", "sim_ts": 1794671360.838683, "ts": "2026-11-14T15:49:20.838Z"}
+{"cell": "CELL-A", "curtail_pct": 0.0, "device": "sunbox-02", "event": "pf_release", "f_grid": 50.0, "provenance": "autonomous_pf", "scenario": "H4", "sim_ts": 1794671360.8464916, "ts": "2026-11-14T15:49:20.846Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-A", "device": "sunbox-02", "event": "firmware_rejected", "provenance": "remote_command", "reason": "assinatura_invalida", "scenario": "H4", "sim_ts": 1794671361.15009, "ts": "2026-11-14T15:49:21.150Z"}
+{"cell": "CELL-A", "device": "sunbox-02", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H4", "sim_ts": 1794671361.1584342, "ts": "2026-11-14T15:49:21.158Z"}

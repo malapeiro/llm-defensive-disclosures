@@ -1,0 +1,5 @@
+{"cell": "CELL-C", "device": "sunbox-08", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H3", "sim_ts": 1794671353.7055144, "ts": "2026-11-14T15:49:13.705Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-C", "device": "sunbox-08", "event": "param_change", "new": 20.0, "old": 100.0, "param": "export_limit", "provenance": "remote_command", "scenario": "H3", "sim_ts": 1794671353.729712, "ts": "2026-11-14T15:49:13.729Z", "work_order": null}
+{"cell": "CELL-C", "curtail_pct": 40.0, "device": "sunbox-08", "event": "pf_curtail", "f_grid": 50.4, "provenance": "autonomous_pf", "scenario": "H3", "sim_ts": 1794671353.7352679, "ts": "2026-11-14T15:49:13.735Z"}
+{"cell": "CELL-C", "curtail_pct": 0.0, "device": "sunbox-08", "event": "pf_release", "f_grid": 50.0, "provenance": "autonomous_pf", "scenario": "H3", "sim_ts": 1794671354.7375033, "ts": "2026-11-14T15:49:14.737Z"}
+{"cell": "CELL-C", "device": "sunbox-08", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H3", "sim_ts": 1794671355.2379005, "ts": "2026-11-14T15:49:15.237Z"}

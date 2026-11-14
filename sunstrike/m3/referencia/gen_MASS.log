@@ -1,0 +1,11 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario MASS — lab mesma pasta (m3/)
+passos: 2
+evidencia: sunstrike_evidence/20261114T154937Z-408318
+alertas do detetor INTERNO do lab (informativo):
+  [MASS] D-AUTH-DAILY-CODE x1 fleetgate
+  [MASS] D-MASS-SHUTDOWN-WITH-WO x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+196 packets captured
+392 packets received by filter
+0 packets dropped by kernel
+193c140ebedad54fb9bfd50539084e821307b31481425f0c41b58b4f78bb839e  MASS.pcap

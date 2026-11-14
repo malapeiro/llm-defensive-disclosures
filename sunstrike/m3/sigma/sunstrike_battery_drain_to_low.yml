@@ -1,0 +1,24 @@
+title: "SUNSTRIKE D-BATTERY-DRAIN-TO-LOW — descarga remote_command executada que deixa SoC resultante <=35"
+id: cd24daf0-1cd0-4d81-9954-d15d3f36e590
+status: experimental
+description: >
+    descarga remote_command executada que deixa SoC resultante <=35. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1485"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: param_change
+        param: soc
+        provenance: remote_command
+        new|lte: 35.0
+    condition: sel
+falsepositives:
+    - a condicao drop>0 do lab nao e verificavel em Sigma (regra do detetor exige descarga, nao recarga)
+level: critical

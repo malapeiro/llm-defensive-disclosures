@@ -1,0 +1,6 @@
+{"cell": "CELL-A", "device": "sunbox-00", "event": "harness_reset", "provenance": "lab_harness", "scenario": "NEG", "sim_ts": 1794671333.3142147, "ts": "2026-11-14T15:48:53.314Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-A", "device": "sunbox-00", "event": "shutdown", "provenance": "remote_command", "scenario": "NEG", "sim_ts": 1794671333.3360882, "ts": "2026-11-14T15:48:53.336Z", "wo_valid": true, "work_order": "WO-20261113-MNT3"}
+{"actor": "fleetgate_forward", "cell": "CELL-A", "device": "sunbox-00", "event": "firmware_push", "provenance": "remote_command", "scenario": "NEG", "signed": true, "sim_ts": 1794671333.342308, "ts": "2026-11-14T15:48:53.342Z", "window": "NORMAL"}
+{"cell": "CELL-A", "device": "sunbox-00", "event": "local_confirm_issued", "provenance": "local_confirm", "scenario": "NEG", "sim_ts": 1794671333.3440614, "ts": "2026-11-14T15:48:53.344Z"}
+{"actor": "fleetgate_forward", "cell": "CELL-A", "device": "sunbox-00", "event": "param_change", "new": 0.0, "note": "descarga abaixo do floor com confirmacao local", "old": 100.0, "param": "soc", "provenance": "local_confirm", "scenario": "NEG", "sim_ts": 1794671333.3451362, "ts": "2026-11-14T15:48:53.345Z"}
+{"cell": "CELL-A", "device": "sunbox-00", "event": "harness_reset", "provenance": "lab_harness", "scenario": "NEG", "sim_ts": 1794671333.3454213, "ts": "2026-11-14T15:48:53.345Z"}

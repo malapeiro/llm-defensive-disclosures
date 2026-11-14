@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-LOGIN-BRUTE-FORCE — lockout do /fleet/login apos >=5 falhas"
+id: 4a9688bf-4c81-41de-9f17-3de9d0a962fd
+status: experimental
+description: >
+    lockout do /fleet/login apos >=5 falhas. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1110"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: login_rate_blocked
+    condition: sel
+falsepositives:
+    - operador legitimo errando a senha 5x seguidas
+level: medium

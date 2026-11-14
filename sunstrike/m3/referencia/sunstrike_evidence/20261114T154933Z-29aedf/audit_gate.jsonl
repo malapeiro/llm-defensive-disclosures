@@ -1,0 +1,13 @@
+{"device": "fleetgate", "event": "harness_reset", "provenance": "lab_harness", "scenario": "NONCANON", "sim_ts": 1794671374.067735, "ts": "2026-11-14T15:49:34.067Z"}
+{"device": "fleetgate", "event": "login_ok", "method": "daily_code", "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.0821834, "ts": "2026-11-14T15:49:34.082Z"}
+{"device": "fleetgate", "event": "login_fail", "fails": 1, "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.09724, "ts": "2026-11-14T15:49:34.097Z"}
+{"device": "fleetgate", "event": "login_fail", "fails": 2, "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.0979934, "ts": "2026-11-14T15:49:34.097Z"}
+{"device": "fleetgate", "event": "login_fail", "fails": 3, "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.0987978, "ts": "2026-11-14T15:49:34.098Z"}
+{"device": "fleetgate", "event": "login_fail", "fails": 4, "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.0996864, "ts": "2026-11-14T15:49:34.099Z"}
+{"device": "fleetgate", "event": "login_fail", "fails": 5, "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.1008425, "ts": "2026-11-14T15:49:34.100Z"}
+{"device": "fleetgate", "event": "login_rate_blocked", "lockout_s": 60.0, "provenance": "remote_command", "scenario": "NONCANON", "sim_ts": 1794671374.100885, "ts": "2026-11-14T15:49:34.100Z"}
+{"device": "fleetgate", "event": "non_canonical_request", "provenance": "remote_command", "reason": "double_slash", "scenario": "NONCANON", "sim_ts": 1794671374.1015425, "ts": "2026-11-14T15:49:34.101Z", "via": "lab_handler"}
+{"device": "fleetgate", "event": "non_canonical_request", "provenance": "remote_command", "reason": "query_or_fragment", "scenario": "NONCANON", "sim_ts": 1794671374.1019838, "ts": "2026-11-14T15:49:34.101Z", "via": "lab_handler"}
+{"device": "fleetgate", "event": "non_canonical_request", "provenance": "remote_command", "reason": "percent_encoded", "scenario": "NONCANON", "sim_ts": 1794671374.102869, "ts": "2026-11-14T15:49:34.102Z", "via": "lab_handler"}
+{"device": "fleetgate", "event": "non_canonical_request", "provenance": "remote_command", "reason": "dot_segment", "scenario": "NONCANON", "sim_ts": 1794671374.1034224, "ts": "2026-11-14T15:49:34.103Z", "via": "lab_handler"}
+{"device": "fleetgate", "event": "non_canonical_request", "provenance": "remote_command", "reason": "non_ascii", "scenario": "NONCANON", "sim_ts": 1794671374.1039681, "ts": "2026-11-14T15:49:34.103Z", "via": "lab_handler"}

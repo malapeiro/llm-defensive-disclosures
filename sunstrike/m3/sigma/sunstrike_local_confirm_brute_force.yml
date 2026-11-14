@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-LOCAL-CONFIRM-BRUTE-FORCE — lockout do PIN fisico apos >=5 falhas"
+id: faa8169b-0697-45db-ba13-49a9de027a3d
+status: experimental
+description: >
+    lockout do PIN fisico apos >=5 falhas. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T1110"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: local_confirm_lockout
+    condition: sel
+falsepositives:
+    - tentativa legitima com PIN errado 5x (exige presenca fisica)
+level: medium

@@ -1,0 +1,16 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario H1 — lab mesma pasta (m3/)
+passos: 14
+evidencia: sunstrike_evidence/20261114T154900Z-9028bc
+alertas do detetor INTERNO do lab (informativo):
+  [H1] D-AUTH-DEFAULT x1 fleetgate
+  [H1] D-BULK-WITHOUT-WORKORDER x1 fleetgate
+  [H1] D-CAPACITY-DIVERGENCE x9 
+  [H1] D-FLEET-SHUTDOWN-WAVE x6 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+  [H1] D-MASS-SHUTDOWN-WITH-WO x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+  [H1] D-REMOTE-SHUTDOWN-NO-WO x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+  [H1] D-SLOW-WAVE x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+365 packets captured
+730 packets received by filter
+0 packets dropped by kernel
+8dff7493399a82d4ab28f6969ba5168ef18dd9391e60a7098a666b7cd50dc18b  H1.pcap

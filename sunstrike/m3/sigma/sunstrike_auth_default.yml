@@ -1,0 +1,22 @@
+title: "SUNSTRIKE D-AUTH-DEFAULT — login no FLEETGATE com credenciais default"
+id: 226a60b7-28aa-416c-bfbc-fe4228edf4fb
+status: experimental
+description: >
+    login no FLEETGATE com credenciais default. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0819, T1078"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: login_ok
+        method: default_creds
+    condition: sel
+falsepositives:
+    - nenhum — credenciais default nunca sao uso legitimo no lab
+level: critical

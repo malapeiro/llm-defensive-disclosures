@@ -1,0 +1,23 @@
+title: "SUNSTRIKE D-REMOTE-SHUTDOWN-NO-WO — shutdown remoto EXECUTADO sem work-order valida (por evento)"
+id: ebd65747-2fbc-45ce-a04b-7489e7d23f5f
+status: experimental
+description: >
+    shutdown remoto EXECUTADO sem work-order valida (por evento). Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0816"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: shutdown
+        provenance: remote_command
+        work_order: null
+    condition: sel
+falsepositives:
+    - nenhum — shutdowns legitimos carregam sempre work-order valida
+level: medium

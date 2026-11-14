@@ -1,0 +1,22 @@
+title: "SUNSTRIKE D-FIRMWARE-REJECTED — firmware recusado por assinatura invalida (403)"
+id: da715c9e-c81f-4d3a-80de-7634a9ab0f8f
+status: experimental
+description: >
+    firmware recusado por assinatura invalida (403). Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0814, T1485"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: firmware_rejected
+        reason: assinatura_invalida
+    condition: sel
+falsepositives:
+    - imagem legitima mal serializada pelo cliente (nao observada no lab)
+level: medium

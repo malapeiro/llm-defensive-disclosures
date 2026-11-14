@@ -1,0 +1,16 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario H2 — lab mesma pasta (m3/)
+passos: 8
+evidencia: sunstrike_evidence/20261114T154905Z-32854e
+alertas do detetor INTERNO do lab (informativo):
+  [H2] D-AUTH-BROKER-TOKEN x7 sunbox-00,sunbox-03,sunbox-04,sunbox-07
+  [H2] D-BATTERY-DRAIN-BELOW-FLOOR x1 sunbox-04
+  [H2] D-CAPACITY-DIVERGENCE x4 
+  [H2] D-FLEET-SHUTDOWN-WAVE x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07
+  [H2] D-MASS-SHUTDOWN-WITH-WO x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07
+  [H2] D-PROVENANCE-SPOOF-ATTEMPT x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07
+  [H2] D-REMOTE-SHUTDOWN-NO-WO x6 sunbox-00,sunbox-03,sunbox-04,sunbox-07
+274 packets captured
+548 packets received by filter
+0 packets dropped by kernel
+a86e3bb9353b9ea0951642aec12fbbc32ea5aa04e49d9131708991fad6dc2c60  H2.pcap

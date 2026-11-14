@@ -1,0 +1,7 @@
+{"cell": "CELL-B", "device": "sunbox-04", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H2", "sim_ts": 1794671346.0936203, "ts": "2026-11-14T15:49:06.093Z"}
+{"cell": "CELL-B", "device": "sunbox-04", "event": "provenance_spoof_attempt", "fields": ["provenance", "reason"], "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.1129537, "ts": "2026-11-14T15:49:06.112Z"}
+{"cell": "CELL-B", "device": "sunbox-04", "event": "auth_use", "method": "broker_token", "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.1130126, "ts": "2026-11-14T15:49:06.113Z"}
+{"actor": "broker_token", "cell": "CELL-B", "device": "sunbox-04", "event": "shutdown", "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.1130366, "ts": "2026-11-14T15:49:06.113Z", "work_order": null}
+{"cell": "CELL-B", "device": "sunbox-04", "event": "auth_use", "method": "broker_token", "provenance": "remote_command", "scenario": "H2", "sim_ts": 1794671346.118672, "ts": "2026-11-14T15:49:06.118Z"}
+{"action": "force_export", "actor": "broker_token", "cell": "CELL-B", "device": "sunbox-04", "event": "floor_block", "floor_soc": 25.0, "provenance": "remote_command", "requested_soc": -6837.5, "scenario": "H2", "sim_ts": 1794671346.1187282, "soc": 100.0, "ts": "2026-11-14T15:49:06.118Z"}
+{"cell": "CELL-B", "device": "sunbox-04", "event": "harness_reset", "provenance": "lab_harness", "scenario": "H2", "sim_ts": 1794671346.1192923, "ts": "2026-11-14T15:49:06.119Z"}

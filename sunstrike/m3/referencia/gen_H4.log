@@ -1,0 +1,11 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario H4 — lab mesma pasta (m3/)
+passos: 24
+evidencia: sunstrike_evidence/20261114T154919Z-d1c9d9
+alertas do detetor INTERNO do lab (informativo):
+  [H4] D-FIRMWARE-OUT-OF-WINDOW x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+  [H4] D-FIRMWARE-REJECTED x12 sunbox-00,sunbox-01,sunbox-02,sunbox-03
+336 packets captured
+672 packets received by filter
+0 packets dropped by kernel
+acab7d1788d525504b07bf1e6ea46362036bd760615828e650594ebf153036f6  H4.pcap

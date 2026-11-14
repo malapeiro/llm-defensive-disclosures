@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-PF-PARAM-CHANGE-IN-STRESS — alteracao remota da curva P(f) recusada com a rede em STRESS"
+id: 4ade0601-9ed2-454b-96dc-e67b4f08c0b6
+status: experimental
+description: >
+    alteracao remota da curva P(f) recusada com a rede em STRESS. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0879"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: pf_param_change_blocked
+    condition: sel
+falsepositives:
+    - nenhum — P(f) e autonomo em STRESS por construcao
+level: critical

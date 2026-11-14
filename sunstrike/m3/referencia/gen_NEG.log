@@ -1,0 +1,10 @@
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+SUNSTRIKE M3 — cenario NEG — lab mesma pasta (m3/)
+passos: 7
+evidencia: sunstrike_evidence/20261114T154852Z-69ac7b
+alertas do detetor INTERNO do lab (informativo):
+  [NEG] D-AUTH-DAILY-CODE x1 fleetgate
+154 packets captured
+308 packets received by filter
+0 packets dropped by kernel
+6e97a1427849f91c78b93efaa910fe59c43d167527eebbd685550ed9572a2a2e  NEG.pcap

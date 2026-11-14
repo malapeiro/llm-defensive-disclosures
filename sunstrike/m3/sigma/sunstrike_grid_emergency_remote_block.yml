@@ -1,0 +1,21 @@
+title: "SUNSTRIKE D-GRID-EMERGENCY-REMOTE-BLOCK — interlock fail-closed recusou comando remoto em emergencia"
+id: 7b59c994-c352-4c00-b6a2-eac71bd44fb5
+status: experimental
+description: >
+    interlock fail-closed recusou comando remoto em emergencia. Lab SUNSTRIKE v0.7.5 (synthetic, loopback-only). Corre sobre os
+    JSONL de evidencia (audit_dev_*, audit_gate, audit_guard) numa tabela
+    `events` com as chaves de topo de cada linha como colunas. Mapeamento
+    ATT&CK provisorio — reconfirmado no M5.
+references:
+    - https://github.com/malapeiro/llm-defensive-disclosures
+    - "ATT&CK provisorio (reconfirmado no M5): T0879"
+logsource:
+    product: sunstrike
+    service: audit
+detection:
+    sel:
+        event: interlock_block
+    condition: sel
+falsepositives:
+    - nenhum — o interlock e a defesa; o alerta e a tentativa
+level: critical
