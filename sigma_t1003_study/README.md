@@ -15,6 +15,17 @@ Asked in Round 2 (`v1 → v2`) to close two false positives (`0x1410` process li
   ```
   — a **100% tautology across all Windows paths** that short-circuited all six preceding `CallTrace` folder restrictions and silently reopened **both** false positives (`selection_lowaccess_untrusted_path` file count stayed stuck at `7 → 7` from `v1` to `v2`, before dropping to `2` in `v3` once `- '\\'` was removed after the builder was shown the compiled SQL).
 
+## Upstream follow-up (status as of 2026-11-16)
+
+The escaping finding was reported upstream as a validator suggestion, not as a bug: the collapse of `'\\'` to one literal backslash is intended Sigma behavior.
+
+- **[SigmaHQ/pySigma#615](https://github.com/SigmaHQ/pySigma/issues/615)** — issue opened 2026-11-09 proposing a validator for `contains` values that reduce to a lone backslash. Open.
+- **[SigmaHQ/pySigma#617](https://github.com/SigmaHQ/pySigma/pull/617)** — pull request by another contributor implementing a `TautologicalValueValidator`. After review discussion the single-separator check was limited to `contains`; empty values are flagged for `contains`, `startswith` and `endswith`. Open, awaiting maintainer review.
+- **[SigmaHQ/sigma#6596](https://github.com/SigmaHQ/sigma/issues/6596) / [#6597](https://github.com/SigmaHQ/sigma/pull/6597)** — issue and proposed fix for an official rule in which that validator found an empty `contains` value turning a filter into a catch-all. Open.
+- Short write-up of the case: [I asked an LLM to harden a real SigmaHQ rule. Its self-test said 19/19 PASS. The real compiler said otherwise.](https://dev.to/malapeiro/i-asked-an-llm-to-harden-a-real-sigmahq-rule-its-self-test-said-1919-pass-the-real-compiler-said-3gga)
+
+What can and cannot be claimed: nothing above is merged. The validator and the rule fix are third-party work; this study's contribution is the finding, the report and the review comments on #617. The minimal repro (`'\\'` under `contains` compiling to `LIKE '%\\%' ESCAPE '\'`) was re-run on pySigma 2.0.3 and 2.1.0 with the same result; the full corpus evaluation in this directory was run on 2.0.2 only.
+
 ## What is in this directory
 
 - [`sigma_t1003_report.md`](sigma_t1003_report.md) — full technical report.
