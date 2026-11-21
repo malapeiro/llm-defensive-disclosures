@@ -1,0 +1,45 @@
+{
+  "side": "elasticsearch_lucene",
+  "versions": {
+    "python": "3.13.18",
+    "pysigma": "1.5.1",
+    "pysigma_backend_elasticsearch": "2.1.1",
+    "pysigma_pipeline_sysmon": "2.0.0",
+    "pysigma_pipeline_windows": "2.0.1",
+    "es_backend_class": "LuceneBackend"
+  },
+  "sigma_collapse_runtime": {
+    "SigmaString('\\\\').s": [
+      "\\"
+    ],
+    "matches_single_backslash": true
+  },
+  "pipeline_load": {
+    "used": true,
+    "note": "loaded from sigma.pipelines.{sysmon,windows}"
+  },
+  "runs": {
+    "v2": {
+      "rule_sha256": "853f22173642983d74887a3b399643387b6c53e01c8a2e53808f53c74424f676",
+      "lucene_query_no_pipeline": "((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(*0x1038* OR *0x1438* OR *0x143a* OR *0x1f1fff* OR *0x1fffff*)) AND (CallTrace:(*dbgcore.dll* OR *dbghelp.dll* OR *kernel32.dll* OR *kernelbase.dll* OR *ntdll.dll*))) AND (NOT (SourceUser:(*AUTHORI* OR *AUTORI*))) AND (NOT (((CallTrace:*\\:\\\\Windows\\\\Temp\\\\asgard2\\-agent\\\\* AND CallTrace:*\\\\thor\\\\thor64.exe\\+* AND CallTrace:*\\|UNKNOWN\\(*) AND GrantedAccess:0x103800) OR (SourceImage:(*\\:\\\\Windows\\\\Sysmon64.exe OR *\\:\\\\Windows\\\\Sysmon64a.exe))))) OR (TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (SourceImage:(*\\\\powershell.exe OR *\\\\pwsh.exe OR *\\\\wscript.exe OR *\\\\cscript.exe OR *\\\\mshta.exe))) OR ((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (CallTrace:(*\\\\Users\\\\* OR *\\\\Temp\\\\* OR *\\\\Windows\\\\Temp\\\\* OR *\\\\ProgramData\\\\* OR *\\\\Downloads\\\\* OR *\\\\PerfLogs\\\\* OR *\\\\*))) AND (NOT ((SourceImage:(C\\:\\\\Windows\\\\* OR c\\:\\\\windows\\\\* OR C\\:\\\\Program\\ Files\\\\* OR c\\:\\\\program\\ files\\\\* OR C\\:\\\\Program\\ Files\\ \\(x86\\)\\\\* OR c\\:\\\\program\\ files\\ \\(x86\\)\\\\* OR C\\:\\\\ProgramData\\\\* OR c\\:\\\\programdata\\\\*)) OR (SourceImage:(*\\\\procexp.exe OR *\\\\procexp64.exe OR *\\\\procmon.exe OR *\\\\procmon64.exe)))))",
+      "lucene_query_with_pipeline": "Channel:Microsoft\\-Windows\\-Sysmon\\/Operational AND (EventID:10 AND (((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(*0x1038* OR *0x1438* OR *0x143a* OR *0x1f1fff* OR *0x1fffff*)) AND (CallTrace:(*dbgcore.dll* OR *dbghelp.dll* OR *kernel32.dll* OR *kernelbase.dll* OR *ntdll.dll*))) AND (NOT (SourceUser:(*AUTHORI* OR *AUTORI*))) AND (NOT (((CallTrace:*\\:\\\\Windows\\\\Temp\\\\asgard2\\-agent\\\\* AND CallTrace:*\\\\thor\\\\thor64.exe\\+* AND CallTrace:*\\|UNKNOWN\\(*) AND GrantedAccess:0x103800) OR (SourceImage:(*\\:\\\\Windows\\\\Sysmon64.exe OR *\\:\\\\Windows\\\\Sysmon64a.exe))))) OR (TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (SourceImage:(*\\\\powershell.exe OR *\\\\pwsh.exe OR *\\\\wscript.exe OR *\\\\cscript.exe OR *\\\\mshta.exe))) OR ((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (CallTrace:(*\\\\Users\\\\* OR *\\\\Temp\\\\* OR *\\\\Windows\\\\Temp\\\\* OR *\\\\ProgramData\\\\* OR *\\\\Downloads\\\\* OR *\\\\PerfLogs\\\\* OR *\\\\*))) AND (NOT ((SourceImage:(C\\:\\\\Windows\\\\* OR c\\:\\\\windows\\\\* OR C\\:\\\\Program\\ Files\\\\* OR c\\:\\\\program\\ files\\\\* OR C\\:\\\\Program\\ Files\\ \\(x86\\)\\\\* OR c\\:\\\\program\\ files\\ \\(x86\\)\\\\* OR C\\:\\\\ProgramData\\\\* OR c\\:\\\\programdata\\\\*)) OR (SourceImage:(*\\\\procexp.exe OR *\\\\procexp64.exe OR *\\\\procmon.exe OR *\\\\procmon64.exe)))))))"
+    },
+    "v3": {
+      "rule_sha256": "52f3516463798f9fa3a5ae5d5a3a881b670950f74b22eea2ffaf100ca2a597ba",
+      "lucene_query_no_pipeline": "((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(*0x1038* OR *0x1438* OR *0x143a* OR *0x1f1fff* OR *0x1fffff*)) AND (CallTrace:(*dbgcore.dll* OR *dbghelp.dll* OR *kernel32.dll* OR *kernelbase.dll* OR *ntdll.dll*))) AND (NOT (SourceUser:(*AUTHORI* OR *AUTORI*))) AND (NOT (((CallTrace:*\\:\\\\Windows\\\\Temp\\\\asgard2\\-agent\\\\* AND CallTrace:*\\\\thor\\\\thor64.exe\\+* AND CallTrace:*\\|UNKNOWN\\(*) AND GrantedAccess:0x103800) OR (SourceImage:(*\\:\\\\Windows\\\\Sysmon64.exe OR *\\:\\\\Windows\\\\Sysmon64a.exe))))) OR (TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (SourceImage:(*\\\\powershell.exe OR *\\\\pwsh.exe OR *\\\\wscript.exe OR *\\\\cscript.exe OR *\\\\mshta.exe))) OR ((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (CallTrace:(*\\\\Users\\\\* OR *\\\\Temp\\\\* OR *\\\\Windows\\\\Temp\\\\* OR *\\\\ProgramData\\\\* OR *\\\\Downloads\\\\* OR *\\\\PerfLogs\\\\*))) AND (NOT ((SourceImage:(C\\:\\\\Windows\\\\* OR c\\:\\\\windows\\\\* OR C\\:\\\\Program\\ Files\\\\* OR c\\:\\\\program\\ files\\\\* OR C\\:\\\\Program\\ Files\\ \\(x86\\)\\\\* OR c\\:\\\\program\\ files\\ \\(x86\\)\\\\* OR C\\:\\\\ProgramData\\\\* OR c\\:\\\\programdata\\\\*)) OR (SourceImage:(*\\\\procexp.exe OR *\\\\procexp64.exe OR *\\\\procmon.exe OR *\\\\procmon64.exe)))))",
+      "lucene_query_with_pipeline": "Channel:Microsoft\\-Windows\\-Sysmon\\/Operational AND (EventID:10 AND (((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(*0x1038* OR *0x1438* OR *0x143a* OR *0x1f1fff* OR *0x1fffff*)) AND (CallTrace:(*dbgcore.dll* OR *dbghelp.dll* OR *kernel32.dll* OR *kernelbase.dll* OR *ntdll.dll*))) AND (NOT (SourceUser:(*AUTHORI* OR *AUTORI*))) AND (NOT (((CallTrace:*\\:\\\\Windows\\\\Temp\\\\asgard2\\-agent\\\\* AND CallTrace:*\\\\thor\\\\thor64.exe\\+* AND CallTrace:*\\|UNKNOWN\\(*) AND GrantedAccess:0x103800) OR (SourceImage:(*\\:\\\\Windows\\\\Sysmon64.exe OR *\\:\\\\Windows\\\\Sysmon64a.exe))))) OR (TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (SourceImage:(*\\\\powershell.exe OR *\\\\pwsh.exe OR *\\\\wscript.exe OR *\\\\cscript.exe OR *\\\\mshta.exe))) OR ((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (CallTrace:(*\\\\Users\\\\* OR *\\\\Temp\\\\* OR *\\\\Windows\\\\Temp\\\\* OR *\\\\ProgramData\\\\* OR *\\\\Downloads\\\\* OR *\\\\PerfLogs\\\\*))) AND (NOT ((SourceImage:(C\\:\\\\Windows\\\\* OR c\\:\\\\windows\\\\* OR C\\:\\\\Program\\ Files\\\\* OR c\\:\\\\program\\ files\\\\* OR C\\:\\\\Program\\ Files\\ \\(x86\\)\\\\* OR c\\:\\\\program\\ files\\ \\(x86\\)\\\\* OR C\\:\\\\ProgramData\\\\* OR c\\:\\\\programdata\\\\*)) OR (SourceImage:(*\\\\procexp.exe OR *\\\\procexp64.exe OR *\\\\procmon.exe OR *\\\\procmon64.exe)))))))"
+    }
+  },
+  "index_fields_referenced": [
+    "CallTrace",
+    "GrantedAccess",
+    "SourceImage",
+    "SourceUser",
+    "TargetImage"
+  ],
+  "telemetry": {
+    "ts": "2026-11-21T13:21:45.480281+00:00",
+    "events_sha256": "a90a83bf1c31a874de0956e295116ecd971416e87d1c9a52ebcdc8526b467ac3",
+    "pre_registration_sha256": "371a2be8e57824335608d1cd8a3ecd428d6b34c3e2f8954f36f06776fa6fbc4f"
+  }
+}

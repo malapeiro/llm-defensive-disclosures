@@ -1,0 +1,24 @@
+{
+  "mappings": {
+    "properties": {
+      "CallTrace": {
+        "type": "keyword"
+      },
+      "GrantedAccess": {
+        "type": "keyword"
+      },
+      "SourceImage": {
+        "type": "keyword"
+      },
+      "SourceUser": {
+        "type": "keyword"
+      },
+      "TargetImage": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      }
+    }
+  }
+}
