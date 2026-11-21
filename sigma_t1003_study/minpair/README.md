@@ -49,15 +49,18 @@ The v2 always-true branch — a bare `'\\'` Sigma value collapsing to one backsl
 |---|---|---|
 | SQLite | sqlite3 3.54.1 (host) | pySigma 2.0.2 · backend-sqlite 2.1.1 · pipeline-sysmon 3.0.0 · pipeline-windows 3.0.0 (study's stack) |
 | Elastic | Elasticsearch 7.17.4 (tar, 2022-05-18) · Lucene 8.11.1 · Python 3.13.18 | pySigma 1.5.1 · backend-elasticsearch 2.1.1 · pipeline-sysmon 2.0.0 · pipeline-windows 2.0.1 (pip constraint: the backend requires pysigma<2.0.0 — dated Amendment E-01) |
-| Collapse anchor | `SigmaString("\\").s == ['\\']` verified at runtime in BOTH compilers (2.0.2 and 1.5.1) | |
+| Collapse anchor | `SigmaString("\\\\").s == ['\\']` verified at runtime in BOTH compilers (2.0.2 and 1.5.1) | |
 
 ## Deviations and incidents (complete)
 
 1. **es_bulk.ndjson generator bug**: the script emitted ONE bulk action line for all 4 documents; ES bulk requires one action line before EACH document. Caught mid-run; the ingest used `es_bulk_fixed.ndjson` (sha256 `9c32b775…`); the buggy artifact (`c8cab5c3…`) is kept and hashed as history. Generator fixed in minpair_es_compile.py v1.2.
 2. **Elasticsearch 7.17.4 (2022) via brew tap** rather than a current 8.x line — accepted, evidence scoped per engine version.
 3. `byte_identical_to_study_sql` label in the v1.1 output of results_sqlite_mac.json is superseded by the trailing-newline taxonomy (minpair_sqlite_run.py v1.2) — content identical, exact byte equality not claimed.
-4. **Broken import in the v1.0 scripts** (fixed before any valid result existed): `from sigma.rule import SigmaString` raises ImportError in both pySigma versions; correct location is `from sigma.types import SigmaString` (sha256 of v1.1 fixes: `a22612c2…` / `43cc079e…`; errata dated in the docstrings). Ruled an implementation bug, not a design change: PRE_REGISTRATION.md was NOT amended (hash unchanged, P1–P4 intact), per the same dated-errata discipline as E-01. Final scripts are v1.2.
+4. **Broken import in the v1.0 scripts** (written by the verifier model, Mistral Vibe; fixed before any valid result existed): `from sigma.rule import SigmaString` raises ImportError in both pySigma versions; correct location is `from sigma.types import SigmaString` (sha256 of v1.1 fixes: `a22612c2…` / `43cc079e…`; errata dated in the docstrings). Ruled an implementation bug, not a design change: PRE_REGISTRATION.md was NOT amended (hash unchanged, P1–P4 intact), per the same dated-errata discipline as E-01. Final scripts are v1.2.
 5. **freeze_es_full.txt generated after the run**, from the same, unaltered Elastic venv (sha256 `9f3bd775…`, appended to hashes_run_2026-11-21.txt). No environment changes between run and freeze.
+6. **OpenJDK 17 (brew) ran the Elasticsearch cluster**: the bundled JDK is Intel-only on this machine ("Bad CPU type"); the cluster ran with `-xpack.ml.enabled=false`. No effect on Lucene query semantics; recorded for reproducibility. *(Added 2026-11-21, after an independent second-opinion review.)*
+7. **Pipeline asymmetry between sides**: the query executed against the index was the no-pipeline variant (`es_query_v2.json` / `es_query_v3.json`, no `Channel`/`EventID` clauses); the SQLite side ran the study's full pipelined SQL (`Channel='Microsoft-Windows-Sysmon/Operational' AND EventID=10`). The `CallTrace` predicate under test is identical on both sides; the pipelined Lucene variants were compiled and recorded (`es_query_v*_pipelined.json`, `lucene_query_with_pipeline`) but not executed against the index. *(Added 2026-11-21.)*
+8. **sqlite3 host version drift**: the operator's Mac ran sqlite3 3.54.1, the independent baseline 3.46.1; identical matrix on both (also disclosed in the result matrix and stack tables above). *(Added 2026-11-21.)*
 
 ## What cannot be claimed (limits)
 
@@ -69,6 +72,7 @@ The v2 always-true branch — a bare `'\\'` Sigma value collapsing to one backsl
 
 ## Chain of custody
 
+- Execution: local, by the operator; a second model guided the run step by step (commands dictated, outputs pasted back; no direct file access). Vibe verified independently from the custody artifacts. *(Provenance line added 2026-11-21.)*
 - `hashes_run_2026-11-21.txt` (13 artifacts) generated on the operator's Mac; the Elasticsearch venv's full freeze was captured after the run, same venv, no changes (Deviation 5).
 - Pre-registration (amended, `371a2be8…`) hashed in the telemetry of both run outputs; the pre-amendment hash (`f1e80010…`) is recorded in `results_sqlite_baseline.json` telemetry, which stays unamended.
 - Supplementary sha256 (computed at packaging time, files with no operator-registered hash): `sqlite_baseline.py` `6f2d1980…`, `results_sqlite_baseline.json` `0e59df22…`, `es_create_index.txt` `9620fb61…`, `es_query_v2_pipelined.json` `7a57d472…`, `es_query_v3_pipelined.json` `15fb3d34…`, `hashes_run_2026-11-21.txt` `819ce4b0…`.
