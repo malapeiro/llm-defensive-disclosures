@@ -1,0 +1,6 @@
+pysigma 2.0.2
+input_backslashes=2 -> output=['\\'] output_backslashes=1
+input_backslashes=1 -> output=['\\'] output_backslashes=1
+pysigma 1.5.1
+input_backslashes=2 -> output=['\\'] output_backslashes=1
+input_backslashes=1 -> output=['\\'] output_backslashes=1

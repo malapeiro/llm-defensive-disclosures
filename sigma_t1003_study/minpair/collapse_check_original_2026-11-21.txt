@@ -1,0 +1,48 @@
+Runtime collapse check - manual, run by the operator at session start, 2026-11-21,
+BEFORE any of the minpair scripts existed (they were written after this check).
+
+This file is a transcription of the operator's terminal excerpt from the session
+start (pasted into the directing session on the same date; it was not captured to
+a file at run time). The notation below is the canonical Python form and is
+anchored twice: (a) the pySigma core parser source of both versions in use
+(2.0.2 and 1.5.1 parse backslash escapes identically) and (b) the recorded rerun
+collapse_check_rerun_2026-11-21.txt (sha256 b3263398...), which repeats the same
+check later the same day with explicit numeric counts and the same results.
+The rerun accompanies this transcript; it does not replace it.
+
+--- SQLite venv (session start, before any script) -----------------------
+
+python3.13 -m venv ~/Estudos/.venv-sigma-sqlite
+source ~/Estudos/.venv-sigma-sqlite/bin/activate
+python3 -m pip install pysigma==2.0.2 pysigma-backend-sqlite==2.1.1 \
+  pysigma-pipeline-sysmon==3.0.0 pysigma-pipeline-windows==3.0.0 pyyaml
+python3 - <<'EOF'
+from importlib.metadata import version
+from sigma.types import SigmaString
+print("pysigma", version("pysigma"))
+print("collapse:", SigmaString("\\\\").s)
+EOF
+
+pysigma 2.0.2
+collapse: ['\\']
+
+--- Elastic venv (same session start) -------------------------------------
+
+python3.13 -m venv ~/Estudos/.venv-sigma-es
+source ~/Estudos/.venv-sigma-es/bin/activate
+python3 -m pip install pysigma-backend-elasticsearch==2.1.1 \
+  pysigma-pipeline-sysmon pysigma-pipeline-windows pyyaml
+python3 - <<'EOF'
+from importlib.metadata import version
+from sigma.types import SigmaString
+print("pysigma", version("pysigma"))
+print("collapse:", SigmaString("\\\\").s)
+EOF
+
+pysigma 1.5.1
+collapse: ['\\']
+
+Verdict: two backslashes in, ONE out (['\\'] is the repr of a single
+one-backslash element) - the core collapse, on pySigma 2.0.2 and on 1.5.1,
+before any script existed. The single-backslash case is in the rerun file:
+same output shape, so it cannot distinguish collapse from no collapse.

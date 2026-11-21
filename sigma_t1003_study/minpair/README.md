@@ -42,6 +42,7 @@ The v2 always-true branch — a bare `'\\'` Sigma value collapsing to one backsl
 | `es_version.txt` | Engine version record (Elasticsearch 7.17.4 / Lucene 8.11.1, tar build 2022-05-18) |
 | `freeze_sqlite_full.txt` / `freeze_es_full.txt` | Full `pip freeze` of both venvs |
 | `hashes_run_2026-11-21.txt` | sha256 of 13 run artifacts, generated on the operator's Mac |
+| `collapse_check_original_2026-11-21.txt` / `collapse_check_rerun_2026-11-21.txt` | Evidence for the runtime collapse check (see the Provenance note): the operator's manual pre-script check, transcribed with its provenance stated in the file, and the recorded same-day rerun with explicit counts (rerun sha256 `b3263398…`) |
 
 ## Engines and stacks (recorded at run time)
 
@@ -49,7 +50,7 @@ The v2 always-true branch — a bare `'\\'` Sigma value collapsing to one backsl
 |---|---|---|
 | SQLite | sqlite3 3.54.1 (host) | pySigma 2.0.2 · backend-sqlite 2.1.1 · pipeline-sysmon 3.0.0 · pipeline-windows 3.0.0 (study's stack) |
 | Elastic | Elasticsearch 7.17.4 (tar, 2022-05-18) · Lucene 8.11.1 · Python 3.13.18 | pySigma 1.5.1 · backend-elasticsearch 2.1.1 · pipeline-sysmon 2.0.0 · pipeline-windows 2.0.1 (pip constraint: the backend requires pysigma<2.0.0 — dated Amendment E-01) |
-| Collapse anchor | `SigmaString("\\\\").s == ['\\']` verified at runtime in BOTH compilers (2.0.2 and 1.5.1) | |
+| Collapse anchor | `SigmaString("\\\\").s == ['\\']` verified at runtime in BOTH compilers (2.0.2 and 1.5.1) — evidence and provenance: see the Provenance note below | |
 
 ## Deviations and incidents (complete)
 
@@ -62,6 +63,14 @@ The v2 always-true branch — a bare `'\\'` Sigma value collapsing to one backsl
 7. **Pipeline asymmetry between sides**: the query executed against the index was the no-pipeline variant (`es_query_v2.json` / `es_query_v3.json`, no `Channel`/`EventID` clauses); the SQLite side ran the study's full pipelined SQL (`Channel='Microsoft-Windows-Sysmon/Operational' AND EventID=10`). The `CallTrace` predicate under test is identical on both sides; the pipelined Lucene variants were compiled and recorded (`es_query_v*_pipelined.json`, `lucene_query_with_pipeline`) but not executed against the index. *(Added 2026-11-21.)*
 8. **sqlite3 host version drift**: the operator's Mac ran sqlite3 3.54.1, the independent baseline 3.46.1; identical matrix on both (also disclosed in the result matrix and stack tables above). *(Added 2026-11-21.)*
 9. **The executed script versions were overwritten in place** *(Added 2026-11-21, upon the executed-version question raised by an independent second-opinion review)*: the runs were produced by v1.1 of both scripts (sha256 `a22612c2…` / `43cc079e…`, hashed by the operator at run time, before the results — `byte_identical_to_study_sql` in results_sqlite_mac.json is v1.1 output); the post-run revisions that became v1.2 (identity-label taxonomy; bulk-generator interleave) were saved on top of the same filenames. No backup exists; v1.1 survives by hash only. *(Checked 2026-11-21: no Time Machine snapshot; recovery closed.)* Custody policy from now on: a new version gets a new file, never an in-place overwrite.
+
+### Provenance note (2026-11-21, post-run review) — the runtime collapse check was manual, not the embedded anchor
+
+The runtime verification cited in the Collapse anchor row was the **operator's manual check, run before any script existed, in both environments**: `SigmaString("\\\\").s` (two real backslashes in) returned `['\\']` (one backslash out) on pySigma 2.0.2 and on pySigma 1.5.1 — the 2→1 collapse, live in both compilers. Evidence: `collapse_check_original_2026-11-21.txt` (the session-start excerpt, transcribed with its provenance stated) and `collapse_check_rerun_2026-11-21.txt` (a rerun recorded in custody at 16:17 local, same venvs, no changes since the run; explicit counts: 2 backslashes in → 1 out and 1 in → 1 out, on both versions; sha256 `b3263398…`).
+
+The same review found that the **collapse anchor embedded in the run scripts** (v1.0 through v1.2, written by the verifier model) passes a single backslash — `SigmaString("\\").s`, honestly recorded as `matches_single_backslash: true` in both results files. The rerun's 1→1 line shows why that embedded check cannot distinguish collapse from no collapse (identical output shape either way) and is therefore **not evidence for the mechanism**. The mechanism's runtime support is the manual check and the rerun above — plus, independently, the end-to-end artifacts (compiled-SQL identity modulo the reference file's trailing newline, and the reopened false positive on both engines). No published result or matrix changes.
+
+*(Added 2026-11-21, after a review of the full run log; deviations remain 1–9 — this is a provenance/quality note on a script-side anchor, not a new run incident.)*
 
 ## What cannot be claimed (limits)
 
