@@ -1,0 +1,7 @@
+{
+  "query": {
+    "query_string": {
+      "query": "((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(*0x1038* OR *0x1438* OR *0x143a* OR *0x1f1fff* OR *0x1fffff*)) AND (CallTrace:(*dbgcore.dll* OR *dbghelp.dll* OR *kernel32.dll* OR *kernelbase.dll* OR *ntdll.dll*))) AND (NOT (SourceUser:(*AUTHORI* OR *AUTORI*))) AND (NOT (((CallTrace:*\\:\\\\Windows\\\\Temp\\\\asgard2\\-agent\\\\* AND CallTrace:*\\\\thor\\\\thor64.exe\\+* AND CallTrace:*\\|UNKNOWN\\(*) AND GrantedAccess:0x103800) OR (SourceImage:(*\\:\\\\Windows\\\\Sysmon64.exe OR *\\:\\\\Windows\\\\Sysmon64a.exe))))) OR (TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (SourceImage:(*\\\\powershell.exe OR *\\\\pwsh.exe OR *\\\\wscript.exe OR *\\\\cscript.exe OR *\\\\mshta.exe))) OR ((TargetImage:*\\\\lsass.exe AND (GrantedAccess:(0x1010 OR 0x1410)) AND (CallTrace:(*\\\\Users\\\\* OR *\\\\Temp\\\\* OR *\\\\Windows\\\\Temp\\\\* OR *\\\\ProgramData\\\\* OR *\\\\Downloads\\\\* OR *\\\\PerfLogs\\\\*))) AND (NOT ((SourceImage:(C\\:\\\\Windows\\\\* OR c\\:\\\\windows\\\\* OR C\\:\\\\Program\\ Files\\\\* OR c\\:\\\\program\\ files\\\\* OR C\\:\\\\Program\\ Files\\ \\(x86\\)\\\\* OR c\\:\\\\program\\ files\\ \\(x86\\)\\\\* OR C\\:\\\\ProgramData\\\\* OR c\\:\\\\programdata\\\\*)) OR (SourceImage:(*\\\\procexp.exe OR *\\\\procexp64.exe OR *\\\\procmon.exe OR *\\\\procmon64.exe)))))"
+    }
+  }
+}

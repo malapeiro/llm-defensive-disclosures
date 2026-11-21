@@ -1,0 +1,91 @@
+{
+  "engine": "sqlite3 (stdlib) 3.46.1",
+  "runs": {
+    "v2": {
+      "sql_sha256": "ad6c9ca9232532ed2adcaf4af9a79bf790909dae1c8166da4a32a8766f29cc69",
+      "matched_event_ids": [
+        "E1_local_backslash",
+        "E2_unc",
+        "E4_downloads_true_positive"
+      ],
+      "not_matched_event_ids": [
+        "E3_forward_slash"
+      ]
+    },
+    "v3": {
+      "sql_sha256": "fe68195675b38702e90e4263fdf988e32bacc7cab26c4a08409a284fc1d47a7f",
+      "matched_event_ids": [
+        "E4_downloads_true_positive"
+      ],
+      "not_matched_event_ids": [
+        "E1_local_backslash",
+        "E2_unc",
+        "E3_forward_slash"
+      ]
+    }
+  },
+  "prediction_check": {
+    "PS1": {
+      "rule": "v2",
+      "event": "E1_local_backslash",
+      "predicted_match": true,
+      "observed_match": true,
+      "status": "CONFIRMED"
+    },
+    "PS2a": {
+      "rule": "v2",
+      "event": "E2_unc",
+      "predicted_match": true,
+      "observed_match": true,
+      "status": "CONFIRMED"
+    },
+    "PS2b": {
+      "rule": "v2",
+      "event": "E3_forward_slash",
+      "predicted_match": false,
+      "observed_match": false,
+      "status": "CONFIRMED"
+    },
+    "PS2c": {
+      "rule": "v2",
+      "event": "E4_downloads_true_positive",
+      "predicted_match": true,
+      "observed_match": true,
+      "status": "CONFIRMED"
+    },
+    "PS3a": {
+      "rule": "v3",
+      "event": "E1_local_backslash",
+      "predicted_match": false,
+      "observed_match": false,
+      "status": "CONFIRMED"
+    },
+    "PS3b": {
+      "rule": "v3",
+      "event": "E2_unc",
+      "predicted_match": false,
+      "observed_match": false,
+      "status": "CONFIRMED"
+    },
+    "PS3c": {
+      "rule": "v3",
+      "event": "E3_forward_slash",
+      "predicted_match": false,
+      "observed_match": false,
+      "status": "CONFIRMED"
+    },
+    "PS3d": {
+      "rule": "v3",
+      "event": "E4_downloads_true_positive",
+      "predicted_match": true,
+      "observed_match": true,
+      "status": "CONFIRMED"
+    }
+  },
+  "telemetry": {
+    "ts": "2026-11-21T12:57:29.836511+00:00",
+    "events_sha256": "a90a83bf1c31a874de0956e295116ecd971416e87d1c9a52ebcdc8526b467ac3",
+    "pre_registration_sha256": "f1e80010f8c00d11111b3921069ef7974e872a34a6ed210e3c9708ce561c72e1",
+    "platform_note": "SQL executed verbatim from sigma_t1003_study compiled_sql (byte-identical reconstruction, verified by file size pre-run and diff against the operator's original post-copy)."
+  }
+}

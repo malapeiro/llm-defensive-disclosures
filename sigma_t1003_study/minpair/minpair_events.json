@@ -1,0 +1,33 @@
+{
+  "_comment": "Minimal event pair for sigma_t1003_study cross-backend verification. SYNTHETIC events, labeled as such; no real telemetry. All four events share identical field values EXCEPT CallTrace, which varies only in path form. Fields chosen to isolate the selection_lowaccess_untrusted_path branch of proc_access_win_lsass_memdump v2/v3: TargetImage lsass.exe, GrantedAccess 0x1410 (exact-match low-access list), SourceImage outside filter_lowaccess_system_paths and not a Sysinternals binary, SourceUser not AUTHORI/AUTORI.",
+  "common_fields": {
+    "Channel": "Microsoft-Windows-Sysmon/Operational",
+    "EventID": 10,
+    "TargetImage": "C:\\Windows\\System32\\lsass.exe",
+    "GrantedAccess": "0x1410",
+    "SourceImage": "D:\\Apps\\Inventory\\agent.exe",
+    "SourceUser": "CORP\\jdoe"
+  },
+  "events": [
+    {
+      "event_id": "E1_local_backslash",
+      "role": "benign local path; MUST NOT alert on a correct rule; v2's bare-'\\\\' value makes it alert (the false positive mechanism)",
+      "CallTrace": "C:\\Program Files\\Vendor\\agent.dll+0x1234"
+    },
+    {
+      "event_id": "E2_unc",
+      "role": "same module content as E1 in UNC form; the intended target of the v2 bare-'\\\\' value; v3 drops it by design (documented trade-off)",
+      "CallTrace": "\\\\filesrv\\metrics\\agent.dll+0x1234"
+    },
+    {
+      "event_id": "E3_forward_slash",
+      "role": "same module content as E1 with no backslash at all; control that isolates the backslash as the trigger",
+      "CallTrace": "C:/Program Files/Vendor/agent.dll+0x1234"
+    },
+    {
+      "event_id": "E4_downloads_true_positive",
+      "role": "same content in a user-writable path covered by an explicit pattern; MUST alert on both v2 and v3",
+      "CallTrace": "C:\\Users\\dev\\Downloads\\agent.exe+0x1234"
+    }
+  ]
+}
